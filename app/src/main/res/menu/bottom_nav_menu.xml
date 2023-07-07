@@ -12,6 +12,11 @@
         android:title="@string/title_search" />
 
     <item
+        android:id="@+id/navigation_share"
+        android:icon="@drawable/baseline_add_circle_outline_24"
+        android:title="@string/title_share" />
+
+    <item
         android:id="@+id/navigation_bookmarks"
         android:icon="@drawable/baseline_bookmark_24"
         android:title="@string/title_bookmark" />

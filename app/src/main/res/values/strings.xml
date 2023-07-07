@@ -2,6 +2,7 @@
     <string name="app_name">Test</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
+    <string name="title_share">Share</string>
     <string name="title_user">User</string>
     <string name="title_bookmark">Saved</string>
 </resources>

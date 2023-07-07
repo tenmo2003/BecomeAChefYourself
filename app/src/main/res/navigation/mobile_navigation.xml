@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_search" />
 
     <fragment
+        android:id="@+id/navigation_share"
+        android:name="com.example.test.ui.share.ShareFragment"
+        android:label="@string/title_share"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
         android:id="@+id/navigation_bookmarks"
         android:name="com.example.test.ui.bookmarks.BookmarksFragment"
         android:label="@string/title_bookmark"
