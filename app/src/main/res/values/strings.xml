@@ -5,4 +5,5 @@
     <string name="title_share">Share</string>
     <string name="title_user">User</string>
     <string name="title_bookmark">Saved</string>
+    <string name="title_article">Article</string>
 </resources>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ui.ArticleFragment">
+
+            <TextView
+                android:id="@+id/dish_name_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="DISH NAME"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textSize="26sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:id="@+id/publisher_text"
+                    android:paddingLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Published by"
+                    android:layout_weight="1"
+                    android:textSize="15sp">
+                </TextView>
+                <TextView
+                    android:id="@+id/published_date_text"
+                    android:gravity="right"
+                    android:paddingRight="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="20-11-2023"
+                    android:layout_weight="1"
+                    android:textSize="15sp">
+                </TextView>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/content_text"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="test"
+                android:textSize="20sp"
+                />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

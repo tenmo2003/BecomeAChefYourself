@@ -4,11 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.databinding.FragmentSearchBinding;
@@ -31,6 +33,15 @@ public class ShareFragment extends Fragment {
 //        return root;
 
         View view = inflater.inflate(R.layout.fragment_share, container, false);
+
+        Button viewArticle = view.findViewById(R.id.view_article);
+
+        viewArticle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.navigation_article);
+            }
+        });
 
         return view;
     }

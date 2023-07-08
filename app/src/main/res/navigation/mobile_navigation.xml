@@ -21,17 +21,23 @@
         android:id="@+id/navigation_share"
         android:name="com.example.test.ui.share.ShareFragment"
         android:label="@string/title_share"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_share" />
 
     <fragment
         android:id="@+id/navigation_bookmarks"
         android:name="com.example.test.ui.bookmarks.BookmarksFragment"
         android:label="@string/title_bookmark"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
         android:id="@+id/navigation_user"
         android:name="com.example.test.ui.user.UserFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_user" />
+
+    <fragment
+        android:id="@+id/navigation_article"
+        android:name="com.example.test.ui.ArticleFragment"
+        android:label="@string/title_article"
+        tools:layout="@layout/fragment_article" />
 </navigation>
