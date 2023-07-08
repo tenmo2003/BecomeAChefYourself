@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.test.R;
 import com.example.test.databinding.FragmentSearchBinding;
 
 public class SearchFragment extends Fragment {
@@ -18,15 +19,19 @@ public class SearchFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        SearchViewModel searchViewModel =
-                new ViewModelProvider(this).get(SearchViewModel.class);
+//        SearchViewModel searchViewModel =
+//                new ViewModelProvider(this).get(SearchViewModel.class);
+//
+//        binding = FragmentSearchBinding.inflate(inflater, container, false);
+//        View root = binding.getRoot();
+//
+//        final TextView textView = binding.textSearch;
+//        searchViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        return root;
 
-        binding = FragmentSearchBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        final TextView textView = binding.textSearch;
-        searchViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
+        return view;
     }
 
     @Override

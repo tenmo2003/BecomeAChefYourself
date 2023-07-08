@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.test.R;
 import com.example.test.databinding.FragmentBookmarksBinding;
 
 public class BookmarksFragment extends Fragment {
@@ -17,15 +18,19 @@ public class BookmarksFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        BookmarksViewModel bookmarksViewModel =
-                new ViewModelProvider(this).get(BookmarksViewModel.class);
+//        BookmarksViewModel bookmarksViewModel =
+//                new ViewModelProvider(this).get(BookmarksViewModel.class);
+//
+//        binding = FragmentBookmarksBinding.inflate(inflater, container, false);
+//        View root = binding.getRoot();
+//
+//        final TextView textView = binding.textBookmarks;
+//        bookmarksViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+//        return root;
 
-        binding = FragmentBookmarksBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
 
-        final TextView textView = binding.textBookmarks;
-        bookmarksViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
+        return view;
     }
 
     @Override

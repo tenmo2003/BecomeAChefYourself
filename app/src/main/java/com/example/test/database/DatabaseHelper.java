@@ -55,6 +55,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                                 "  FOREIGN KEY(article) REFERENCES article(id)\n" +
                                                                 ");";
 
+    public static final String SQL_CREATE_ENTRIES_ARTICLE_DISLIKE = "CREATE TABLE article_dislike (\n" +
+                                                                "  user TEXT NOT NULL,\n" +
+                                                                "  article INTEGER NOT NULL,\n" +
+                                                                "  PRIMARY KEY(user, article),\n" +
+                                                                "  FOREIGN KEY(user) REFERENCES user(username),\n" +
+                                                                "  FOREIGN KEY(article) REFERENCES article(id)\n" +
+                                                                ");";
+
     public static final int DB_VERSION = 1;
 
     public DatabaseHelper(@Nullable Context context) {
@@ -72,6 +80,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
 
         db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
+
+        db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_DISLIKE);
     }
 
     @Override
