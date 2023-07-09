@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private Intent recipeListActivity;
 
+    public static String loggedInUsername;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

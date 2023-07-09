@@ -1,22 +1,27 @@
 package com.example.test.database;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.example.test.activities.MainActivity;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "chef.db";
 
-    public static final String SQL_CREATE_ENTRIES_USER = "CREATE TABLE user (\n" +
+    public static final String SQL_CREATE_ENTRIES_USER = "CREATE TABLE users (\n" +
                                                         "  username TEXT PRIMARY KEY,\n" +
                                                         "  password TEXT NOT NULL,\n" +
+                                                        "  fullname TEXT NOT NULL, \n" +
                                                         "  points INTEGER DEFAULT 0\n" +
                                                         "); ";
 
-    public static final String SQL_CREATE_ENTRIES_ARTICLE = "CREATE TABLE article (\n" +
+    public static final String SQL_CREATE_ENTRIES_ARTICLE = "CREATE TABLE articles (\n" +
                                                             "  id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                                                             "  publisher TEXT NOT NULL,\n" +
                                                             "  dish_name TEXT NOT NULL,\n" +
@@ -30,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY(publisher) REFERENCES user(username)\n" +
                                                             ");";
 
-    public static final String SQL_CREATE_ENTRIES_BOOKMARK = "CREATE TABLE bookmark (\n" +
+    public static final String SQL_CREATE_ENTRIES_BOOKMARK = "CREATE TABLE bookmarks (\n" +
                                                             "  user TEXT NOT NULL,\n" +
                                                             "  article INTEGER NOT NULL,\n" +
                                                             "  FOREIGN KEY(user) REFERENCES user(username),\n" +
@@ -38,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  PRIMARY KEY(user, article)\n" +
                                                             ");";
 
-    public static final String SQL_CREATE_ENTRIES_COMMENT = "CREATE TABLE comment (\n" +
+    public static final String SQL_CREATE_ENTRIES_COMMENT = "CREATE TABLE comments (\n" +
                                                             "  id INTEGER PRIMARY KEY,\n" +
                                                             "  article_id INTEGER NOT NULL,\n" +
                                                             "  commenter TEXT NOT NULL,\n" +
@@ -47,7 +52,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY(commenter) REFERENCES user(username)" +
                                                             ");";
 
-    public static final String SQL_CREATE_ENTRIES_ARTICLE_LIKE = "CREATE TABLE article_like (\n" +
+    public static final String SQL_CREATE_ENTRIES_ARTICLE_LIKE = "CREATE TABLE article_likes (\n" +
                                                                 "  user TEXT NOT NULL,\n" +
                                                                 "  article INTEGER NOT NULL,\n" +
                                                                 "  PRIMARY KEY(user, article),\n" +
@@ -55,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                                 "  FOREIGN KEY(article) REFERENCES article(id)\n" +
                                                                 ");";
 
-    public static final String SQL_CREATE_ENTRIES_ARTICLE_DISLIKE = "CREATE TABLE article_dislike (\n" +
+    public static final String SQL_CREATE_ENTRIES_ARTICLE_DISLIKE = "CREATE TABLE article_dislikes (\n" +
                                                                 "  user TEXT NOT NULL,\n" +
                                                                 "  article INTEGER NOT NULL,\n" +
                                                                 "  PRIMARY KEY(user, article),\n" +
@@ -87,5 +92,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         onCreate(db);
+    }
+
+    public boolean signUpUser(String username, String password, String fullname) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Check if the username already exists in the database
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE username=?", new String[]{username});
+        if (cursor.getCount() > 0) {
+            // The username already exists, so we cannot add a new user with the same username
+            cursor.close();
+            return false;
+        }
+
+        // The username does not exist, so we can add a new user with the given username, password, and fullname
+        ContentValues values = new ContentValues();
+        values.put("username", username);
+        values.put("password", password);
+        values.put("fullname", fullname);
+        db.insert("users", null, values);
+
+        cursor.close();
+        return true;
+    }
+
+    public boolean userAuthentication(String username, String password) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Check if the given username and password combination exists in the database
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE username=? AND password=?", new String[]{username, password});
+        boolean result = cursor.getCount() > 0;
+
+        MainActivity.loggedInUsername = username;
+
+        cursor.close();
+        return result;
+    }
+
+    public boolean addArticle(String dishName, String publisher, String content) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Create a new ContentValues object that contains the values for the new article
+        ContentValues values = new ContentValues();
+        values.put("dish_name", dishName);
+        values.put("publisher", publisher);
+        values.put("content", content);
+
+        // Insert the new article into the database
+        long result = db.insert("articles", null, values);
+
+        return result != -1;
     }
 }
