@@ -18,11 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
-    Context context;
     List<String> dish_names;
 
-    public RecipeListAdapter(Context context) {
-        this.context = context;
+    public RecipeListAdapter() {
         this.dish_names = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
     }
 

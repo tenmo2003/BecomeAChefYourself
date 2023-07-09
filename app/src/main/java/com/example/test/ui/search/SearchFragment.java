@@ -4,16 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
-import com.example.test.activities.RecipeListActivity;
 import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.databinding.FragmentSearchBinding;
 
@@ -36,7 +32,6 @@ public class SearchFragment extends Fragment {
 //        return root;
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-
         return view;
     }
 
