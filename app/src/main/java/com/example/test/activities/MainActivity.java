@@ -1,7 +1,11 @@
-package com.example.test;
+package com.example.test.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
+import com.example.test.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +21,7 @@ import com.example.test.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private Intent recipeListActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Button buttonToRecipeList = findViewById(R.id.buttonToRecipeList);
+        buttonToRecipeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recipeListActivity = new Intent(MainActivity.this, RecipeListActivity.class);
+                startActivity(recipeListActivity);
+            }
+        });
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -35,5 +49,4 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
-
 }

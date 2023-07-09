@@ -9,13 +9,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
+import com.example.test.activities.RecipeListActivity;
+import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.databinding.FragmentSearchBinding;
 
 public class SearchFragment extends Fragment {
 
     private FragmentSearchBinding binding;
+    RecyclerView recyclerView;
+    RecipeListAdapter recipeListAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
