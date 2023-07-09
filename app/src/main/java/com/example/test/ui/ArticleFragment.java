@@ -40,51 +40,47 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView contentTextView = view.findViewById(R.id.content_text);
+        TextView dishNameTextView = view.findViewById(R.id.dish_name_text);
+        TextView recipeContentTextView = view.findViewById(R.id.content_text);
 
-        contentTextView.setText(Html.fromHtml("\t<img src=\"https://i.imgur.com/5e2qPZH.jpeg\" alt=\"Chocolate chip cookies\">\n" +
-                "\t<p>Nothing beats the classic chocolate chip cookie. This recipe yields a dozen perfectly chewy and golden-brown cookies, with just the right balance of sweetness and crunch.</p>\n" +
-                "\t<h2>Ingredients</h2>\n" +
-                "\t<ul>\n" +
-                "\t\t<li>1/2 cup unsalted butter, at room temperature</li>\n" +
-                "\t\t<li>1/2 cup granulated sugar</li>\n" +
-                "\t\t<li>1/2 cup brown sugar</li>\n" +
-                "\t\t<li>1 large egg</li>\n" +
-                "\t\t<li>1 teaspoon vanilla extract</li>\n" +
-                "\t\t<li>1 1/2 cups all-purpose flour</li>\n" +
-                "\t\t<li>1/2 teaspoon baking soda</li>\n" +
-                "\t\t<li>1/4 teaspoon salt</li>\n" +
-                "\t\t<li>1 cup semisweet chocolate chips</li>\n" +
-                "\t</ul>\n" +
-                "\t<br>\n" +
-                "\t<h2>Instructions</h2>\n" +
-                "\t<ol>\n" +
-                "\t\t<li>Preheat the oven to 350°F (180°C) and line a baking sheet with parchment paper.</li>\n" +
-                "\t\t<li>In a large mixing bowl, cream together the butter, granulated sugar, and brown sugar until light and fluffy.</li>\n" +
-                "\t\t<li>Add the egg and vanilla extract to the bowl and mix until well combined.</li>\n" +
-                "\t\t<li>In a separate mixing bowl, whisk together the flour, baking soda, and salt.</li>\n" +
-                "\t\t<li>Gradually add the dry ingredients to the wet mixture, mixing until just combined.</li>\n" +
-                "\t\t<li>Fold in the chocolate chips.</li>\n" +
-                "\t\t<li>Using a cookie scoop or spoon, drop balls of dough onto the prepared baking sheet, spacing them about 2 inches apart.</li>\n" +
-                "\t\t<li>Bake the cookies for 12-15 minutes, or until the edges are golden brown and the centers are set.</li>\n" +
-                "\t\t<li>Remove the cookies from the oven and let them cool on the baking sheet for 5 minutes before transferring them to a wire rack to cool completely.</li>\n" +
-                "\t</ol>\n" +
-                "\t<br>\n" +
-                "\t<p>Enjoy your freshly baked chocolate chip cookies with a glass of cold milk or a hot cup of coffee. These cookies can be stored in an airtight container at room temperature for up to 3 days.</p>", Html.FROM_HTML_MODE_LEGACY));
+        Bundle args = getArguments();
+        if (args != null) {
+            String dishName = args.getString("dish_name");
+            String recipeContent = args.getString("recipe_content");
 
-        TextView dishName = view.findViewById(R.id.dish_name_text);
-
-        dishName.setText("Classic Chocolate Chip Cookies");
-
-        TextView publisher = view.findViewById(R.id.publisher_text);
-
-        publisher.setText("Published by admin");
-
-        TextView publishedDate = view.findViewById(R.id.published_date_text);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            publishedDate.setText(LocalDate.now().toString());
+            dishNameTextView.setText(dishName);
+            recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_LEGACY));
         }
+
+
+        //Html test text
+//        <h1>Spaghetti Bolognese Recipe</h1>
+//	<ul>
+//		<li><strong>Prep Time:</strong> 15 minutes</li>
+//		<li><strong>Cook Time:</strong> 1 hour</li>
+//		<li><strong>Total Time:</strong> 1 hour 15 minutes</li>
+//	</ul>
+//	<h2>Ingredients:</h2>
+//	<ul>
+//		<li>1 pound spaghetti</li>
+//		<li>1 pound ground beef</li>
+//		<li>1 onion, chopped</li>
+//		<li>2 cloves garlic, minced</li>
+//		<li>1 can (28 ounces) crushed tomatoes</li>
+//		<li>1 teaspoon dried basil</li>
+//		<li>1 teaspoon dried oregano</li>
+//		<li>1/2 teaspoon salt</li>
+//		<li>1/4 teaspoon black pepper</li>
+//		<li>Grated Parmesan cheese, for serving</li>
+//	</ul>
+//	<h2>Directions:</h2>
+//	<ol>
+//		<li>Bring a large pot of salted water to a boil. Add spaghetti and cook according to package directions.</li>
+//		<li>Meanwhile, in a large skillet over medium heat, cook ground beef, onion, and garlic until beef is no longer pink. Drain any excess fat.</li>
+//		<li>Add crushed tomatoes, basil, oregano, salt, and black pepper to the skillet. Bring to a simmer and cook for 20-30 minutes, stirring occasionally.</li>
+//		<li>Drain spaghetti and return to pot. Add sauce and toss to coat.</li>
+//		<li>Serve hot with grated Parmesan cheese.</li>
+//	</ol>
 
         Button backButton = view.findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,14 +35,26 @@ public class ShareFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_share, container, false);
 
-        Button viewArticle = view.findViewById(R.id.view_article);
+        EditText dishNameInput = view.findViewById(R.id.dish_name_input);
 
-        viewArticle.setOnClickListener(new View.OnClickListener() {
+        EditText contentInput = view.findViewById(R.id.recipe_input);
+
+        Button previewArticleBtn = view.findViewById(R.id.preview_article_button);
+
+        previewArticleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.navigation_article);
+            public void onClick(View view) {
+                String dishName = dishNameInput.getText().toString();
+                String recipeContent = contentInput.getText().toString();
+
+                Bundle args = new Bundle();
+                args.putString("dish_name", dishName);
+                args.putString("recipe_content", recipeContent);
+
+                Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }
         });
+
 
         return view;
     }

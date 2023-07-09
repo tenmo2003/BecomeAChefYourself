@@ -21,7 +21,8 @@
         android:id="@+id/navigation_share"
         android:name="com.example.test.ui.share.ShareFragment"
         android:label="@string/title_share"
-        tools:layout="@layout/fragment_share" />
+        tools:layout="@layout/fragment_share" >
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_bookmarks"
