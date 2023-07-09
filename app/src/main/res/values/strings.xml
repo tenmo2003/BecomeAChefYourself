@@ -2,7 +2,6 @@
 <resources>
 	<!-- android_small___1 strings -->
 
-	<string name="app_name">Page 1</string>
 	<string name="ek_img_content">ExportKit Image</string>
 	<string name="sign_up_ek1_string">Sign up</string>
 	<string name="or_ek1_string">OR</string>
@@ -11,4 +10,12 @@
 	<string name="username_string">Username</string>
 	<string name="password_string">Password</string>
 	<string name="login_ek1_string">Login</string>
+
+	<string name="app_name">Test</string>
+	<string name="title_home">Home</string>
+	<string name="title_search">Search</string>
+	<string name="title_share">Share</string>
+	<string name="title_user">User</string>
+	<string name="title_bookmark">Saved</string>
+	<string name="title_article">Article</string>
 </resources>
