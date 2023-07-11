@@ -15,8 +15,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
+
+import org.w3c.dom.Text;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UserFragment extends Fragment {
 
@@ -82,6 +88,30 @@ public class UserFragment extends Fragment {
                 }
             }
         });
+
+//        Button test = view.findViewById(R.id.test_button);
+//        TextView textView = view.findViewById(R.id.database_test);
+//        test.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (MainActivity.sqlConnection != null) {
+//                    Thread thread = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            try {
+//                                ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT * FROM users");
+//                                while (rs.next()) {
+//                                    textView.setText(rs.getString(1));
+//                                }
+//                            }catch (SQLException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                    });
+//                    thread.start();
+//                }
+//            }
+//        });
     }
 
     @Override
