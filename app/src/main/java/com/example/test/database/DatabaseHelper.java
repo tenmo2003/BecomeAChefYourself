@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -18,14 +19,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                         "  username TEXT PRIMARY KEY,\n" +
                                                         "  password TEXT NOT NULL,\n" +
                                                         "  fullname TEXT NOT NULL, \n" +
-                                                        "  points INTEGER DEFAULT 0\n" +
+                                                        "  points INTEGER DEFAULT 0,\n" +
+                                                        "  bio TEXT \n" +
                                                         "); ";
 
     public static final String SQL_CREATE_ENTRIES_ARTICLE = "CREATE TABLE articles (\n" +
                                                             "  id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
                                                             "  publisher TEXT NOT NULL,\n" +
                                                             "  dish_name TEXT NOT NULL,\n" +
-                                                            "  meal TEXT CHECK(meal IN ('Bữa sáng', 'Bữa trưa', 'Bữa tối', 'Flexible')) NOT NULL,\n" +
+                                                            "  meal TEXT CHECK(meal IN ('Bữa sáng', 'Bữa trưa', 'Bữa tối', 'Linh hoạt')) NOT NULL,\n" +
                                                             "  serve_order_class TEXT CHECK(serve_order_class IN ('Món khai vị', 'Món chính', 'Món tráng miệng')) NOT NULL,\n" +
                                                             "  type TEXT CHECK(type IN ('Món thịt', 'Món hải sản', 'Món chay', 'Món canh', 'Món rau', 'Mì', 'Bún', 'Món cuốn', 'Món xôi', 'Món cơm', 'Món bánh mặn', 'Món bánh ngọt')) NOT NULL,\n" +
                                                             "  content TEXT NOT NULL,\n" +
@@ -68,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                                 "  FOREIGN KEY(article) REFERENCES article(id)\n" +
                                                                 ");";
 
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 4;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -90,8 +92,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        onCreate(db);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE users ADD COLUMN bio TEXT");
+        }
+        if (oldVersion < 4) {
+            db.execSQL("DROP TABLE IF EXISTS articles");
+            db.execSQL(SQL_CREATE_ENTRIES_ARTICLE);
+        }
     }
 
     public boolean signUpUser(String username, String password, String fullname) {
@@ -124,12 +132,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean result = cursor.getCount() > 0;
 
         MainActivity.loggedInUsername = username;
+        Log.i("UserLoggedIn", MainActivity.loggedInUsername);
 
         cursor.close();
         return result;
     }
 
-    public boolean addArticle(String dishName, String publisher, String content) {
+    public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String content) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Create a new ContentValues object that contains the values for the new article
@@ -137,6 +146,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("dish_name", dishName);
         values.put("publisher", publisher);
         values.put("content", content);
+        values.put("meal", meal);
+        values.put("serve_order_class", serve_order_class);
+        values.put("type", type);
 
         // Insert the new article into the database
         long result = db.insert("articles", null, values);

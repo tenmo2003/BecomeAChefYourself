@@ -49,11 +49,11 @@ public class ArticleFragment extends Fragment {
             String recipeContent = args.getString("recipe_content");
 
             dishNameTextView.setText(dishName);
-            recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_LEGACY));
+            recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
         }
 
 
-        //Html test text
+//        Html test text
 //        <h1>Spaghetti Bolognese Recipe</h1>
 //	<ul>
 //		<li><strong>Prep Time:</strong> 15 minutes</li>

@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    public static String loggedInUsername;
+    public static String loggedInUsername = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

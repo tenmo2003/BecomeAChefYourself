@@ -38,7 +38,8 @@
 
                 <TextView
                     android:id="@+id/publisher_text"
-                    android:paddingLeft="20dp"
+                    android:gravity="start"
+                    android:paddingStart="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Published by"
@@ -47,8 +48,8 @@
                 </TextView>
                 <TextView
                     android:id="@+id/published_date_text"
-                    android:gravity="right"
-                    android:paddingRight="20dp"
+                    android:gravity="end"
+                    android:paddingEnd="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="20-11-2023"
@@ -63,6 +64,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:text="test"
                 android:textSize="20sp"
                 />
