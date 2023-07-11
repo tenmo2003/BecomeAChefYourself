@@ -20,8 +20,13 @@ import java.util.List;
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     List<String> dish_names;
 
-    public RecipeListAdapter() {
-        this.dish_names = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+    public void setDish_names(List<String> _dish_names) {
+        dish_names = _dish_names;
+        notifyDataSetChanged();
+    }
+
+    public List<String> getDish_names() {
+        return dish_names;
     }
 
     @NonNull
