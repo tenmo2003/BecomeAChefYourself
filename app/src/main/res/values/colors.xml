@@ -12,6 +12,7 @@
 	<color name="teal_700">#FF018786</color>
 	<color name="black">#FF000000</color>
 	<color name="white">#FFFFFFFF</color>
+	<color name="gray">#DDE6ED</color>
 
 	<color name="_bg__android_small___1_color">#FFAF5A</color>
 	<color name="sign_up_ek1_color">#2F6C6D</color>
