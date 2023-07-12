@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.test.R;
 import com.example.test.database.SQLConnection;
+import com.example.test.ui.Runner;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,38 +31,31 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private SQLConnection sqlConnection;
+    public static SQLConnection sqlConnection;
 
     public static String loggedInUsername = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Thread thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                try {
-//                    //Background work here
-//                    String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6631936";
-//                    String username = "sql6631936";
-//                    String password = "aE8v6qffBv";
+//        Runner.runTask(() -> {
+//            try {
+//                //Background work here
+//                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6631936";
+//                String username = "sql6631936";
+//                String password = "aE8v6qffBv";
 //
-//                    Class.forName("com.mysql.jdbc.Driver");
-//                    Connection connection = DriverManager.getConnection(url, username, password);
 //
-////                    sqlConnection = new SQLConnection(url, username, password);
-////
-////                    sqlConnection.connectServer();
+//                sqlConnection = new SQLConnection(url, username, password);
 //
-//                    Log.i("Database", "Connection established");
+//                sqlConnection.connectServer();
 //
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
+//                Log.i("Database", "Connection established");
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
 //            }
-//        });
-//
-//        thread.start();
+//        }, null, this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -18,11 +18,13 @@ import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
+import com.example.test.ui.Runner;
 
 import org.w3c.dom.Text;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class UserFragment extends Fragment {
 
@@ -95,23 +97,32 @@ public class UserFragment extends Fragment {
 //            @Override
 //            public void onClick(View view) {
 //                if (MainActivity.sqlConnection != null) {
-//                    Thread thread = new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
+//                    AtomicReference<ResultSet> rsRef = new AtomicReference<>();
+//                    Runner.runTask(() -> {
+//                        ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT * FROM users");
+//                        rsRef.set(rs);
+//                    }, () -> {
+//                        ResultSet rs = rsRef.get();
+//                        if (rs != null) {
 //                            try {
-//                                ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT * FROM users");
 //                                while (rs.next()) {
 //                                    textView.setText(rs.getString(1));
 //                                }
-//                            }catch (SQLException e) {
+//                            } catch (Exception e) {
 //                                e.printStackTrace();
+//                            } finally {
+//                                try {
+//                                    rs.close();
+//                                } catch (SQLException e) {
+//                                    e.printStackTrace();
+//                                }
 //                            }
 //                        }
-//                    });
-//                    thread.start();
+//                    }, getActivity());
 //                }
 //            }
 //        });
+
     }
 
     @Override
