@@ -37,6 +37,12 @@
         tools:layout="@layout/fragment_login" />
 
     <fragment
+        android:id="@+id/navigation_sign_up"
+        android:name="com.example.test.ui.user.SignUpFragment"
+        android:label="@string/title_user"
+        tools:layout="@layout/fragment_sign_up" />
+
+    <fragment
         android:id="@+id/navigation_user"
         android:name="com.example.test.ui.user.UserFragment"
         android:label="@string/title_user"

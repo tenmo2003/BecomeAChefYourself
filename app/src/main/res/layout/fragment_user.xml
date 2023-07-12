@@ -117,7 +117,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp">
 
-        <TextView android:id="@+id/_61_8k"
+        <TextView android:id="@+id/_post_count"
             android:textSize="22sp"
             android:textColor="@color/_61_8k_color"
             android:layout_width="wrap_content"
@@ -127,7 +127,7 @@
             android:gravity="center"
             />
 
-        <TextView android:id="@+id/_10_5m"
+        <TextView android:id="@+id/_follower_count"
             android:textSize="22sp"
             android:textColor="@color/_61_8k_color"
             android:layout_width="wrap_content"
@@ -139,7 +139,7 @@
             />
 
         <TextView
-            android:id="@+id/_100k"
+            android:id="@+id/_bookmark_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/_100k_string"

@@ -44,6 +44,7 @@ public class LoginFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Button loginBtn = view.findViewById(R.id.login_button);
+        Button toSignUpBtn = view.findViewById(R.id.to_sign_up_button);
 
         EditText usernameTv = view.findViewById(R.id.login_username_input);
         EditText passwordTv = view.findViewById(R.id.login_password_input);
@@ -61,6 +62,13 @@ public class LoginFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "Logged in failed! Check your credentials", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        toSignUpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.navigation_sign_up);
             }
         });
 

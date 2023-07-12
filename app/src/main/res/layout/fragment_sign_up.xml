@@ -23,21 +23,6 @@
 		android:layout_height="wrap_content"
 		android:src="@drawable/vector_2" />
 
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-
-		<ImageView
-			android:id="@+id/__img___chosse_button"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="30dp"
-			android:layout_marginTop="32dp"
-			android:src="@drawable/__img___chosse_button" />
-
-
-	</LinearLayout>
-
 
 	<RelativeLayout
 		android:id="@+id/____icon__chef_hat_"
@@ -85,6 +70,14 @@
 		<RelativeLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/sign_up_button"
+				android:layout_width="195dp"
+				android:layout_height="37dp"
+				android:layout_centerHorizontal="true"
+				android:alpha="0"
+				/>
 
 			<ImageView
 				android:id="@+id/rectangle_6"
@@ -142,20 +135,23 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_centerInParent="true"
-					android:src="@drawable/vector" />
+					android:src="@drawable/human" />
 
 			</RelativeLayout>
 
 
-			<TextView
-				android:id="@+id/username"
-				android:layout_width="104dp"
-				android:layout_height="35dp"
-				android:layout_marginLeft="62dp"
-				android:layout_marginTop="14dp"
-				android:text="@string/username_string"
+			<EditText
+				android:id="@+id/sign_up_username_input"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="50dp"
+				android:paddingLeft="20dp"
+				android:layout_marginTop="5dp"
+				android:ems="14"
+				android:hint="@string/username_string"
 				android:textColor="@color/username_color"
-				android:textSize="16sp" />
+				android:textSize="16sp"
+				android:background="@drawable/no_underline_edittext"/>
 		</RelativeLayout>
 
 
@@ -193,15 +189,19 @@
 
 			</RelativeLayout>
 
-			<TextView
-				android:id="@+id/password"
-				android:layout_width="98dp"
-				android:layout_height="35dp"
-				android:layout_marginLeft="62dp"
-				android:layout_marginTop="79dp"
-				android:text="@string/password_string"
+			<EditText
+				android:id="@+id/sign_up_password_input"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="50dp"
+				android:paddingLeft="20dp"
+				android:ems="14"
+				android:inputType="textPassword"
+				android:layout_marginTop="70dp"
+				android:hint="@string/password_string"
 				android:textColor="@color/username_color"
-				android:textSize="16sp" />
+				android:textSize="16sp"
+				android:background="@drawable/no_underline_edittext"/>
 		</RelativeLayout>
 
 
@@ -224,14 +224,18 @@
 				android:background="@drawable/rectangle_4_shape" />
 
 
-			<TextView android:id="@+id/re_enter_password"
+			<EditText android:id="@+id/sign_up_re_enter_password"
 				android:textSize="16sp"
 				android:textColor="@color/re_enter_password_color"
-				android:layout_marginLeft="62dp"
-				android:layout_marginTop="143dp"
-				android:layout_width="175dp"
-				android:layout_height="35dp"
-				android:text="@string/re_enter_password_string"
+				android:layout_marginLeft="50dp"
+				android:paddingLeft="20dp"
+				android:ems="14"
+				android:inputType="textPassword"
+				android:layout_marginTop="136dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:hint="@string/re_enter_password_string"
+				android:background="@drawable/no_underline_edittext"
 				/>
 
 			<RelativeLayout
@@ -274,6 +278,12 @@
 		<RelativeLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/to_login_button"
+				android:layout_width="195dp"
+				android:layout_height="wrap_content"
+				android:alpha="0"/>
 
 			<ImageView
 				android:id="@+id/rectangle_7"
