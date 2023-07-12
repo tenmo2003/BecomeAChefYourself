@@ -4,32 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.test.R;
-import com.example.test.activities.MainActivity;
-import com.example.test.database.DatabaseHelper;
-import com.example.test.databinding.FragmentUserBinding;
-import com.example.test.ui.Runner;
-
-import org.w3c.dom.Text;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class UserFragment extends Fragment {
-
-    private FragmentUserBinding binding;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 //        UserViewModel userViewModel =
@@ -51,83 +33,5 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        Button signUpBtn = view.findViewById(R.id.signup_button);
-        Button loginBtn = view.findViewById(R.id.login_button);
-
-        EditText usernameSignUp = view.findViewById(R.id.username_signup_input);
-        EditText passwordSignUp = view.findViewById(R.id.password_signup_input);
-        EditText fullnameSignUp = view.findViewById(R.id.fullname_signup_input);
-        EditText usernameLogin = view.findViewById(R.id.username_login_input);
-        EditText passwordLogin = view.findViewById(R.id.password_login_input);
-
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-
-                boolean signUpResult = dbHelper.signUpUser(usernameSignUp.getText().toString(), passwordSignUp.getText().toString(), fullnameSignUp.getText().toString());
-
-                if (signUpResult) {
-                    Toast.makeText(getActivity(), "Sign up successful!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Sign up failed. Username already exists.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        loginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-
-                boolean signUpResult = dbHelper.userAuthentication(usernameLogin.getText().toString(), passwordLogin.getText().toString());
-
-                if (signUpResult) {
-                    Toast.makeText(getActivity(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Logged in failed! Check your credentials", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-//        Button test = view.findViewById(R.id.test_button);
-//        TextView textView = view.findViewById(R.id.database_test);
-//        test.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (MainActivity.sqlConnection != null) {
-//                    AtomicReference<ResultSet> rsRef = new AtomicReference<>();
-//                    Runner.runTask(() -> {
-//                        ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT * FROM users");
-//                        rsRef.set(rs);
-//                    }, () -> {
-//                        ResultSet rs = rsRef.get();
-//                        if (rs != null) {
-//                            try {
-//                                while (rs.next()) {
-//                                    textView.setText(rs.getString(1));
-//                                }
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                try {
-//                                    rs.close();
-//                                } catch (SQLException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                    }, getActivity());
-//                }
-//            }
-//        });
-
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 }
