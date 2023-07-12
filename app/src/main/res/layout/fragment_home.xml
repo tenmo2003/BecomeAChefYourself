@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,56 +32,63 @@
             android:id="@+id/search_view"
             android:layout_margin="15dp"
             android:background="@drawable/searchview_shape"
-            android:queryHint="Search for your recipe..."
-            android:backgroundTint="@color/white"
-            android:iconifiedByDefault="false">
+            android:queryHint="Search for your recipe...">
         </SearchView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <Button
+            <TextView
                 android:layout_width="50dp"
                 android:layout_height="30dp"
+                android:id="@+id/all"
                 android:text="All"
-                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:layout_margin="5dp"
                 android:background="@drawable/sort_button_shape">
-            </Button>
+            </TextView>
 
-            <Button
+            <TextView
                 android:layout_width="80dp"
                 android:layout_height="30dp"
+                android:id="@+id/most_star"
                 android:text="Most star"
-                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:layout_margin="5dp"
                 android:background="@drawable/sort_button_shape">
-            </Button>
+            </TextView>
 
-            <Button
-                android:layout_width="80dp"
-                android:layout_height="30dp"
-                android:text="Most like"
-                android:textAllCaps="false"
-                android:layout_margin="5dp"
-                android:background="@drawable/sort_button_shape">
-            </Button>
-
-            <Button
+            <TextView
                 android:layout_width="90dp"
                 android:layout_height="30dp"
-                android:text="Most recent"
-                android:textAllCaps="false"
+                android:id="@+id/most_react"
+                android:text="Most react"
+                android:textColor="@color/black"
+                android:gravity="center"
                 android:layout_margin="5dp"
                 android:background="@drawable/sort_button_shape">
-            </Button>
+            </TextView>
+
+            <TextView
+                android:layout_width="95dp"
+                android:layout_height="30dp"
+                android:id="@+id/most_recent"
+                android:text="Most recent"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:background="@drawable/sort_button_shape">
+            </TextView>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/recipe_list"
-            android:nestedScrollingEnabled="false">
+            android:nestedScrollingEnabled="false"
+            android:layout_marginVertical="5dp">
         </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

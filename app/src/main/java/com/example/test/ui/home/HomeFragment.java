@@ -1,19 +1,17 @@
 package com.example.test.ui.home;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -25,6 +23,7 @@ import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.adapters.RecommendRecipeAdapter;
 import com.example.test.databinding.FragmentHomeBinding;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,12 +33,14 @@ import java.util.TimerTask;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    SearchView searchView;
     RecipeListAdapter recipeListAdapter;
     RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
-    SearchView searchView;
+    LinearLayoutManager rcmLLayoutManager;
     Timer timer;
     TimerTask timerTask;
+    Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
     List<String> list = Arrays.asList("Thịt bò", "Thịt gà", "Cơm rang",
             "Xôi", "Bánh cuốn", "Chả cá", "Canh rau", "Khoai tây", "Chuối", "Pizza");
@@ -52,7 +53,9 @@ public class HomeFragment extends Fragment {
 
         //Recycler display recommend recipe
         recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
-        recommendRecipeView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recommendRecipeView.setHasFixedSize(true);
+        rcmLLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        recommendRecipeView.setLayoutManager(rcmLLayoutManager);
 
         recommendRecipeAdapter = new RecommendRecipeAdapter();
         recommendRecipeView.setAdapter(recommendRecipeAdapter);
@@ -60,7 +63,21 @@ public class HomeFragment extends Fragment {
         recommendRecipeView.scrollToPosition(position);
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recommendRecipeView);
-        recommendRecipeView.smoothScrollBy(100, 0);
+        recommendRecipeView.smoothScrollBy(500, 0);
+
+        recommendRecipeView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == 1) {
+                    stopAutoScroll();
+                } else if (newState == 0) {
+                    position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+                    autoScroll();
+                }
+            }
+        });
 
         //Recycler display grid recipe
         recipeListView = view.findViewById(R.id.recipe_list);
@@ -90,37 +107,70 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    private void autoScroll() {
-        if (timer == null && timerTask == null) {
-            timer = new Timer();
-            timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    recommendRecipeView.scrollToPosition(position++);
-                }
-            };
-            timer.schedule(timerTask, 3000, 3000);
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        autoScroll();
     }
 
-    private void filterList(String text) {
-        System.out.print(text);
-        List<String> filteredList = new ArrayList<>();
-        for (String dish_name: list) {
-            if (dish_name.toLowerCase().contains(text.toLowerCase())) {
-                filteredList.add(dish_name);
-            }
-        }
-        if (!filteredList.isEmpty()) {
-            recipeListAdapter.setDish_names(filteredList);
-        } else {
-            recipeListAdapter.setDish_names(list);
-        }
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopAutoScroll();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void autoScroll() {
+        if (timer == null && timerTask == null) {
+            timer = new Timer();
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    timerHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            recommendRecipeView.smoothScrollToPosition(position);
+                            position++;
+                        }
+                    });
+                }
+            };
+            timer.schedule(timerTask, 5000, 5000);
+        }
+    }
+
+    private void stopAutoScroll() {
+        if (timer != null && timerTask != null) {
+            timer.cancel();
+            timerTask.cancel();
+            timer = null;
+            timerTask = null;
+            position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+        }
+    }
+
+    private void filterList(String text) {
+        List<String> filteredList = new ArrayList<>();
+        for (String dish_name: list) {
+            String dish_name_copy = dish_name;
+
+            //Remove accents from string
+            dish_name_copy = dish_name_copy.toLowerCase();
+            dish_name_copy = Normalizer.normalize(dish_name_copy, Normalizer.Form.NFD);
+            dish_name_copy = dish_name_copy.replaceAll("[^\\p{ASCII}]", "");
+            text = text.toLowerCase();
+            text = Normalizer.normalize(text, Normalizer.Form.NFD);
+            text = text.replaceAll("[^\\p{ASCII}]", "");
+
+            if (dish_name_copy.contains(text)) {
+                filteredList.add(dish_name);
+            }
+        }
+        recipeListAdapter.setDish_names(filteredList);
     }
 }
