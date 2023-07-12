@@ -16,6 +16,7 @@
 	<string name="title_search">Search</string>
 	<string name="title_share">Share</string>
 	<string name="title_user">User</string>
+	<string name="title_login">Login</string>
 	<string name="title_bookmark">Saved</string>
 	<string name="title_article">Article</string>
 
@@ -35,4 +36,11 @@
 	<string name="gordon_ramsay_ek1_string">Gordon Ramsay</string>
 	<string name="asian_food_string">Asian food</string>
 	<string name="learn_now_string">Learn now</string>
+
+	<!-- sign_up strings -->
+
+	<string name="sign_up_ek4_string">Sign up</string>
+	<string name="re_enter_password_string">Re-enter password</string>
+	<string name="sign_up_ek5_string">Sign up</string>
+	<string name="already_have_account__string">Already have account?</string>
 </resources>

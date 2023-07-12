@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.test.R;
@@ -11,6 +13,7 @@ import com.example.test.database.SQLConnection;
 import com.example.test.ui.Runner;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -18,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.test.databinding.ActivityMainBinding;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -65,5 +69,24 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(navView, navController);
+
+        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.navigation_home) {
+                    navController.navigate(R.id.navigation_home);
+                } else if (id == R.id.navigation_share) {
+                    navController.navigate(R.id.navigation_share);
+                } else if (id == R.id.navigation_user) {
+                    if (loggedInUsername != null) {
+                        navController.navigate(R.id.navigation_user);
+                    } else {
+                        navController.navigate(R.id.navigation_login);
+                    }
+                }
+                return false;
+            }
+        });
     }
 }

@@ -31,6 +31,12 @@
         tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
+        android:id="@+id/navigation_login"
+        android:name="com.example.test.ui.user.LoginFragment"
+        android:label="@string/title_user"
+        tools:layout="@layout/fragment_login" />
+
+    <fragment
         android:id="@+id/navigation_user"
         android:name="com.example.test.ui.user.UserFragment"
         android:label="@string/title_user"
