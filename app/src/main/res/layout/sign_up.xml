@@ -1,0 +1,303 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+
+	<View
+		android:id="@+id/_bg__android_small___1"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/_bg__android_small___1_shape" />
+
+	<ImageView
+		android:id="@+id/vector_1"
+		android:layout_width="307.81dp"
+		android:layout_height="483.5dp"
+		android:layout_marginStart="250dp"
+		android:layout_marginTop="315dp"
+		android:src="@drawable/vector_1" />
+
+
+	<ImageView
+		android:id="@+id/vector_2"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/vector_2" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<ImageView
+			android:id="@+id/__img___chosse_button"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="30dp"
+			android:layout_marginTop="32dp"
+			android:src="@drawable/__img___chosse_button" />
+
+
+	</LinearLayout>
+
+
+	<RelativeLayout
+		android:id="@+id/____icon__chef_hat_"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="68dp"
+		>
+
+		<TextView
+			android:id="@+id/login_ek1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="93dp"
+			android:text="Let's Cook Together"
+			android:textColor="@color/line_2_color"
+			android:textSize="26sp"
+			android:textStyle="bold"
+			android:gravity="center"/>
+
+		<RelativeLayout
+			android:id="@+id/____icon__chef_hat__ek1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center">
+
+			<ImageView
+				android:id="@+id/vector_ek2"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:src="@drawable/vector_ek2"
+				/>
+
+		</RelativeLayout>
+
+	</RelativeLayout>
+
+
+	<RelativeLayout
+		android:id="@+id/login"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="450dp"
+		android:gravity="center">
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageView
+				android:id="@+id/rectangle_6"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:src="@drawable/rectangle_6" />
+
+			<TextView
+				android:id="@+id/log_in"
+				android:layout_width="wrap_content"
+				android:layout_height="35dp"
+				android:layout_centerInParent="true"
+				android:text="@string/sign_up_ek1_string"
+				android:textColor="@color/log_in_color"
+				android:textSize="18sp"
+				android:textStyle="bold" />
+		</RelativeLayout>
+
+
+	</RelativeLayout>
+
+
+	<RelativeLayout
+		android:id="@+id/username_and_password"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="241dp"
+		android:gravity="center"
+		>
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<View
+				android:id="@+id/rectangle_1"
+				android:layout_width="320dp"
+				android:layout_height="50dp"
+				android:background="@drawable/rectangle_1_shape" />
+
+			<View
+				android:id="@+id/rectangle_3"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:background="@drawable/rectangle_3_shape" />
+
+			<RelativeLayout
+				android:id="@+id/usericon"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				>
+
+				<ImageView
+					android:id="@+id/vector_ek1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:src="@drawable/vector" />
+
+			</RelativeLayout>
+
+
+			<TextView
+				android:id="@+id/username"
+				android:layout_width="104dp"
+				android:layout_height="35dp"
+				android:layout_marginLeft="62dp"
+				android:layout_marginTop="14dp"
+				android:text="@string/username_string"
+				android:textColor="@color/username_color"
+				android:textSize="16sp" />
+		</RelativeLayout>
+
+
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageView
+				android:id="@+id/rectangle_2"
+				android:layout_width="320dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="64dp"
+				android:src="@drawable/rectangle_1_shape" />
+
+			<View
+				android:id="@+id/rectangle_4"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="64dp"
+				android:background="@drawable/rectangle_4_shape" />
+
+			<RelativeLayout
+				android:id="@+id/passwordicon"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="64dp">
+
+				<ImageView
+					android:id="@+id/vector"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:src="@drawable/lock" />
+
+			</RelativeLayout>
+
+			<TextView
+				android:id="@+id/password"
+				android:layout_width="98dp"
+				android:layout_height="35dp"
+				android:layout_marginLeft="62dp"
+				android:layout_marginTop="79dp"
+				android:text="@string/password_string"
+				android:textColor="@color/username_color"
+				android:textSize="16sp" />
+		</RelativeLayout>
+
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<View
+				android:id="@+id/rectangle_11"
+				android:layout_width="320dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="130dp"
+				android:background="@drawable/rectangle_1_shape" />
+
+			<View
+				android:id="@+id/rectangle_44"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="130dp"
+				android:background="@drawable/rectangle_4_shape" />
+
+
+			<TextView android:id="@+id/re_enter_password"
+				android:textSize="16sp"
+				android:textColor="@color/re_enter_password_color"
+				android:layout_marginLeft="62dp"
+				android:layout_marginTop="143dp"
+				android:layout_width="175dp"
+				android:layout_height="35dp"
+				android:text="@string/re_enter_password_string"
+				/>
+
+			<RelativeLayout
+				android:id="@+id/passwordicon1"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_marginTop="128dp">
+
+				<ImageView
+					android:id="@+id/vector1"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_centerInParent="true"
+					android:src="@drawable/lock" />
+
+			</RelativeLayout>
+
+		</RelativeLayout>
+
+	</RelativeLayout>
+
+
+	<TextView android:id="@+id/already_have_account_"
+		android:textSize="16sp"
+		android:textColor="@color/sign_up_ek5_color"
+		android:layout_marginTop="530dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/already_have_account__string"
+		android:gravity="center"
+		/>
+
+	<RelativeLayout
+		android:id="@+id/sign_up"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="580dp"
+		android:gravity="center">
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageView
+				android:id="@+id/rectangle_7"
+				android:layout_width="195dp"
+				android:layout_height="50dp"
+				android:src="@drawable/rectangle_7" />
+
+			<TextView
+				android:id="@+id/sign_up_ek1"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+				android:layout_marginTop="11dp"
+				android:text="@string/log_in_string"
+				android:textColor="@color/sign_up_ek1_color"
+				android:textSize="18sp"
+				android:textStyle="bold" />
+		</RelativeLayout>
+
+
+	</RelativeLayout>
+
+
+</RelativeLayout>
+
+
+
