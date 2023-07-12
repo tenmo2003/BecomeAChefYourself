@@ -18,4 +18,21 @@
 	<string name="title_user">User</string>
 	<string name="title_bookmark">Saved</string>
 	<string name="title_article">Article</string>
+
+	<!-- user strings -->
+
+	<string name="_61_8k_string">61.8K</string>
+	<string name="bookmarks_string">Bookmarks</string>
+	<string name="_10_5m_string">10.5M</string>
+	<string name="followers_string">Followers</string>
+	<string name="_100k_string">100K</string>
+	<string name="recipes_string">Recipes</string>
+	<string name="hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string">Hi, I like to think of my cooking as expressions of love for my family and friends, especially when its European dishes or Asian dishes! </string>
+	<string name="follow_string">Follow</string>
+	<string name="food_lover___influencer_string">Food lover &amp; Influencer</string>
+	<string name="gordon_ramsay_string">Gordon Ramsay</string>
+	<string name="pizza_string">Pizza </string>
+	<string name="gordon_ramsay_ek1_string">Gordon Ramsay</string>
+	<string name="asian_food_string">Asian food</string>
+	<string name="learn_now_string">Learn now</string>
 </resources>

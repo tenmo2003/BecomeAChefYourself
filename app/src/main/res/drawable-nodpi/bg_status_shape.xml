@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- bg_status from your XD file. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle" >
+	<solid android:color="@color/bg_status_color" />
+	<gradient android:angle="180" android:type="linear" android:startColor="#ff536976" android:endColor="#ff292e49" />
+</shape>
+
