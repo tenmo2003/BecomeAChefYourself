@@ -13,14 +13,21 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
+import com.example.test.components.Article;
 
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     List<String> dish_names;
+    List<Article> articleList;
 
     public void setDish_names(List<String> _dish_names) {
         dish_names = _dish_names;
+        notifyDataSetChanged();
+    }
+
+    public void setArticleList(List<Article> articleList) {
+        this.articleList = articleList;
         notifyDataSetChanged();
     }
 
@@ -36,7 +43,9 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-        holder.dish_name.setText(dish_names.get(position));
+//        holder.dish_name.setText(dish_names.get(position));
+        holder.article = articleList.get(position);
+        holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
     }
 
@@ -47,6 +56,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 }
 
 class RecipeViewHolder extends RecyclerView.ViewHolder {
+    Article article;
     LinearLayout recipe_post;
     TextView dish_name;
     ImageView dish_img;
@@ -57,8 +67,13 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
-                args.putString("dish_name", (String) dish_name.getText());
-                args.putString("recipe_content", "recipeContent");
+//                args.putString("dish_name", (String) dish_name.getText());
+//                args.putString("recipe_content", "recipeContent");
+                args.putString("dish_name", article.getDishName());
+                args.putString("recipe_content", article.getContent());
+                args.putString("publisher", article.getPublisher());
+                args.putString("publishedDate", article.getPublishedTime());
+
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }
         });

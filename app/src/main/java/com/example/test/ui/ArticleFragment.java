@@ -42,14 +42,20 @@ public class ArticleFragment extends Fragment {
 
         TextView dishNameTextView = view.findViewById(R.id.dish_name_text);
         TextView recipeContentTextView = view.findViewById(R.id.content_text);
+        TextView publisherTextView = view.findViewById(R.id.publisher_text);
+        TextView publishedDateTextView = view.findViewById(R.id.published_date_text);
 
         Bundle args = getArguments();
         if (args != null) {
             String dishName = args.getString("dish_name");
             String recipeContent = args.getString("recipe_content");
+            String publisher = args.getString("publisher");
+            String publishedDate = args.getString("publishedDate");
 
             dishNameTextView.setText(dishName);
             recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
+            publishedDateTextView.setText(publishedDate);
+            publisherTextView.setText("Published by " + publisher);
         }
 
 

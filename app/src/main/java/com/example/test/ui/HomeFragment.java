@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.example.test.R;
 import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.adapters.RecommendRecipeAdapter;
+import com.example.test.components.Article;
+import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentHomeBinding;
 
 import java.text.Normalizer;
@@ -46,11 +48,17 @@ public class HomeFragment extends Fragment {
     List<String> list = Arrays.asList("Thịt bò", "Thịt gà", "Cơm rang",
             "Xôi", "Bánh cuốn", "Chả cá", "Canh rau", "Khoai tây", "Chuối", "Pizza");
 
+    List<Article> articlesList;
+
     @SuppressLint("MissingInflatedId")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+
+        articlesList = dbHelper.getAllArticles();
 
         //Recycler display recommend recipe
         recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
@@ -87,6 +95,7 @@ public class HomeFragment extends Fragment {
 
         recipeListAdapter = new RecipeListAdapter();
         recipeListAdapter.setDish_names(list);
+        recipeListAdapter.setArticleList(articlesList);
         recipeListView.setAdapter(recipeListAdapter);
 
         //Search bar
