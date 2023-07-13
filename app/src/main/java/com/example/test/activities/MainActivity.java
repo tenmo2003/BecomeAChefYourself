@@ -16,6 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -74,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
+//
+//                NavDestination currentDestination = navController.getCurrentDestination();
+//                if (currentDestination != null && currentDestination.getId() == id) {
+//                    // If the user is already on the selected navigation item, do nothing
+//                    return true;
+//                }
+
                 if (id == R.id.navigation_home) {
                     navController.navigate(R.id.navigation_home);
                 } else if (id == R.id.navigation_share) {
@@ -85,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                         navController.navigate(R.id.navigation_login);
                     }
                 }
+                item.setChecked(true);
                 return false;
             }
         });

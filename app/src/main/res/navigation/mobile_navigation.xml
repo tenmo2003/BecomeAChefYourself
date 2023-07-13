@@ -7,44 +7,44 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.test.ui.home.HomeFragment"
+        android:name="com.example.test.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.test.ui.search.SearchFragment"
+        android:name="com.example.test.ui.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_share"
-        android:name="com.example.test.ui.share.ShareFragment"
+        android:name="com.example.test.ui.ShareFragment"
         android:label="@string/title_share"
         tools:layout="@layout/fragment_share" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_bookmarks"
-        android:name="com.example.test.ui.bookmarks.BookmarksFragment"
+        android:name="com.example.test.ui.BookmarksFragment"
         android:label="@string/title_bookmark"
         tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
         android:id="@+id/navigation_login"
-        android:name="com.example.test.ui.user.LoginFragment"
+        android:name="com.example.test.ui.LoginFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/navigation_sign_up"
-        android:name="com.example.test.ui.user.SignUpFragment"
+        android:name="com.example.test.ui.SignUpFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_sign_up" />
 
     <fragment
         android:id="@+id/navigation_user"
-        android:name="com.example.test.ui.user.UserFragment"
+        android:name="com.example.test.ui.UserFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_user" />
 

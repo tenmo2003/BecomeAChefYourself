@@ -1,8 +1,9 @@
-package com.example.test.ui.home;
+package com.example.test.ui;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +111,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        autoScroll();
+        position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+        recommendRecipeView.scrollToPosition(position);
     }
 
     @Override
@@ -134,6 +136,9 @@ public class HomeFragment extends Fragment {
                     timerHandler.post(new Runnable() {
                         @Override
                         public void run() {
+                            if (position == -1) {
+                                position = 1;
+                            }
                             recommendRecipeView.smoothScrollToPosition(position);
                             position++;
                         }
@@ -145,12 +150,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void stopAutoScroll() {
-        if (timer != null && timerTask != null) {
-            timer.cancel();
-            timerTask.cancel();
+        if (timer != null || timerTask != null) {
+            if (timer != null)
+                timer.cancel();
+            if (timerTask != null)
+                timerTask.cancel();
             timer = null;
             timerTask = null;
-            position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+//            position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
         }
     }
 

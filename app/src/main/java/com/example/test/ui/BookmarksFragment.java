@@ -1,4 +1,4 @@
-package com.example.test.ui.bookmarks;
+package com.example.test.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

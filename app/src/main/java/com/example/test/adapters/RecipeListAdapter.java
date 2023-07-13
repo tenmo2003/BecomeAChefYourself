@@ -1,7 +1,5 @@
 package com.example.test.adapters;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
-import com.example.test.ui.ArticleFragment;
-import com.example.test.ui.home.HomeFragment;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {

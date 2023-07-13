@@ -1,4 +1,4 @@
-package com.example.test.ui.share;
+package com.example.test.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,21 +10,17 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.database.DatabaseHelper;
-import com.example.test.databinding.FragmentSearchBinding;
 import com.example.test.databinding.FragmentShareBinding;
-import com.example.test.ui.search.SearchViewModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
