@@ -1,6 +1,5 @@
-package com.example.test.ui;
+package com.example.test.fragments;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -15,8 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
-
-import java.time.LocalDate;
 
 public class ArticleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,

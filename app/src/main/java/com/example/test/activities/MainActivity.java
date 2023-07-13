@@ -6,6 +6,7 @@ import android.view.MenuItem;
 import com.example.test.R;
 import com.example.test.components.User;
 import com.example.test.database.SQLConnection;
+import com.example.test.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
 import com.example.test.components.Article;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
@@ -33,6 +34,10 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     public List<String> getDish_names() {
         return dish_names;
+    }
+
+    public void sortByReact() {
+
     }
 
     @NonNull
@@ -58,11 +63,25 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 class RecipeViewHolder extends RecyclerView.ViewHolder {
     Article article;
     LinearLayout recipe_post;
-    TextView dish_name;
-    ImageView dish_img;
+    TextView dish_name, user_name, cmt_count, react_count;
+    ImageView dish_img, user_avatar;
+
     public RecipeViewHolder(View itemView) {
         super(itemView);
         recipe_post = itemView.findViewById(R.id.recipe_post);
+        dish_name = itemView.findViewById(R.id.dish_name);
+        user_name = itemView.findViewById(R.id.user_name);
+        user_avatar = itemView.findViewById(R.id.user_avatar);
+        dish_img = itemView.findViewById(R.id.dish_img);
+        cmt_count = itemView.findViewById(R.id.cmt_count);
+        react_count = itemView.findViewById(R.id.react_count);
+
+        //default value
+        user_name.setText("username");
+        user_avatar.setImageResource(R.drawable.user_avatar);
+        cmt_count.setText("12");
+        react_count.setText("34");
+
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,7 +96,17 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }
         });
-        dish_name = itemView.findViewById(R.id.dish_name);
-        dish_img = itemView.findViewById(R.id.dish_img);
     }
+
+    public static Comparator<RecipeViewHolder> sortByReaction = new Comparator<RecipeViewHolder>() {
+        @Override
+        public int compare(RecipeViewHolder holder1, RecipeViewHolder holder2) {
+            if (Integer.parseInt((String) holder1.react_count.getText())
+                    > Integer.parseInt((String) holder2.react_count.getText())) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    };
 }
