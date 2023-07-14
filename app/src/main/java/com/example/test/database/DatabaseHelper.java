@@ -1,5 +1,6 @@
 package com.example.test.database;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
+import com.example.test.components.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,18 +136,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean userAuthentication(String username, String password) {
+    public User userAuthentication(String username, String password) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Check if the given username and password combination exists in the database
         Cursor cursor = db.rawQuery("SELECT * FROM user WHERE username=? AND password=?", new String[]{username, password});
-        boolean result = cursor.getCount() > 0;
 
-        MainActivity.loggedInUsername = username;
-        Log.i("UserLoggedIn", MainActivity.loggedInUsername);
+        if (cursor.moveToFirst()) {
+            // If the user exists in the database, create a User object and return it
+            @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
+            @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
+            User user = new User(username, password, fullname, points, bio);
 
-        cursor.close();
-        return result;
+            MainActivity.loggedInUser = user;
+
+            cursor.close();
+            return user;
+        } else {
+            // If the user does not exist in the database, return null
+            cursor.close();
+            return null;
+        }
     }
 
     public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String content) {

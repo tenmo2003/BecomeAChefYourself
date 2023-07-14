@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
+import com.example.test.components.User;
 import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
 
@@ -54,9 +55,9 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-                boolean loginResult = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
+                User user = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
 
-                if (loginResult) {
+                if (user != null) {
                     Toast.makeText(getActivity(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(view).navigate(R.id.navigation_user);
                 } else {

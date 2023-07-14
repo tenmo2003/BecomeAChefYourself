@@ -11,7 +11,6 @@
         android:icon="@drawable/baseline_add_circle_outline_24"
         android:title="@string/title_share" />
 
-
     <item
         android:id="@+id/navigation_user"
         android:icon="@drawable/baseline_person_24"

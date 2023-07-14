@@ -84,7 +84,7 @@ public class ShareFragment extends Fragment {
         shareArticleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (MainActivity.loggedInUsername == null) {
+                if (MainActivity.loggedInUser == null) {
                     Toast.makeText(getActivity(), "Please log in first!", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -102,7 +102,7 @@ public class ShareFragment extends Fragment {
                 String type = typeChoice.getSelectedItem().toString();
 
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(dishNameInput.getText().toString(), MainActivity.loggedInUsername, mealChoice, serveOrder, type, contentInput.getText().toString());
+                boolean result = dbHelper.addArticle(dishNameInput.getText().toString(), MainActivity.loggedInUser.getUsername(), mealChoice, serveOrder, type, contentInput.getText().toString());
                 if (result) {
                     Toast.makeText(getActivity(), "Shared successfully!", Toast.LENGTH_SHORT).show();
                 } else {

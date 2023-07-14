@@ -1,45 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/__img___chosse_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="36dp"
-            android:src="@drawable/__img___chosse_button" />
-
-
-        <ImageView
-            android:id="@+id/__img___edit_logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="320dp"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/__img___edit_logout" />
-
-
-    </LinearLayout>
-
+    <Button
+        android:id="@+id/user_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="10dp"
+        android:text="Menu"
+        />
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp">
+        android:layout_gravity="center"
+        android:paddingHorizontal="20dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp">
+            >
 
             <View   android:id="@+id/ellipse_1"
                 android:background="@drawable/ellipse_1_shape"
@@ -57,9 +43,9 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="140dp">
+            android:layout_marginStart="100dp">
 
-            <TextView android:id="@+id/gordon_ramsay"
+            <TextView android:id="@+id/user_username"
                 android:textSize="26sp"
                 android:textColor="@color/_61_8k_color"
                 android:layout_width="wrap_content"
@@ -68,13 +54,16 @@
                 android:layout_marginTop="-5dp"
                 />
 
-            <TextView android:id="@+id/food_lover___influencer"
-                android:textColor="@color/bookmarks_color"
-                android:layout_marginTop="25dp"
-                android:layout_width="160dp"
-                android:layout_height="18dp"
-                android:text="@string/food_lover___influencer_string"
-                />
+            <EditText
+                android:id="@+id/user_fullname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user full name"
+                android:textSize="15sp"
+                android:background="@drawable/no_underline_edittext"
+                android:layout_marginTop="20dp"
+                android:cursorVisible="false"
+                android:focusable="false"/>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -100,11 +89,11 @@
 
 
         <TextView
-            android:id="@+id/hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes_"
-            android:layout_width="340dp"
-            android:layout_height="70dp"
-            android:layout_marginLeft="40dp"
+            android:id="@+id/user_bio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
+            android:gravity="center_vertical"
             android:text="@string/hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string"
             android:textColor="@color/bookmarks_color"
             android:textSize="15sp" />
@@ -115,94 +104,98 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp">
-
-        <TextView android:id="@+id/_post_count"
-            android:textSize="22sp"
-            android:textColor="@color/_61_8k_color"
-            android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginVertical="15dp">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/_61_8k_string"
-            android:layout_weight="3"
-            android:gravity="center"
-            />
+            >
 
-        <TextView android:id="@+id/_follower_count"
-            android:textSize="22sp"
-            android:textColor="@color/_61_8k_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_10_5m_string"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:paddingLeft="-30dp"
-            />
+            <TextView android:id="@+id/_post_count"
+                android:textSize="22sp"
+                android:textColor="@color/_61_8k_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_61_8k_string"
+                android:layout_weight="1"
+                android:gravity="center"
+                />
 
-        <TextView
-            android:id="@+id/_bookmark_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_100k_string"
-            android:textColor="@color/_61_8k_color"
-            android:textSize="22sp"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:paddingLeft="-25dp"
-            />
+            <TextView android:id="@+id/_follower_count"
+                android:textSize="22sp"
+                android:textColor="@color/_61_8k_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_10_5m_string"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="-30dp"
+                />
 
+            <TextView
+                android:id="@+id/_bookmark_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/_100k_string"
+                android:textColor="@color/_61_8k_color"
+                android:textSize="22sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="-25dp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <TextView android:id="@+id/recipes"
+                android:textSize="17sp"
+                android:textColor="@color/bookmarks_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/recipes_string"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:paddingLeft="15dp"
+                />
+
+            <TextView android:id="@+id/followers"
+                android:textSize="17sp"
+                android:textColor="@color/bookmarks_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/followers_string"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:paddingStart="10dp"
+                />
+
+            <TextView
+                android:id="@+id/bookmarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bookmarks_string"
+                android:textColor="@color/bookmarks_color"
+                android:textSize="17sp"
+                android:layout_weight="3"
+                android:gravity="center"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="275dp">
-
-
-        <TextView android:id="@+id/recipes"
-            android:textSize="17sp"
-            android:textColor="@color/bookmarks_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/recipes_string"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:paddingLeft="15dp"
-            />
-
-        <TextView android:id="@+id/followers"
-            android:textSize="17sp"
-            android:textColor="@color/bookmarks_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/followers_string"
-            android:layout_weight="3"
-            android:gravity="center"
-            android:paddingStart="10dp"
-            />
-
-        <TextView
-            android:id="@+id/bookmarks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/bookmarks_string"
-            android:textColor="@color/bookmarks_color"
-            android:textSize="17sp"
-            android:layout_weight="3"
-            android:gravity="center"
-            />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="330dp">
+        android:layout_marginTop="5dp">
 
         <ImageView
             android:src="@drawable/__img___icon_grid"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="2"
             />
 
@@ -217,10 +210,10 @@
     </LinearLayout>
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="355dp">
+        android:layout_marginTop="5dp">
 
         <ImageView
             android:src="@drawable/__img___grid_select"
@@ -228,12 +221,11 @@
             android:layout_height="4dp"
             android:layout_centerInParent="true"
             />
-    </RelativeLayout>
+    </LinearLayout>
 
 
     <LinearLayout
         android:id="@+id/status_1"
-        android:layout_marginTop="365dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -321,4 +313,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
