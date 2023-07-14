@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -15,29 +16,56 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
 import com.example.test.components.Article;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
-    List<String> dish_names;
     List<Article> articleList;
 
-    public void setDish_names(List<String> _dish_names) {
-        dish_names = _dish_names;
-        notifyDataSetChanged();
-    }
-
     public void setArticleList(List<Article> articleList) {
-        this.articleList = articleList;
+        this.articleList = new ArrayList<>();
+        this.articleList.addAll(articleList);
         notifyDataSetChanged();
-    }
-
-    public List<String> getDish_names() {
-        return dish_names;
     }
 
     public void sortByReact() {
+        Collections.sort(articleList, new Comparator<Article>() {
+            @Override
+            public int compare(Article article1, Article article2) {
+                if (article1.getLikes() < article2.getLikes()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+        notifyDataSetChanged();
+    }
 
+    public void sortByPublishedTime() {
+        Collections.sort(articleList, new Comparator<Article>() {
+            @Override
+            public int compare(Article article1, Article article2) {
+                String[] a1 = article1.getPublishedTime().split(" ");
+                String[] a2 = article2.getPublishedTime().split(" ");
+                String date1 = a1[0], time1 = a1[1], date2 = a2[0], time2 = a2[0];
+                if (date1.compareTo(date2) < 0) {
+                    return 1;
+                } else if (date1.compareTo(date2) > 0) {
+                    return -1;
+                } else {
+                    if (time1.compareTo(time2) < 0) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            }
+        });
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -48,15 +76,15 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
-//        holder.dish_name.setText(dish_names.get(position));
         holder.article = articleList.get(position);
         holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
+        holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
     }
 
     @Override
     public int getItemCount() {
-        return dish_names.size();
+        return articleList.size();
     }
 }
 
@@ -80,14 +108,11 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         user_name.setText("username");
         user_avatar.setImageResource(R.drawable.user_avatar);
         cmt_count.setText("12");
-        react_count.setText("34");
 
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
-//                args.putString("dish_name", (String) dish_name.getText());
-//                args.putString("recipe_content", "recipeContent");
                 args.putString("dish_name", article.getDishName());
                 args.putString("recipe_content", article.getContent());
                 args.putString("publisher", article.getPublisher());
@@ -97,16 +122,4 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             }
         });
     }
-
-    public static Comparator<RecipeViewHolder> sortByReaction = new Comparator<RecipeViewHolder>() {
-        @Override
-        public int compare(RecipeViewHolder holder1, RecipeViewHolder holder2) {
-            if (Integer.parseInt((String) holder1.react_count.getText())
-                    > Integer.parseInt((String) holder2.react_count.getText())) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    };
 }
