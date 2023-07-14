@@ -44,4 +44,8 @@
 	<string name="re_enter_password_string">Re-enter password</string>
 	<string name="sign_up_ek5_string">Sign up</string>
 	<string name="already_have_account__string">Already have account?</string>
+    <string name="most_follow">Most follow</string>
+	<string name="most_react">Most react</string>
+	<string name="most_recent">Most recent</string>
+	<string name="all">All</string>
 </resources>

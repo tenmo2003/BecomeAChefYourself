@@ -1,18 +1,18 @@
-package com.example.test.ui;
+package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     SearchView searchView;
+    TextView all, most_follow, most_react, most_recent;
     RecipeListAdapter recipeListAdapter;
     RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
@@ -45,9 +46,6 @@ public class HomeFragment extends Fragment {
     TimerTask timerTask;
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
-    List<String> list = Arrays.asList("Thịt bò", "Thịt gà", "Cơm rang",
-            "Xôi", "Bánh cuốn", "Chả cá", "Canh rau", "Khoai tây", "Chuối", "Pizza");
-
     List<Article> articlesList;
 
     @SuppressLint("MissingInflatedId")
@@ -78,7 +76,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (newState == 1) {
                     stopAutoScroll();
                 } else if (newState == 0) {
@@ -94,7 +91,6 @@ public class HomeFragment extends Fragment {
         recipeListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         recipeListAdapter = new RecipeListAdapter();
-        recipeListAdapter.setDish_names(list);
         recipeListAdapter.setArticleList(articlesList);
         recipeListView.setAdapter(recipeListAdapter);
 
@@ -109,8 +105,35 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                filterList(s);
+                searchArticle(s);
                 return true;
+            }
+        });
+
+        //Sort button
+        all = view.findViewById(R.id.all);
+        most_follow = view.findViewById(R.id.most_follow);
+        most_react = view.findViewById(R.id.most_react);
+        most_recent = view.findViewById(R.id.most_recent);
+
+        all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recipeListAdapter.setArticleList(articlesList);
+            }
+        });
+
+        most_react.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recipeListAdapter.sortByReact();
+            }
+        });
+
+        most_recent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recipeListAdapter.sortByPublishedTime();
             }
         });
 
@@ -170,23 +193,23 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void filterList(String text) {
-        List<String> filteredList = new ArrayList<>();
-        for (String dish_name: list) {
-            String dish_name_copy = dish_name;
+    private void searchArticle(String text) {
+        List<Article> filteredList = new ArrayList<>();
+        for (Article article: articlesList) {
 
+            String dish_name = article.getDishName();
             //Remove accents from string
-            dish_name_copy = dish_name_copy.toLowerCase();
-            dish_name_copy = Normalizer.normalize(dish_name_copy, Normalizer.Form.NFD);
-            dish_name_copy = dish_name_copy.replaceAll("[^\\p{ASCII}]", "");
+            dish_name = dish_name.toLowerCase();
+            dish_name = Normalizer.normalize(dish_name, Normalizer.Form.NFD);
+            dish_name = dish_name.replaceAll("[^\\p{ASCII}]", "");
             text = text.toLowerCase();
             text = Normalizer.normalize(text, Normalizer.Form.NFD);
             text = text.replaceAll("[^\\p{ASCII}]", "");
 
-            if (dish_name_copy.contains(text)) {
-                filteredList.add(dish_name);
+            if (dish_name.contains(text)) {
+                filteredList.add(article);
             }
         }
-        recipeListAdapter.setDish_names(filteredList);
+        recipeListAdapter.setArticleList(filteredList);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.test.ui;
+package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;

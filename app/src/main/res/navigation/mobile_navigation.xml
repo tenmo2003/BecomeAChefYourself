@@ -7,50 +7,50 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.test.ui.HomeFragment"
+        android:name="com.example.test.fragments.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.example.test.ui.SearchFragment"
+        android:name="com.example.test.fragments.SearchFragment"
         android:label="@string/title_search"
         tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_share"
-        android:name="com.example.test.ui.ShareFragment"
+        android:name="com.example.test.fragments.ShareFragment"
         android:label="@string/title_share"
         tools:layout="@layout/fragment_share" >
     </fragment>
 
     <fragment
         android:id="@+id/navigation_bookmarks"
-        android:name="com.example.test.ui.BookmarksFragment"
+        android:name="com.example.test.fragments.BookmarksFragment"
         android:label="@string/title_bookmark"
         tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
         android:id="@+id/navigation_login"
-        android:name="com.example.test.ui.LoginFragment"
+        android:name="com.example.test.fragments.LoginFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/navigation_sign_up"
-        android:name="com.example.test.ui.SignUpFragment"
+        android:name="com.example.test.fragments.SignUpFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_sign_up" />
 
     <fragment
         android:id="@+id/navigation_user"
-        android:name="com.example.test.ui.UserFragment"
+        android:name="com.example.test.fragments.UserFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_user" />
 
     <fragment
         android:id="@+id/navigation_article"
-        android:name="com.example.test.ui.ArticleFragment"
+        android:name="com.example.test.fragments.ArticleFragment"
         android:label="@string/title_article"
         tools:layout="@layout/fragment_article" />
 </navigation>
