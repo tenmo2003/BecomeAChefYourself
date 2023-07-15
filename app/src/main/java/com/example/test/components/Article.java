@@ -7,19 +7,21 @@ public class Article {
     private String meal;
     private String serveOrderClass;
     private String type;
-    private String content;
+    private String recipe;
+    private String ingredients;
     private int likes;
     private String publishedTime;
     private String timeToMake;
 
-    public Article(int id, String dishName, String publisher, String meal, String serveOrderClass, String type, String content, int likes, String publishedTime, String timeToMake) {
+    public Article(int id, String dishName, String publisher, String meal, String serveOrderClass, String type, String content, String ingredients, int likes, String publishedTime, String timeToMake) {
         this.id = id;
         this.dishName = dishName;
         this.publisher = publisher;
         this.meal = meal;
         this.serveOrderClass = serveOrderClass;
         this.type = type;
-        this.content = content;
+        this.recipe = content;
+        this.ingredients = ingredients;
         this.likes = likes;
         this.publishedTime = publishedTime;
         this.timeToMake = timeToMake;
@@ -49,8 +51,8 @@ public class Article {
         return type;
     }
 
-    public String getContent() {
-        return content;
+    public String getRecipe() {
+        return recipe;
     }
 
     public int getLikes() {
@@ -63,5 +65,9 @@ public class Article {
 
     public String getTimeToMake() {
         return timeToMake;
+    }
+
+    public String getIngredients() {
+        return ingredients;
     }
 }

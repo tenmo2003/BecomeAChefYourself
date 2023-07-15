@@ -55,6 +55,8 @@ public class ShareFragment extends Fragment {
 
         EditText contentInput = view.findViewById(R.id.content_input);
 
+        EditText ingredientsInput = view.findViewById(R.id.ingredients_input);
+
         Button previewArticleBtn = view.findViewById(R.id.preview_article_button);
 
         Button shareArticleBtn = view.findViewById(R.id.share_article_button);
@@ -102,7 +104,7 @@ public class ShareFragment extends Fragment {
                 String type = typeChoice.getSelectedItem().toString();
 
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(dishNameInput.getText().toString(), MainActivity.loggedInUser.getUsername(), mealChoice, serveOrder, type, contentInput.getText().toString());
+                boolean result = dbHelper.addArticle(dishNameInput.getText().toString(), MainActivity.loggedInUser.getUsername(), mealChoice, serveOrder, type, contentInput.getText().toString(), ingredientsInput.getText().toString());
                 if (result) {
                     Toast.makeText(getActivity(), "Shared successfully!", Toast.LENGTH_SHORT).show();
                 } else {

@@ -161,11 +161,32 @@
             />
 
         <TextView
-            android:id="@+id/recipe_text"
+            android:id="@+id/share_ingredients_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ingredients:"
+            app:layout_constraintTop_toBottomOf="@+id/type_choice"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:paddingLeft="10dp"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:id="@+id/ingredients_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="30"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            app:layout_constraintTop_toBottomOf="@+id/share_ingredients_text"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:paddingLeft="10dp"/>
+
+        <TextView
+            android:id="@+id/share_recipe_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="The mysterious recipe:"
-            app:layout_constraintTop_toBottomOf="@+id/type_choice"
+            app:layout_constraintTop_toBottomOf="@+id/ingredients_input"
             app:layout_constraintLeft_toLeftOf="parent"
             android:paddingLeft="10dp"
             android:textSize="20sp"/>
@@ -177,7 +198,7 @@
             android:ems="30"
             android:gravity="start|top"
             android:inputType="textMultiLine"
-            app:layout_constraintTop_toBottomOf="@+id/recipe_text"
+            app:layout_constraintTop_toBottomOf="@+id/share_recipe_text"
             app:layout_constraintLeft_toLeftOf="parent"
             android:paddingLeft="10dp"/>
 

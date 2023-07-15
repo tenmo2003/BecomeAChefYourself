@@ -36,7 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  meal TEXT CHECK(meal IN ('Bữa sáng', 'Bữa trưa', 'Bữa tối', 'Linh hoạt')) NOT NULL,\n" +
                                                             "  serve_order_class TEXT CHECK(serve_order_class IN ('Món khai vị', 'Món chính', 'Món tráng miệng')) NOT NULL,\n" +
                                                             "  type TEXT CHECK(type IN ('Món thịt', 'Món hải sản', 'Món chay', 'Món canh', 'Món rau', 'Mì', 'Bún', 'Món cuốn', 'Món xôi', 'Món cơm', 'Món bánh mặn', 'Món bánh ngọt')) NOT NULL,\n" +
-                                                            "  content TEXT NOT NULL,\n" +
+                                                            "  recipe TEXT NOT NULL,\n" +
+                                                            "  ingredients TEXT NOT NULL,\n" +
                                                             "  likes INTEGER DEFAULT 0,\n" +
                                                             "  published_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                                                             "  time_to_make TEXT," +
@@ -160,14 +161,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String content) {
+    public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Create a new ContentValues object that contains the values for the new article
         ContentValues values = new ContentValues();
         values.put("dish_name", dishName);
         values.put("publisher", publisher);
-        values.put("content", content);
+        values.put("recipe", recipe);
+        values.put("ingredients", ingredients);
         values.put("meal", meal);
         values.put("serve_order_class", serve_order_class);
         values.put("type", type);
@@ -188,7 +190,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "meal",
                 "serve_order_class",
                 "type",
-                "content",
+                "recipe",
+                "ingredients",
                 "likes",
                 "published_time",
                 "time_to_make"
@@ -210,11 +213,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String meal = cursor.getString(cursor.getColumnIndexOrThrow("meal"));
                 String serveOrderClass = cursor.getString(cursor.getColumnIndexOrThrow("serve_order_class"));
                 String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
-                String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
+                String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
                 int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, likes, publishedTime, timeToMake);
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
                 articles.add(article);
             }
         } finally {

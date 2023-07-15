@@ -48,7 +48,7 @@ public class HomeFragment extends Fragment {
     int position = Integer.MAX_VALUE / 2;
     List<Article> articlesList;
 
-    @SuppressLint("MissingInflatedId")
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 

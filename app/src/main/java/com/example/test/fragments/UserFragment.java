@@ -8,8 +8,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -75,21 +75,22 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         fullnameTv.setText(MainActivity.loggedInUser.getFullname());
         bioTv.setText(MainActivity.loggedInUser.getBio());
 
-        Button popupMenu = view.findViewById(R.id.user_menu);
+        popupMenu(view);
+    }
+
+    public void popupMenu(View v) {
+        ImageView popupMenu = v.findViewById(R.id.user_menu);
+
+        PopupMenu popup = new PopupMenu(getActivity(), popupMenu);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.user_popup_menu);
 
         popupMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopup(view);
+                popup.show();
             }
         });
-    }
-
-    public void showPopup(View v) {
-        PopupMenu popup = new PopupMenu(getActivity(), v);
-        popup.setOnMenuItemClickListener(this);
-        popup.inflate(R.menu.user_popup_menu);
-        popup.show();
     }
 
     @SuppressLint("NonConstantResourceId")

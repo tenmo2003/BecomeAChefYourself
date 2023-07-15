@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
@@ -17,7 +16,6 @@ import com.example.test.R;
 import com.example.test.components.Article;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -114,9 +112,12 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             public void onClick(View view) {
                 Bundle args = new Bundle();
                 args.putString("dish_name", article.getDishName());
-                args.putString("recipe_content", article.getContent());
+                args.putString("recipe_content", article.getRecipe());
+                args.putString("ingredients", article.getIngredients());
                 args.putString("publisher", article.getPublisher());
                 args.putString("publishedDate", article.getPublishedTime());
+                args.putString("time_to_make", article.getTimeToMake());
+                args.putString("rating", String.valueOf(article.getLikes()));
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }

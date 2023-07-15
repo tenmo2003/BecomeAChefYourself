@@ -38,21 +38,30 @@ public class ArticleFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         TextView dishNameTextView = view.findViewById(R.id.dish_name_text);
-        TextView recipeContentTextView = view.findViewById(R.id.content_text);
+        TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
+        TextView ingredientsTextView = view.findViewById(R.id.ingredients_text);
         TextView publisherTextView = view.findViewById(R.id.publisher_text);
         TextView publishedDateTextView = view.findViewById(R.id.published_date_text);
+        TextView timeToMakeTextView = view.findViewById(R.id.time_to_make_text);
+        TextView ratingTextView = view.findViewById(R.id.ratings_text);
 
         Bundle args = getArguments();
         if (args != null) {
             String dishName = args.getString("dish_name");
             String recipeContent = args.getString("recipe_content");
+            String ingredients = args.getString("ingredients");
             String publisher = args.getString("publisher");
             String publishedDate = args.getString("publishedDate");
+            String timeToMake = args.getString("time_to_make");
+            String rating = args.getString("rating");
 
             dishNameTextView.setText(dishName);
             recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
+            ingredientsTextView.setText(formatIngredients(ingredients));
             publishedDateTextView.setText(publishedDate);
-            publisherTextView.setText("Published by " + publisher);
+            publisherTextView.setText(publisher);
+            timeToMakeTextView.setText(timeToMake);
+            ratingTextView.setText(rating);
         }
 
 
@@ -97,5 +106,22 @@ public class ArticleFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    private String formatIngredients(String input) {
+
+        // Split the input string into an array of individual ingredients
+        String[] ingredients = input.split(";\\s*");
+
+        // Use a StringBuilder to build the formatted string
+        StringBuilder builder = new StringBuilder();
+        for (String ingredient : ingredients) {
+            builder.append("- ")
+                    .append(ingredient.substring(0, 1).toUpperCase())
+                    .append(ingredient.substring(1))
+                    .append("\n");
+        }
+
+        return builder.toString();
     }
 }
