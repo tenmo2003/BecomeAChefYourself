@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
 import com.example.test.components.Article;
+import com.example.test.database.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +31,20 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void sortByFollow() {
-
+    public void sortByFollow(DatabaseHelper dbHelper) {
+        articleList.sort(new Comparator<Article>() {
+            @Override
+            public int compare(Article article1, Article article2) {
+                int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
+                int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
+                if (follow1 > follow2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        notifyDataSetChanged();
     }
 
     public void sortByReact() {
@@ -80,6 +93,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         holder.article = articleList.get(position);
+        holder.user_name.setText(articleList.get(position).getPublisher());
         holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
@@ -110,7 +124,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         bookmark = itemView.findViewById(R.id.bookmark);
 
         //default value
-        user_name.setText("username");
         user_avatar.setImageResource(R.drawable.user_avatar);
         cmt_count.setText("12");
         bookmark.setImageResource(R.drawable.bookmark);

@@ -31,8 +31,7 @@
             android:layout_height="40dp"
             android:id="@+id/search_view"
             android:layout_margin="15dp"
-            android:background="@drawable/searchview_shape"
-            android:queryHint="Search for your recipe...">
+            android:background="@drawable/search_view_shape">
         </SearchView>
 
         <LinearLayout

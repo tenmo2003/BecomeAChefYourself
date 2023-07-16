@@ -54,14 +54,14 @@ public class HomeFragment extends Fragment {
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
     List<Article> articlesList;
-
+    DatabaseHelper dbHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+        dbHelper = new DatabaseHelper(getActivity());
 
         articlesList = dbHelper.getAllArticles();
 
@@ -227,7 +227,7 @@ public class HomeFragment extends Fragment {
                         if (v == sortButtons.get("all")) {
                             recipeListAdapter.setArticleList(articlesList);
                         } else if (v == sortButtons.get("most_follow")) {
-                            recipeListAdapter.sortByFollow();
+                            recipeListAdapter.sortByFollow(dbHelper);
                         } else if (v == sortButtons.get("most_react")) {
                             recipeListAdapter.sortByReact();
                         } else {
