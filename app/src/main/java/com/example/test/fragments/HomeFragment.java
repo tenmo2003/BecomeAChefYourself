@@ -1,10 +1,14 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -27,9 +31,11 @@ import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentHomeBinding;
 
 import java.text.Normalizer;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,7 +43,8 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     SearchView searchView;
-    TextView all, most_follow, most_react, most_recent;
+    HashMap<String, TextView> sortButtons = new HashMap<>();
+
     RecipeListAdapter recipeListAdapter;
     RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
@@ -47,14 +54,14 @@ public class HomeFragment extends Fragment {
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
     List<Article> articlesList;
-
+    DatabaseHelper dbHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+        dbHelper = new DatabaseHelper(getActivity());
 
         articlesList = dbHelper.getAllArticles();
 
@@ -100,42 +107,31 @@ public class HomeFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                searchArticle(s);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                searchArticle(s);
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                recipeListAdapter.setArticleList(articlesList);
                 return true;
             }
         });
 
         //Sort button
-        all = view.findViewById(R.id.all);
-        most_follow = view.findViewById(R.id.most_follow);
-        most_react = view.findViewById(R.id.most_react);
-        most_recent = view.findViewById(R.id.most_recent);
+        sortButtons.put("all", view.findViewById(R.id.all));
+        sortButtons.put("most_follow", view.findViewById(R.id.most_follow));
+        sortButtons.put("most_react", view.findViewById(R.id.most_react));
+        sortButtons.put("most_recent", view.findViewById(R.id.most_recent));
 
-        all.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recipeListAdapter.setArticleList(articlesList);
-            }
-        });
-
-        most_react.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recipeListAdapter.sortByReact();
-            }
-        });
-
-        most_recent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recipeListAdapter.sortByPublishedTime();
-            }
-        });
+        setSortButtonBehavior();
 
         return view;
     }
@@ -211,5 +207,36 @@ public class HomeFragment extends Fragment {
             }
         }
         recipeListAdapter.setArticleList(filteredList);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void setSortButtonBehavior(){
+        Objects.requireNonNull(sortButtons.get("all")).getBackground()
+                .setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
+        for (TextView sortButton: sortButtons.values()) {
+            sortButton.setOnTouchListener(new View.OnTouchListener() {
+                @SuppressLint({"ResourceAsColor", "ClickableViewAccessibility"})
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        for (TextView sortButton: sortButtons.values()) {
+                            sortButton.getBackground().clearColorFilter();
+                        }
+
+                        v.getBackground().setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
+
+                        if (v == sortButtons.get("all")) {
+                            recipeListAdapter.setArticleList(articlesList);
+                        } else if (v == sortButtons.get("most_follow")) {
+                            recipeListAdapter.sortByFollow(dbHelper);
+                        } else if (v == sortButtons.get("most_react")) {
+                            recipeListAdapter.sortByReact();
+                        } else {
+                            recipeListAdapter.sortByPublishedTime();
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
     }
 }

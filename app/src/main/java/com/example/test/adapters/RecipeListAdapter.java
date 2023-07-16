@@ -1,5 +1,6 @@
 package com.example.test.adapters;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
 import com.example.test.components.Article;
+import com.example.test.database.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +31,24 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void sortByFollow(DatabaseHelper dbHelper) {
+        articleList.sort(new Comparator<Article>() {
+            @Override
+            public int compare(Article article1, Article article2) {
+                int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
+                int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
+                if (follow1 > follow2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        });
+        notifyDataSetChanged();
+    }
+
     public void sortByReact() {
-        Collections.sort(articleList, new Comparator<Article>() {
+        articleList.sort(new Comparator<Article>() {
             @Override
             public int compare(Article article1, Article article2) {
                 if (article1.getLikes() < article2.getLikes()) {
@@ -44,7 +62,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     }
 
     public void sortByPublishedTime() {
-        Collections.sort(articleList, new Comparator<Article>() {
+        articleList.sort(new Comparator<Article>() {
             @Override
             public int compare(Article article1, Article article2) {
                 String[] a1 = article1.getPublishedTime().split(" ");
@@ -75,6 +93,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder holder, int position) {
         holder.article = articleList.get(position);
+        holder.user_name.setText(articleList.get(position).getPublisher());
         holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
@@ -90,7 +109,8 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     Article article;
     LinearLayout recipe_post;
     TextView dish_name, user_name, cmt_count, react_count;
-    ImageView dish_img, user_avatar;
+    ImageView dish_img, user_avatar, bookmark;
+    boolean isBookmark;
 
     public RecipeViewHolder(View itemView) {
         super(itemView);
@@ -101,11 +121,13 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         dish_img = itemView.findViewById(R.id.dish_img);
         cmt_count = itemView.findViewById(R.id.cmt_count);
         react_count = itemView.findViewById(R.id.react_count);
+        bookmark = itemView.findViewById(R.id.bookmark);
 
         //default value
-        user_name.setText("username");
         user_avatar.setImageResource(R.drawable.user_avatar);
         cmt_count.setText("12");
+        bookmark.setImageResource(R.drawable.bookmark);
+        isBookmark = false;
 
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +142,19 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 args.putString("rating", String.valueOf(article.getLikes()));
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+            }
+        });
+
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isBookmark) {
+                    isBookmark = true;
+                    bookmark.setImageResource(R.drawable.bookmarked);
+                } else {
+                    isBookmark = false;
+                    bookmark.setImageResource(R.drawable.bookmark);
+                }
             }
         });
     }
