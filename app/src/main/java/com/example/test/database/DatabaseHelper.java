@@ -71,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String SQL_CREATE_ENTRIES_FOLLOWS = " CREATE TABLE follows (\n" +
                                                             "  followed TEXT NOT NULL,\n" +
-                                                            "  follower NOT NULL,\n" +
+                                                            "  follower TEXT NOT NULL,\n" +
                                                             "  PRIMARY KEY(followed, follower),\n" +
                                                             "  FOREIGN KEY(followed) REFERENCES user(username),\n" +
                                                             "  FOREIGN KEY(follower) REFERENCES user(username)\n" +
@@ -123,6 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.getCount() > 0) {
             // The username already exists, so we cannot add a new user with the same username
             cursor.close();
+            db.close();
             return false;
         }
 
@@ -134,10 +135,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("users", null, values);
 
         cursor.close();
+        db.close();
         return true;
     }
 
-    public User userAuthentication(String username, String password) {
+    public boolean userAuthentication(String username, String password) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Check if the given username and password combination exists in the database
@@ -153,10 +155,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             MainActivity.loggedInUser = user;
 
             cursor.close();
+            db.close();
+            return true;
+        } else {
+            // If the user does not exist in the database, return null
+            cursor.close();
+            db.close();
+            return false;
+        }
+    }
+
+    public User getUserWithUsername(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Check if the given username and password combination exists in the database
+        Cursor cursor = db.rawQuery("SELECT * FROM user WHERE username=?", new String[]{username});
+
+        if (cursor.moveToFirst()) {
+            // If the user exists in the database, create a User object and return it
+            @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
+            @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
+            User user = new User(username, fullname, points, bio);
+
+            cursor.close();
+            db.close();
             return user;
         } else {
             // If the user does not exist in the database, return null
             cursor.close();
+            db.close();
             return null;
         }
     }
@@ -177,6 +205,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // Insert the new article into the database
         long result = db.insert("articles", null, values);
 
+        db.close();
         return result != -1;
     }
 
@@ -223,8 +252,84 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         } finally {
             cursor.close();
+            db.close();
         }
         Log.i("Articles", articles.toString());
         return articles;
+    }
+
+    public boolean addFollow(String follower, String followed) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("follower", follower);
+        values.put("followed", followed);
+
+        long result = db.insert("follows", null, values);
+
+        db.close();
+
+        return result != -1;
+    }
+
+    public boolean removeFollow(String follower, String followed) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Define the table name and the WHERE clause for the delete operation
+        String tableName = "follows";
+        String whereClause = "follower=? AND followed=?";
+
+        // Define the arguments to replace the placeholders in the WHERE clause
+        String[] whereArgs = {follower, followed};
+
+        // Perform the delete operation and get the number of rows affected
+        int rowsDeleted = db.delete(tableName, whereClause, whereArgs);
+
+        // Close the database
+        db.close();
+
+        // Return true if at least one row was deleted, false otherwise
+        return rowsDeleted > 0;
+    }
+
+    public boolean isFollowing(String follower, String followed) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM follows WHERE follower=? AND followed=?", new String[] {follower, followed});
+
+        boolean isFollowing = cursor.getCount() > 0;
+
+        // Close the cursor and the database
+        cursor.close();
+        db.close();
+
+        // Return the result
+        return isFollowing;
+    }
+
+    public int getTotalFollowCount(String username) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        // Define the query to get the count of followers for the given user
+        String query = "SELECT COUNT(*) FROM follows WHERE followed=?";
+
+        // Define the arguments to replace the placeholder in the query
+        String[] args = {username};
+
+        // Execute the query and obtain the result cursor
+        Cursor cursor = db.rawQuery(query, args);
+
+        // Get the count from the first column of the first row of the cursor
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        // Close the cursor and the database
+        cursor.close();
+        db.close();
+
+        // Return the count
+        return count;
     }
 }

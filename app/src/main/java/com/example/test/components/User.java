@@ -15,6 +15,13 @@ public class User {
         this.bio = bio;
     }
 
+    public User(String username, String fullname, int points, String bio) {
+        this.username = username;
+        this.fullname = fullname;
+        this.points = points;
+        this.bio = bio;
+    }
+
     //getters and setters
     public String getUsername() {
         return username;

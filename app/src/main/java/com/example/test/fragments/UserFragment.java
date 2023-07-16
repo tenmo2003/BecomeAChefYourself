@@ -11,19 +11,26 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
+import com.example.test.components.User;
+import com.example.test.database.DatabaseHelper;
 
 public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
-    View fragmentView;
+    private View fragmentView;
+
+    private User profileUser;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 //        UserViewModel userViewModel =
@@ -67,19 +74,80 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Bundle args = getArguments();
+        if (args != null) {
+            String username = args.getString("username");
+            DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+            profileUser = dbHelper.getUserWithUsername(username);
+        } else {
+            profileUser = MainActivity.loggedInUser;
+        }
+
         TextView usernameTv = view.findViewById(R.id.user_username);
         EditText fullnameTv = view.findViewById(R.id.user_fullname);
         TextView bioTv = view.findViewById(R.id.user_bio);
+        RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
+        ImageView popupMenu = view.findViewById(R.id.user_menu);
 
-        usernameTv.setText(MainActivity.loggedInUser.getUsername());
-        fullnameTv.setText(MainActivity.loggedInUser.getFullname());
-        bioTv.setText(MainActivity.loggedInUser.getBio());
+        usernameTv.setText(profileUser.getUsername());
+        fullnameTv.setText(profileUser.getFullname());
+        bioTv.setText(profileUser.getBio());
 
-        popupMenu(view);
+        if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
+            popupMenu(popupMenu);
+            followBtn.setVisibility(View.INVISIBLE);
+        } else {
+            popupMenu.setVisibility(View.INVISIBLE);
+            followBtn.setVisibility(View.VISIBLE);
+            DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
+            if (MainActivity.loggedInUser == null || !databaseHelper.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername())) {
+                View follow_frame = view.findViewById(R.id.follow_frame);
+                follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
+                TextView follow_text = view.findViewById(R.id.follow_text);
+                follow_text.setText("Follow");
+            } else {
+                View follow_frame = view.findViewById(R.id.follow_frame);
+                follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
+                TextView follow_text = view.findViewById(R.id.follow_text);
+                follow_text.setText("Following");
+            }
+
+            followBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (MainActivity.loggedInUser == null) {
+                        Toast.makeText(getActivity(), "Please login first!", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(view).navigate(R.id.navigation_login);
+                        return;
+                    }
+
+                    if (!databaseHelper.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername())) {
+                        boolean result = databaseHelper.addFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername());
+
+                        if (result) {
+                            View follow_frame = view.findViewById(R.id.follow_frame);
+                            follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
+                            TextView follow_text = view.findViewById(R.id.follow_text);
+                            follow_text.setText("Following");
+                        }
+                    } else {
+                        boolean result = databaseHelper.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername());
+
+                        if (result) {
+                            View follow_frame = view.findViewById(R.id.follow_frame);
+                            follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
+                            TextView follow_text = view.findViewById(R.id.follow_text);
+                            follow_text.setText("Follow");
+                        }
+                    }
+                }
+            });
+        }
     }
 
-    public void popupMenu(View v) {
-        ImageView popupMenu = v.findViewById(R.id.user_menu);
+    public void popupMenu(ImageView popupMenu) {
+
+        popupMenu.setVisibility(View.VISIBLE);
 
         PopupMenu popup = new PopupMenu(getActivity(), popupMenu);
         popup.setOnMenuItemClickListener(this);

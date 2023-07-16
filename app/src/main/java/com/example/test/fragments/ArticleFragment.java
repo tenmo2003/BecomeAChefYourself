@@ -64,6 +64,17 @@ public class ArticleFragment extends Fragment {
             ratingTextView.setText(rating);
         }
 
+        publisherTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+
+                args.putString("username", publisherTextView.getText().toString());
+
+                Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
+            }
+        });
+
 
 //        Html test text
 //        <h1>Spaghetti Bolognese Recipe</h1>

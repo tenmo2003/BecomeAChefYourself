@@ -55,11 +55,11 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-                User user = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
+                boolean result = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
 
-                if (user != null) {
+                if (result) {
                     Toast.makeText(getActivity(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.navigation_user);
+                    Navigation.findNavController(view).navigate(R.id.navigation_profile);
                 } else {
                     Toast.makeText(getActivity(), "Logged in failed! Check your credentials", Toast.LENGTH_SHORT).show();
                 }

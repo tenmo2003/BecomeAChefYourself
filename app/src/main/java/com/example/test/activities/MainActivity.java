@@ -15,7 +15,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.test.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
                     navController.navigate(R.id.navigation_home);
                 } else if (id == R.id.navigation_share) {
                     navController.navigate(R.id.navigation_share);
-                } else if (id == R.id.navigation_user) {
+                } else if (id == R.id.navigation_profile) {
                     if (loggedInUser != null) {
-                        navController.navigate(R.id.navigation_user);
+                        navController.navigate(R.id.navigation_profile);
                     } else {
                         navController.navigate(R.id.navigation_login);
                     }

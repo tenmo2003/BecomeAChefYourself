@@ -67,17 +67,18 @@
                 android:focusable="false"/>
 
             <RelativeLayout
+                android:id="@+id/follow_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="58dp">
 
-                <View   android:id="@+id/khung_follow"
-                    android:background="@drawable/khung_follow_shape"
+                <View   android:id="@+id/follow_frame"
+                    android:background="@drawable/follow_frame"
                     android:layout_width="120dp"
                     android:layout_height="24dp" />
 
                 <TextView
-                    android:id="@+id/follow"
+                    android:id="@+id/follow_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
