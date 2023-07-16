@@ -1,0 +1,170 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+
+	<ImageView android:id="@+id/step_1_back_button"
+		android:src="@drawable/vector_ek1"
+		android:layout_width="20dp"
+		android:layout_height="20dp"
+		app:layout_constraintTop_toTopOf="parent"
+		app:layout_constraintLeft_toLeftOf="parent"
+		android:layout_margin="40dp"/>
+
+	<TextView android:id="@+id/what_kind"
+		android:textStyle="bold"
+		android:textSize="34sp"
+		android:textColor="@color/next_steps_color"
+		android:layout_width="249dp"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="15dp"
+		android:text="@string/what_kind_of_serve_order__string"
+		app:layout_constraintTop_toBottomOf="@id/step_1_back_button"
+		app:layout_constraintLeft_toLeftOf="@id/step_1_back_button"
+		/>
+
+	<FrameLayout
+		android:id="@+id/breakfast_frame"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingHorizontal="40dp"
+		android:layout_marginTop="25dp"
+		app:layout_constraintTop_toBottomOf="@+id/what_kind"
+		app:layout_constraintLeft_toLeftOf="@+id/what_kind">
+
+		<View
+			android:id="@+id/khung_breakfast"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			android:background="@drawable/make_corner"
+			/>
+
+		<TextView android:id="@+id/breakfast_ek1"
+			android:layout_marginTop="12dp"
+			android:layout_marginLeft="30dp"
+			android:textSize="30sp"
+			android:textColor="@color/next_steps_color"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/appetizer_ek1_string"
+			/>
+
+		<ImageView
+			android:id="@+id/image_breakfast"
+			android:layout_width="70dp"
+			android:layout_height="70dp"
+			android:layout_gravity="top|right"
+			android:layout_marginRight="20dp"
+			android:layout_marginTop="15dp"
+			android:src="@drawable/image_appetizer" />
+
+	</FrameLayout>
+
+
+	<FrameLayout
+		android:layout_marginTop="20dp"
+		android:id="@+id/lunch_frame"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingHorizontal="40dp"
+		app:layout_constraintTop_toBottomOf="@id/breakfast_frame"
+		>
+
+		<View
+			android:id="@+id/khung_lunch"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			android:layout_centerInParent="true"
+			android:background="@drawable/make_corner" />
+
+		<TextView
+			android:id="@+id/lunch_ek1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="12dp"
+			android:layout_marginLeft="30dp"
+			android:text="@string/main_dishes_ek1_string"
+			android:textColor="@color/next_steps_color"
+			android:textSize="30sp" />
+
+		<ImageView android:id="@+id/image_lunch"
+			android:src="@drawable/img_main_dishes"
+			android:layout_gravity="top|right"
+			android:layout_marginRight="20dp"
+			android:layout_marginTop="15dp"
+			android:layout_width="70dp"
+			android:layout_height="70dp" />
+
+	</FrameLayout>
+
+	<FrameLayout
+		android:layout_marginTop="20dp"
+		android:id="@+id/dinner_frame"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:paddingHorizontal="40dp"
+		app:layout_constraintTop_toBottomOf="@id/lunch_frame"
+		>
+
+		<View
+			android:id="@+id/khung_dinner"
+			android:layout_width="wrap_content"
+			android:layout_height="100dp"
+			android:background="@drawable/make_corner" />
+
+		<TextView
+			android:id="@+id/dinner_ek1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="12dp"
+			android:layout_marginLeft="30dp"
+			android:text="@string/desserts_ek1_string"
+			android:textColor="@color/next_steps_color"
+			android:textSize="30sp" />
+
+		<ImageView android:id="@+id/image_dinner"
+			android:src="@drawable/img_desserts"
+			android:layout_gravity="top|right"
+			android:layout_marginRight="20dp"
+			android:layout_marginTop="15dp"
+			android:layout_width="70dp"
+			android:layout_height="70dp" />
+
+	</FrameLayout>
+
+
+
+	<FrameLayout android:id="@+id/nextsteps"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toBottomOf="parent"
+		app:layout_constraintRight_toRightOf="parent"
+		android:layout_margin="20dp"
+		>
+
+		<ImageView android:id="@+id/khung_steps"
+			android:src="@drawable/khung_steps"
+			android:layout_width="197dp"
+			android:layout_height="59dp" />
+
+		<TextView android:id="@+id/next_steps"
+			android:textSize="25sp"
+			android:textColor="@color/next_steps_color"
+			android:layout_marginLeft="25dp"
+			android:layout_marginTop="12dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/next_steps_string"
+			/>
+
+		<ImageView android:id="@+id/vector"
+			android:src="@drawable/vector"
+			android:layout_marginStart="157dp"
+			android:layout_marginTop="26dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" />
+
+	</FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
