@@ -1,5 +1,6 @@
 package com.example.test.adapters;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,12 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void sortByFollow() {
+
+    }
+
     public void sortByReact() {
-        Collections.sort(articleList, new Comparator<Article>() {
+        articleList.sort(new Comparator<Article>() {
             @Override
             public int compare(Article article1, Article article2) {
                 if (article1.getLikes() < article2.getLikes()) {
@@ -44,7 +49,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     }
 
     public void sortByPublishedTime() {
-        Collections.sort(articleList, new Comparator<Article>() {
+        articleList.sort(new Comparator<Article>() {
             @Override
             public int compare(Article article1, Article article2) {
                 String[] a1 = article1.getPublishedTime().split(" ");
@@ -90,7 +95,8 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     Article article;
     LinearLayout recipe_post;
     TextView dish_name, user_name, cmt_count, react_count;
-    ImageView dish_img, user_avatar;
+    ImageView dish_img, user_avatar, bookmark;
+    boolean isBookmark;
 
     public RecipeViewHolder(View itemView) {
         super(itemView);
@@ -101,11 +107,14 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         dish_img = itemView.findViewById(R.id.dish_img);
         cmt_count = itemView.findViewById(R.id.cmt_count);
         react_count = itemView.findViewById(R.id.react_count);
+        bookmark = itemView.findViewById(R.id.bookmark);
 
         //default value
         user_name.setText("username");
         user_avatar.setImageResource(R.drawable.user_avatar);
         cmt_count.setText("12");
+        bookmark.setImageResource(R.drawable.bookmark);
+        isBookmark = false;
 
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +129,19 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 args.putString("rating", String.valueOf(article.getLikes()));
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+            }
+        });
+
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isBookmark) {
+                    isBookmark = true;
+                    bookmark.setImageResource(R.drawable.bookmarked);
+                } else {
+                    isBookmark = false;
+                    bookmark.setImageResource(R.drawable.bookmark);
+                }
             }
         });
     }
