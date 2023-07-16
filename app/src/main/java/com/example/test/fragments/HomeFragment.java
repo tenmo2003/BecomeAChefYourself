@@ -99,6 +99,7 @@ public class HomeFragment extends Fragment {
 
         recipeListAdapter = new RecipeListAdapter();
         recipeListAdapter.setArticleList(articlesList);
+        recipeListAdapter.setContext(getActivity());
         recipeListView.setAdapter(recipeListAdapter);
 
         //Search bar

@@ -48,7 +48,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  user TEXT NOT NULL,\n" +
                                                             "  article INTEGER NOT NULL,\n" +
                                                             "  FOREIGN KEY(user) REFERENCES user(username),\n" +
-                                                            "  FOREIGN KEY(article) REFERENCES article(id),\n" +
+                                                            "  FOREIGN KEY(article) REFERENCES articles(id),\n" +
                                                             "  PRIMARY KEY(user, article)\n" +
                                                             ");";
 
@@ -57,7 +57,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  article_id INTEGER NOT NULL,\n" +
                                                             "  commenter TEXT NOT NULL,\n" +
                                                             "  content TEXT NOT NULL,\n" +
-                                                            "  FOREIGN KEY(article_id) REFERENCES article(id),\n" +
+                                                            "  FOREIGN KEY(article_id) REFERENCES articles(id),\n" +
                                                             "  FOREIGN KEY(commenter) REFERENCES user(username)" +
                                                             ");";
 
@@ -66,7 +66,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                                 "  article INTEGER NOT NULL,\n" +
                                                                 "  PRIMARY KEY(user, article),\n" +
                                                                 "  FOREIGN KEY(user) REFERENCES user(username),\n" +
-                                                                "  FOREIGN KEY(article) REFERENCES article(id)\n" +
+                                                                "  FOREIGN KEY(article) REFERENCES articles(id)\n" +
                                                                 ");";
 
     public static final String SQL_CREATE_ENTRIES_FOLLOWS = " CREATE TABLE follows (\n" +
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY(follower) REFERENCES user(username)\n" +
                                                             ");";
 
-    public static final int DB_VERSION = 6;
+    public static final int DB_VERSION = 7;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -112,6 +112,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         if (oldVersion < 6) {
             db.execSQL("DROP TABLE IF EXISTS article_dislikes");
+        }
+        if (oldVersion < 7) {
+            db.execSQL("DROP TABLE IF EXISTS bookmarks");
+            db.execSQL("DROP TABLE IF EXISTS article_likes");
+            db.execSQL("DROP TABLE IF EXISTS comments");
+            db.execSQL(SQL_CREATE_ENTRIES_BOOKMARK);
+            db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
+            db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
         }
     }
 
@@ -331,5 +339,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Return the count
         return count;
+    }
+
+    public boolean addBookmark(String user, int articleID) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("user", user);
+        values.put("article", articleID);
+
+        long result = db.insert("bookmarks", null, values);
+
+        db.close();
+
+        return result != -1;
+    }
+
+    public boolean removeBookmark(String user, int articleID) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        int rowsDeleted = db.delete("bookmarks", "user=? AND article=?", new String[] {user, String.valueOf(articleID)});
+
+        db.close();
+
+        return rowsDeleted > 0;
+    }
+
+    public boolean checkBookmarked(String user, int articleID) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM bookmarks WHERE user=? AND article=?", new String[] {user, String.valueOf(articleID)});
+
+        boolean bookmarked = cursor.moveToFirst();
+
+        cursor.close();
+        db.close();
+
+        return bookmarked;
     }
 }
