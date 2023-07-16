@@ -107,12 +107,20 @@ public class HomeFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                return false;
+                searchArticle(s);
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                searchArticle(s);
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                recipeListAdapter.setArticleList(articlesList);
                 return true;
             }
         });
