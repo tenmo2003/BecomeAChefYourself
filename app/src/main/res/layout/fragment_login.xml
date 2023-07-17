@@ -24,7 +24,8 @@
         android:layout_height="483.5dp"
         android:layout_marginStart="250dp"
         android:layout_marginTop="315dp"
-        android:contentDescription="vector_1"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-10dp"
         android:src="@drawable/vector_1" />
 
 
@@ -71,32 +72,40 @@
         android:layout_marginTop="440dp"
         >
 
-        <View
-            android:id="@+id/line_2"
-            android:layout_width="120dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="240dp"
-            android:layout_marginTop="56dp"
-            android:background="@drawable/line_2_shape" />
-
-        <TextView
-            android:id="@+id/or_ek1"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="45dp"
-            android:text="@string/or_ek1_string"
-            android:textColor="@color/line_2_color"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:weightSum="3">
+            <View
+                android:id="@+id/line_2"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_2_shape" />
 
-        <View
-            android:id="@+id/line_1"
-            android:layout_width="120dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="56dp"
-            android:background="@drawable/line_1_shape" />
+            <TextView
+                android:id="@+id/or_ek1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:text="@string/or_ek1_string"
+                android:textColor="@color/line_2_color"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:textAlignment="center"/>
+
+            <View
+                android:id="@+id/line_1"
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:layout_marginTop="56dp"
+                android:layout_weight="1"
+                android:background="@drawable/line_1_shape" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/forgot_password_"

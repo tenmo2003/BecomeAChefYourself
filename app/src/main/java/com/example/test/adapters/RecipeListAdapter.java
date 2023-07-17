@@ -1,6 +1,7 @@
 package com.example.test.adapters;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.database.DatabaseHelper;
 
@@ -24,11 +27,16 @@ import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     List<Article> articleList;
+    Context context;
 
     public void setArticleList(List<Article> articleList) {
         this.articleList = new ArrayList<>();
         this.articleList.addAll(articleList);
         notifyDataSetChanged();
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     public void sortByFollow(DatabaseHelper dbHelper) {
@@ -97,6 +105,15 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        holder.isBookmark = MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId());
+        if (holder.isBookmark) {
+            holder.bookmark.setImageResource(R.drawable.bookmarked);
+        } else {
+            holder.bookmark.setImageResource(R.drawable.bookmark);
+        }
+        holder.dbHelper = dbHelper;
+        holder.context = context;
     }
 
     @Override
@@ -112,6 +129,9 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     ImageView dish_img, user_avatar, bookmark;
     boolean isBookmark;
 
+    Context context;
+    DatabaseHelper dbHelper;
+
     public RecipeViewHolder(View itemView) {
         super(itemView);
         recipe_post = itemView.findViewById(R.id.recipe_post);
@@ -126,8 +146,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         //default value
         user_avatar.setImageResource(R.drawable.user_avatar);
         cmt_count.setText("12");
-        bookmark.setImageResource(R.drawable.bookmark);
-        isBookmark = false;
 
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,11 +166,18 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (MainActivity.loggedInUser == null) {
+                    Toast.makeText(context, "Please login first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (!isBookmark) {
                     isBookmark = true;
+                    dbHelper.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
                     bookmark.setImageResource(R.drawable.bookmarked);
                 } else {
                     isBookmark = false;
+                    dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
                     bookmark.setImageResource(R.drawable.bookmark);
                 }
             }
