@@ -36,11 +36,16 @@
 
 	<!-- sign_up colors -->
 
-
 	<color name="_bg__sign_up_ek2_color">#FFAF5A</color>
 	<color name="sign_up_ek4_color">#FFFFFF</color>
 	<color name="re_enter_password_color">#A09D98</color>
 	<color name="khung_re_color">#2F6C6D</color>
 	<color name="khung_user_2_color">#EDE8E2</color>
 	<color name="sign_up_ek5_color">#000000</color>
+
+	<!-- create_post_1 colors -->
+
+	<color name="_bg__create_post_1_ek2_color">#FFFFFF</color>
+	<color name="next_steps_color">#2F6C6D</color>
+	<color name="khung_flex_color">#BED7D6</color>
 </resources>
