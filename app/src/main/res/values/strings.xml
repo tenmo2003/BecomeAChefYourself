@@ -1,74 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<!-- android_small___1 strings -->
+    <!-- android_small___1 strings -->
 
-	<string name="ek_img_content">ExportKit Image</string>
-	<string name="sign_up_ek1_string">Sign up</string>
-	<string name="or_ek1_string">OR</string>
-	<string name="forgot_password__string"><u>Forgot password?</u></string>
-	<string name="log_in_string">Log in</string>
-	<string name="username_string">Username</string>
-	<string name="password_string">Password</string>
-	<string name="login_ek1_string">Login</string>
+    <string name="ek_img_content">ExportKit Image</string>
+    <string name="sign_up_ek1_string">Sign up</string>
+    <string name="or_ek1_string">OR</string>
+    <string name="forgot_password__string"><u>Forgot password?</u></string>
+    <string name="log_in_string">Log in</string>
+    <string name="username_string">Username</string>
+    <string name="password_string">Password</string>
+    <string name="login_ek1_string">Login</string>
 
-	<string name="app_name">Test</string>
-	<string name="title_home">Home</string>
-	<string name="title_search">Search</string>
-	<string name="title_share">Share</string>
-	<string name="title_user">User</string>
-	<string name="title_sign_up">Sign up</string>
-	<string name="title_login">Login</string>
-	<string name="title_bookmark">Saved</string>
-	<string name="title_article">Article</string>
+    <string name="app_name">Test</string>
+    <string name="title_home">Home</string>
+    <string name="title_search">Search</string>
+    <string name="title_share">Share</string>
+    <string name="title_user">User</string>
+    <string name="title_sign_up">Sign up</string>
+    <string name="title_login">Login</string>
+    <string name="title_bookmark">Saved</string>
+    <string name="title_article">Article</string>
 
-	<!-- user strings -->
+    <!-- user strings -->
 
-	<string name="_61_8k_string">61.8K</string>
-	<string name="bookmarks_string">Bookmarks</string>
-	<string name="_10_5m_string">10.5M</string>
-	<string name="followers_string">Followers</string>
-	<string name="_100k_string">100K</string>
-	<string name="recipes_string">Recipes</string>
-	<string name="hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string">Hi, I like to think of my cooking as expressions of love for my family and friends, especially when its European dishes or Asian dishes! </string>
-	<string name="follow_string">Follow</string>
-	<string name="food_lover___influencer_string">Food lover &amp; Influencer</string>
-	<string name="gordon_ramsay_string">Gordon Ramsay</string>
-	<string name="pizza_string">Pizza </string>
-	<string name="gordon_ramsay_ek1_string">Gordon Ramsay</string>
-	<string name="asian_food_string">Asian food</string>
-	<string name="learn_now_string">Learn now</string>
+    <string name="_61_8k_string">61.8K</string>
+    <string name="bookmarks_string">Bookmarks</string>
+    <string name="_10_5m_string">10.5M</string>
+    <string name="followers_string">Followers</string>
+    <string name="_100k_string">100K</string>
+    <string name="recipes_string">Recipes</string>
+    <string name="hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string">Hi, I like to think of my cooking as expressions of love for my family and friends, especially when its European dishes or Asian dishes! </string>
+    <string name="follow_string">Follow</string>
+    <string name="food_lover___influencer_string">Food lover &amp; Influencer</string>
+    <string name="gordon_ramsay_string">Gordon Ramsay</string>
+    <string name="pizza_string">Pizza </string>
+    <string name="gordon_ramsay_ek1_string">Gordon Ramsay</string>
+    <string name="asian_food_string">Asian food</string>
+    <string name="learn_now_string">Learn now</string>
 
-	<!-- sign_up strings -->
+    <!-- sign_up strings -->
 
-	<string name="sign_up_ek4_string">Sign up</string>
-	<string name="re_enter_password_string">Re-enter password</string>
-	<string name="sign_up_ek5_string">Sign up</string>
-	<string name="already_have_account__string">Already have account?</string>
+    <string name="sign_up_ek4_string">Sign up</string>
+    <string name="re_enter_password_string">Re-enter password</string>
+    <string name="sign_up_ek5_string">Sign up</string>
+    <string name="already_have_account__string">Already have account?</string>
     <string name="most_follow">Most follow</string>
-	<string name="most_react">Most react</string>
-	<string name="most_recent">Most recent</string>
-	<string name="all">All</string>
+    <string name="most_react">Most react</string>
+    <string name="most_recent">Most recent</string>
+    <string name="all">All</string>
 
-	<!-- create_post_1 strings -->
+    <!-- create_post_1 strings -->
 
-	<string name="next_steps_string">Next steps</string>
-	<string name="create_your_posts_string">Create your posts</string>
-	<string name="flex_ek1_string">Flex</string>
-	<string name="dinner_ek1_string">Dinner</string>
-	<string name="lunch_ek1_string">Lunch</string>
-	<string name="breakfast_ek1_string">Breakfast</string>
+    <string name="next_steps_string">Next steps</string>
+    <string name="create_your_posts_string">Create your posts</string>
+    <string name="flex_ek1_string">Flex</string>
+    <string name="dinner_ek1_string">Dinner</string>
+    <string name="lunch_ek1_string">Lunch</string>
+    <string name="breakfast_ek1_string">Breakfast</string>
 
-	<!-- create_post_2 strings -->
+    <!-- create_post_2 strings -->
 
-	<string name="what_kind_of_serve_order__string">What kind of serve order?</string>
-	<string name="desserts_ek1_string">Desserts</string>
-	<string name="main_dishes_ek1_string">Main dishes</string>
-	<string name="appetizer_ek1_string">Appetizer</string>
+    <string name="what_kind_of_serve_order__string">What kind of serve order?</string>
+    <string name="desserts_ek1_string">Desserts</string>
+    <string name="main_dishes_ek1_string">Main dishes</string>
+    <string name="appetizer_ek1_string">Appetizer</string>
 
-	<!-- create_post_3 strings -->
+    <!-- create_post_3 strings -->
 
-	<string name="done_string">Done</string>
+    <string name="done_string">Done</string>
 
-	<!-- create_post_4 strings -->
-	<string name="upload_string">Upload</string>
+    <!-- create_post_4 strings -->
+    <string name="upload_string">Upload</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

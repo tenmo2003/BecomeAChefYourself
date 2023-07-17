@@ -262,8 +262,109 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
             db.close();
         }
-        Log.i("Articles", articles.toString());
         return articles;
+    }
+
+    public List<Article> getArticlesFromUser(String username) {
+        List<Article> articles = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "id",
+                "dish_name",
+                "publisher",
+                "meal",
+                "serve_order_class",
+                "type",
+                "recipe",
+                "ingredients",
+                "likes",
+                "published_time",
+                "time_to_make"
+        };
+        String selection = "publisher=?";
+        String[] selectionArgs = { username };
+        Cursor cursor = db.query(
+                "articles",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                "published_time DESC"
+        );
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String dishName = cursor.getString(cursor.getColumnIndexOrThrow("dish_name"));
+                String publisher = cursor.getString(cursor.getColumnIndexOrThrow("publisher"));
+                String meal = cursor.getString(cursor.getColumnIndexOrThrow("meal"));
+                String serveOrderClass = cursor.getString(cursor.getColumnIndexOrThrow("serve_order_class"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
+                String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
+                int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
+                String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
+                articles.add(article);
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+        return articles;
+    }
+
+    public List<Article> getUserSavedArticles(String username) {
+        List<Article> savedArticles = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "articles.id",
+                "dish_name",
+                "publisher",
+                "meal",
+                "serve_order_class",
+                "type",
+                "recipe",
+                "ingredients",
+                "likes",
+                "published_time",
+                "time_to_make"
+        };
+        String selection = "bookmarks.user=?";
+        String[] selectionArgs = { username };
+        String sortOrder = "published_time DESC";
+        String table = "articles INNER JOIN bookmarks ON articles.id = bookmarks.article";
+        Cursor cursor = db.query(
+                table,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String dishName = cursor.getString(cursor.getColumnIndexOrThrow("dish_name"));
+                String publisher = cursor.getString(cursor.getColumnIndexOrThrow("publisher"));
+                String meal = cursor.getString(cursor.getColumnIndexOrThrow("meal"));
+                String serveOrderClass = cursor.getString(cursor.getColumnIndexOrThrow("serve_order_class"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
+                String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
+                int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
+                String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
+                savedArticles.add(article);
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+        return savedArticles;
     }
 
     public boolean addFollow(String follower, String followed) {

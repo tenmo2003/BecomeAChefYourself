@@ -3,7 +3,9 @@ package com.example.test.fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,55 +19,32 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
+import com.example.test.adapters.SectionsPagerAdapter;
 import com.example.test.components.User;
 import com.example.test.database.DatabaseHelper;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
     private View fragmentView;
 
-    private User profileUser;
+    ViewPager2 viewPager2;
+    TabLayout tabLayout;
+    SectionsPagerAdapter sectionsPagerAdapter;
+
+    public static User profileUser;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-//        UserViewModel userViewModel =
-//                new ViewModelProvider(this).get(UserViewModel.class);
-//
-//        binding = FragmentUserBinding.inflate(inflater, container, false);
-//        View root = binding.getRoot();
-//
-//        final TextView textView = binding.textUser;
-//        userViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-//        return root;
-
-
         fragmentView = inflater.inflate(R.layout.fragment_user, container, false);
-
-//        Button logoutBtn = view.findViewById(R.id.logout_button);
-//        logoutBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Logout");
-//                builder.setMessage("Are you sure you want to log out?");
-//                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // Perform logout action here
-//                        MainActivity.loggedInUser = null;
-//                        Navigation.findNavController(view).navigate(R.id.navigation_login);
-//                    }
-//                });
-//                builder.setNegativeButton("No", null);
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//            }
-//        });
 
         return fragmentView;
     }
@@ -84,7 +63,7 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         }
 
         TextView usernameTv = view.findViewById(R.id.user_username);
-        EditText fullnameTv = view.findViewById(R.id.user_fullname);
+        TextView fullnameTv = view.findViewById(R.id.user_fullname);
         TextView bioTv = view.findViewById(R.id.user_bio);
         RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
         ImageView popupMenu = view.findViewById(R.id.user_menu);
@@ -143,6 +122,38 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 }
             });
         }
+        viewPager2 = fragmentView.findViewById(R.id.view_pager);
+        tabLayout = fragmentView.findViewById(R.id.tabLayout);
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getActivity(), R.color.black));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int tabIconColor = ContextCompat.getColor(getActivity(), R.color.black);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                int tabIconColor = ContextCompat.getColor(getActivity(), R.color.darkGray);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        setupViewPager(viewPager2);
+
+        new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+            if (position == 0) {
+                tab.setIcon(R.drawable.gray_your_posts_24);
+            } else {
+                tab.setIcon(R.drawable.gray_bookmark_border_24);
+            }
+        }).attach();
     }
 
     public void popupMenu(ImageView popupMenu) {
@@ -183,5 +194,12 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             dialog.show();
             return true;
         }
+    }
+
+    private void setupViewPager(ViewPager2 viewPager2) {
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
+        adapter.addFragment(new UserPostFragment());
+        adapter.addFragment(new UserSavedFragment());
+        viewPager2.setAdapter(adapter);
     }
 }
