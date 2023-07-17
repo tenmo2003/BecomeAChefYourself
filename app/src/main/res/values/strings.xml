@@ -48,4 +48,27 @@
 	<string name="most_react">Most react</string>
 	<string name="most_recent">Most recent</string>
 	<string name="all">All</string>
+
+	<!-- create_post_1 strings -->
+
+	<string name="next_steps_string">Next steps</string>
+	<string name="create_your_posts_string">Create your posts</string>
+	<string name="flex_ek1_string">Flex</string>
+	<string name="dinner_ek1_string">Dinner</string>
+	<string name="lunch_ek1_string">Lunch</string>
+	<string name="breakfast_ek1_string">Breakfast</string>
+
+	<!-- create_post_2 strings -->
+
+	<string name="what_kind_of_serve_order__string">What kind of serve order?</string>
+	<string name="desserts_ek1_string">Desserts</string>
+	<string name="main_dishes_ek1_string">Main dishes</string>
+	<string name="appetizer_ek1_string">Appetizer</string>
+
+	<!-- create_post_3 strings -->
+
+	<string name="done_string">Done</string>
+
+	<!-- create_post_4 strings -->
+	<string name="upload_string">Upload</string>
 </resources>
