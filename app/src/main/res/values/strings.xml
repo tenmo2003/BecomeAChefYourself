@@ -67,7 +67,7 @@
 
     <!-- create_post_3 strings -->
 
-    <string name="done_string">Done</string>
+    <string name="done_string">Preview</string>
 
     <!-- create_post_4 strings -->
     <string name="upload_string">Upload</string>

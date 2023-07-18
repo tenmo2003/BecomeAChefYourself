@@ -49,4 +49,7 @@
 	<color name="_bg__create_post_1_ek2_color">#FFFFFF</color>
 	<color name="next_steps_color">#2F6C6D</color>
 	<color name="khung_flex_color">#BED7D6</color>
+
+	<!-- create_post_3_bg colors -->
+	<color name="color_bg_spinner">#BED7D6</color>
 </resources>

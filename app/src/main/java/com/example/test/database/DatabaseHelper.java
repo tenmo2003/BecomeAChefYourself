@@ -35,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  dish_name TEXT NOT NULL,\n" +
                                                             "  meal TEXT CHECK(meal IN ('Bữa sáng', 'Bữa trưa', 'Bữa tối', 'Linh hoạt')) NOT NULL,\n" +
                                                             "  serve_order_class TEXT CHECK(serve_order_class IN ('Món khai vị', 'Món chính', 'Món tráng miệng')) NOT NULL,\n" +
-                                                            "  type TEXT CHECK(type IN ('Món thịt', 'Món hải sản', 'Món chay', 'Món canh', 'Món rau', 'Mì', 'Bún', 'Món cuốn', 'Món xôi', 'Món cơm', 'Món bánh mặn', 'Món bánh ngọt')) NOT NULL,\n" +
+                                                            "  type TEXT CHECK(type IN ('Meat', 'Seafood', 'Vegetarian food', 'Soup', 'Fruits and vegetables', 'Noodles', 'Rice noodle', 'Roll', 'Sticky rice', 'Rice', 'Savory cakes', 'Sweet cakes')) NOT NULL,\n" +
                                                             "  recipe TEXT NOT NULL,\n" +
                                                             "  ingredients TEXT NOT NULL,\n" +
                                                             "  likes INTEGER DEFAULT 0,\n" +

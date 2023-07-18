@@ -146,13 +146,13 @@
 
 		<ImageView android:id="@+id/khung_steps"
 			android:src="@drawable/khung_steps"
-			android:layout_width="197dp"
+			android:layout_width="187dp"
 			android:layout_height="59dp" />
 
 		<TextView android:id="@+id/next_steps"
 			android:textSize="25sp"
 			android:textColor="@color/next_steps_color"
-			android:layout_marginLeft="25dp"
+			android:layout_marginLeft="30dp"
 			android:layout_marginTop="12dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
 
 		<ImageView android:id="@+id/vector"
 			android:src="@drawable/vector"
-			android:layout_marginStart="157dp"
+			android:layout_marginStart="150dp"
 			android:layout_marginTop="26dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content" />

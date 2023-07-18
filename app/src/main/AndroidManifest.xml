@@ -9,7 +9,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/beefsteak"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/baseline_person_24"
+        android:roundIcon="@drawable/user_avatar"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="31">

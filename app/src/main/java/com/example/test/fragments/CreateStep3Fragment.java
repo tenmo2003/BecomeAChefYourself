@@ -6,19 +6,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.test.CustomSpinner;
 import com.example.test.R;
+import com.example.test.SelectAdapter;
+import com.example.test.inventory.Data;
 
-public class CreateStep3Fragment extends Fragment {
+public class CreateStep3Fragment extends Fragment implements CustomSpinner.OnSpinnerEventsListener {
+
+    private CustomSpinner spinner_select;
+    private SelectAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_post_3, container, false);
 
+
+        spinner_select = view.findViewById(R.id.spinner_select);
+
+        spinner_select.setSpinnerEventsListener(this);
+
+        adapter = new SelectAdapter(getActivity(), Data.getSelectList());
+        spinner_select.setAdapter(adapter);
 
         return view;
     }
@@ -45,5 +59,15 @@ public class CreateStep3Fragment extends Fragment {
             }
         });
 
+    }
+
+    @Override
+    public void onPopupWindowOpened(Spinner spinner) {
+        spinner_select.setBackground(getResources().getDrawable(R.drawable.bg_spinner_up));
+    }
+
+    @Override
+    public void onPopupWindowClosed(Spinner spinner) {
+        spinner_select.setBackground(getResources().getDrawable(R.drawable.bg_spinner));
     }
 }
