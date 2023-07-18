@@ -1,17 +1,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/step_3">
 
-	<ImageView android:id="@+id/step_1_back_button"
+	<ImageView android:id="@+id/back_button"
 		android:src="@drawable/vector_ek1"
-		android:layout_width="20dp"
-		android:layout_height="20dp"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:padding="10dp"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintLeft_toLeftOf="parent"
 		android:layout_margin="40dp"/>
 
-	<FrameLayout android:id="@+id/nextsteps"
+	<FrameLayout android:id="@+id/next_steps_btn"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
