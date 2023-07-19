@@ -14,22 +14,103 @@
 	app:layout_constraintLeft_toLeftOf="parent"
 	android:layout_margin="40dp"/>
 
-
-	<com.example.test.CustomSpinner
-		android:id="@+id/spinner_select"
-		android:layout_width="match_parent"
-		android:layout_height="50dp"
+	<androidx.core.widget.NestedScrollView
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
 		app:layout_constraintTop_toBottomOf="@id/back_button"
-		app:layout_constraintLeft_toLeftOf="@id/back_button"
-		android:layout_marginTop="40dp"
-		android:layout_marginLeft="60dp"
-		android:layout_marginRight="60dp"
-		android:dropDownVerticalOffset="52dp"
-		android:background="@drawable/bg_spinner"
+		app:layout_constraintLeft_toLeftOf="parent"
+		android:layout_marginVertical="80dp"
+		>
+		<LinearLayout
+			android:id="@+id/scroll_wrap_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			>
 
-		/>
+			<TextView android:id="@+id/type_string"
+				android:textStyle="bold"
+				android:textSize="30sp"
+				android:textColor="@color/next_steps_color"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/type_string"
+				android:layout_marginHorizontal="50dp"
+				/>
 
-	<FrameLayout android:id="@+id/nextsteps"
+
+			<Spinner
+				android:id="@+id/spinner"
+				android:layout_width="match_parent"
+				android:layout_height="40dp"
+				android:layout_marginTop="20dp"
+				android:background="@drawable/bg_spinner"
+				android:layout_marginHorizontal="50dp"
+				android:spinnerMode="dropdown"/>
+
+			<TextView android:id="@+id/dish_name_string"
+				android:textStyle="bold"
+				android:textSize="30sp"
+				android:textColor="@color/next_steps_color"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
+				android:text="@string/dish_name_string"
+
+				android:layout_marginHorizontal="50dp"
+				/>
+
+			<EditText
+				android:id="@+id/dish_name_input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/ingredients_hint"
+				android:layout_marginHorizontal="20dp"
+				android:inputType="textMultiLine" />
+
+			<TextView android:id="@+id/ingredients_string"
+				android:textStyle="bold"
+				android:textSize="30sp"
+				android:textColor="@color/next_steps_color"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:layout_marginHorizontal="50dp"
+				android:text="@string/ingredients_string"
+				/>
+
+			<EditText
+				android:id="@+id/ingredients_input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/ingredients_hint"
+				android:layout_marginHorizontal="20dp"
+				android:inputType="textMultiLine" />
+
+			<TextView android:id="@+id/recipe_string"
+				android:textStyle="bold"
+				android:textSize="30sp"
+				android:textColor="@color/next_steps_color"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="20dp"
+				android:layout_marginHorizontal="50dp"
+				android:text="@string/recipe_string"
+				/>
+
+			<EditText
+				android:id="@+id/recipe_input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:hint="@string/recipe_hint"
+				android:layout_marginHorizontal="20dp"
+				android:inputType="textMultiLine" />
+		</LinearLayout>
+	</androidx.core.widget.NestedScrollView>
+
+
+	<FrameLayout android:id="@+id/next_steps_btn"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"

@@ -15,7 +15,13 @@ import com.example.test.adapters.SectionsPagerAdapter;
 import com.example.test.databinding.FragmentShareBinding;
 
 public class ShareFragment extends Fragment {
-    private FragmentShareBinding binding;
+
+    public static String mealChoice;
+    public static String typeChoice;
+    public static String serveOrderChoice;
+    public static String dishName;
+    public static String ingredients;
+    public static String recipe;
 
     public static ViewPager2 viewPager;
 

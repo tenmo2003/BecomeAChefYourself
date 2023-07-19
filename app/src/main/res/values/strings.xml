@@ -68,6 +68,12 @@
     <!-- create_post_3 strings -->
 
     <string name="done_string">Preview</string>
+    <string name="type_string">What type of dish you have?</string>
+    <string name="dish_name_string">Dish\'s name:</string>
+    <string name="ingredients_string">Ingredients (separated with a semicolon):</string>
+    <string name="ingredients_hint">Ingredient 1; ingredient 2; ...</string>
+    <string name="recipe_string">Recipe:</string>
+    <string name="recipe_hint">Where the magic happens</string>
 
     <!-- create_post_4 strings -->
     <string name="upload_string">Upload</string>

@@ -35,20 +35,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  dish_name TEXT NOT NULL,\n" +
                                                             "  meal TEXT CHECK(meal IN ('Bữa sáng', 'Bữa trưa', 'Bữa tối', 'Linh hoạt')) NOT NULL,\n" +
                                                             "  serve_order_class TEXT CHECK(serve_order_class IN ('Món khai vị', 'Món chính', 'Món tráng miệng')) NOT NULL,\n" +
-                                                            "  type TEXT CHECK(type IN ('Meat', 'Seafood', 'Vegetarian food', 'Soup', 'Fruits and vegetables', 'Noodles', 'Rice noodle', 'Roll', 'Sticky rice', 'Rice', 'Savory cakes', 'Sweet cakes')) NOT NULL,\n" +
+                                                            "  type TEXT CHECK(type IN ('Món thịt', 'Món hải sản', 'Món chay', 'Món canh', 'Món rau', 'Mì', 'Bún', 'Món cuốn', 'Món xôi', 'Món cơm', 'Món bánh mặn', 'Món bánh ngọt')) NOT NULL,\n" +
                                                             "  recipe TEXT NOT NULL,\n" +
                                                             "  ingredients TEXT NOT NULL,\n" +
                                                             "  likes INTEGER DEFAULT 0,\n" +
                                                             "  published_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                                                             "  time_to_make TEXT," +
-                                                            "  FOREIGN KEY(publisher) REFERENCES user(username)\n" +
+                                                            "  FOREIGN KEY(publisher) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
 
     public static final String SQL_CREATE_ENTRIES_BOOKMARK = "CREATE TABLE bookmarks (\n" +
                                                             "  user TEXT NOT NULL,\n" +
                                                             "  article INTEGER NOT NULL,\n" +
-                                                            "  FOREIGN KEY(user) REFERENCES user(username),\n" +
-                                                            "  FOREIGN KEY(article) REFERENCES articles(id),\n" +
+                                                            "  FOREIGN KEY(user) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                            "  FOREIGN KEY(article) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
                                                             "  PRIMARY KEY(user, article)\n" +
                                                             ");";
 
@@ -57,26 +57,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  article_id INTEGER NOT NULL,\n" +
                                                             "  commenter TEXT NOT NULL,\n" +
                                                             "  content TEXT NOT NULL,\n" +
-                                                            "  FOREIGN KEY(article_id) REFERENCES articles(id),\n" +
-                                                            "  FOREIGN KEY(commenter) REFERENCES user(username)" +
+                                                            "  FOREIGN KEY(article_id) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                            "  FOREIGN KEY(commenter) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE" +
                                                             ");";
 
     public static final String SQL_CREATE_ENTRIES_ARTICLE_LIKE = "CREATE TABLE article_likes (\n" +
                                                                 "  user TEXT NOT NULL,\n" +
                                                                 "  article INTEGER NOT NULL,\n" +
                                                                 "  PRIMARY KEY(user, article),\n" +
-                                                                "  FOREIGN KEY(user) REFERENCES user(username),\n" +
-                                                                "  FOREIGN KEY(article) REFERENCES articles(id)\n" +
+                                                                "  FOREIGN KEY(user) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                                "  FOREIGN KEY(article) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                                 ");";
 
     public static final String SQL_CREATE_ENTRIES_FOLLOWS = " CREATE TABLE follows (\n" +
                                                             "  followed TEXT NOT NULL,\n" +
                                                             "  follower TEXT NOT NULL,\n" +
                                                             "  PRIMARY KEY(followed, follower),\n" +
-                                                            "  FOREIGN KEY(followed) REFERENCES user(username),\n" +
-                                                            "  FOREIGN KEY(follower) REFERENCES user(username)\n" +
+                                                            "  FOREIGN KEY(followed) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                            "  FOREIGN KEY(follower) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
-
     public static final int DB_VERSION = 7;
 
     public DatabaseHelper(@Nullable Context context) {

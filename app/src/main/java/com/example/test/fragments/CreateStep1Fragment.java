@@ -51,7 +51,7 @@ public class CreateStep1Fragment extends Fragment {
         selection1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Bữa sáng";
+                ShareFragment.mealChoice = "Bữa sáng";
 
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner_selected);
@@ -64,7 +64,7 @@ public class CreateStep1Fragment extends Fragment {
         selection2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Bữa trưa";
+                ShareFragment.mealChoice = "Bữa trưa";
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner_selected);
@@ -76,7 +76,7 @@ public class CreateStep1Fragment extends Fragment {
         selection3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Bữa tối";
+                ShareFragment.mealChoice = "Bữa tối";
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner);
@@ -88,7 +88,7 @@ public class CreateStep1Fragment extends Fragment {
         selection4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Linh hoạt";
+                ShareFragment.mealChoice = "Linh hoạt";
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner);

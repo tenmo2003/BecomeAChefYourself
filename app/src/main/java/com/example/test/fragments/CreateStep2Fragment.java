@@ -15,7 +15,6 @@ import com.example.test.R;
 
 public class CreateStep2Fragment extends Fragment {
 
-    public static String choice;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class CreateStep2Fragment extends Fragment {
         selection1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Món khai vị";
+                ShareFragment.serveOrderChoice = "Món khai vị";
 
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner_selected);
@@ -71,7 +70,7 @@ public class CreateStep2Fragment extends Fragment {
         selection2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Món chính";
+                ShareFragment.serveOrderChoice = "Món chính";
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner_selected);
@@ -82,7 +81,7 @@ public class CreateStep2Fragment extends Fragment {
         selection3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                choice = "Món tráng miệng";
+                ShareFragment.serveOrderChoice = "Món tráng miệng";
                 // Change the background of the selected FrameLayout
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner);
