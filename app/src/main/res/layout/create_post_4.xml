@@ -3,15 +3,190 @@
 	android:layout_height="match_parent"
 	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<ImageView android:id="@+id/step_1_back_button"
+	<ImageView android:id="@+id/back_button"
 		android:src="@drawable/vector_ek1"
-		android:layout_width="20dp"
-		android:layout_height="20dp"
+		android:layout_width="40dp"
+		android:layout_height="40dp"
+		android:padding="10dp"
 		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintLeft_toLeftOf="parent"
 		android:layout_margin="40dp"/>
 
-	<FrameLayout android:id="@+id/nextsteps"
+	<ScrollView
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		app:layout_constraintTop_toBottomOf="@id/back_button"
+		app:layout_constraintLeft_toLeftOf="parent"
+		android:layout_marginVertical="80dp"
+		>
+		<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+			xmlns:tools="http://schemas.android.com/tools"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:paddingHorizontal="20dp"
+			android:paddingVertical="10dp">
+
+			<TextView
+				android:id="@+id/dish_name_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="DISH NAME"
+				android:fontFamily="sans-serif-black"
+				android:textStyle="bold"
+				android:textAlignment="center"
+				android:textSize="26sp"
+				android:textColor="@color/black"/>
+
+			<LinearLayout
+				android:layout_marginTop="10dp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				>
+
+				<TextView
+					android:gravity="start"
+					android:paddingLeft="5dp"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Published by "
+					android:textSize="15sp"
+					android:textColor="@color/black"
+					android:fontFamily="sans-serif-light">
+				</TextView>
+				<TextView
+					android:id="@+id/publisher_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="username"
+					android:textSize="15sp"
+					android:textStyle="bold"
+					android:textColor="@color/purple_700"
+					android:fontFamily="sans-serif-light"
+					/>
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text=" at "
+					android:textSize="15sp"
+					android:textColor="@color/black"
+					android:fontFamily="sans-serif-light"/>
+				<TextView
+					android:id="@+id/published_date_text"
+					android:gravity="end"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="20-11-2023"
+					android:textSize="15sp"
+					android:textColor="@color/black"
+					android:fontFamily="sans-serif-light">
+				</TextView>
+
+			</LinearLayout>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:layout_marginVertical="20dp"
+				android:background="@color/darkGray"
+				android:paddingHorizontal="20dp"/>
+
+			<ImageView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:adjustViewBounds="true"
+				android:src="@drawable/beefsteak" />
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:layout_marginTop="20dp"
+				>
+				<TextView
+					android:id="@+id/ratings_text"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Ratings here"
+					android:layout_weight="5"/>
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:gravity="right"
+					android:layout_weight="2">
+					<ImageView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:src="@drawable/baseline_clock_24"
+						/>
+					<TextView
+						android:layout_marginLeft="5dp"
+						android:id="@+id/time_to_make_text"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_vertical"
+						android:text="35 mins" />
+				</LinearLayout>
+			</LinearLayout>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:layout_marginVertical="20dp"
+				android:background="@color/darkGray"
+				android:paddingHorizontal="20dp"/>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Ingredients"
+				android:textAlignment="center"
+				android:textColor="@color/black"
+				android:textSize="23sp"
+				android:fontFamily="sans-serif-black"
+				/>
+
+			<TextView
+				android:id="@+id/ingredients_text"
+				android:layout_marginTop="20dp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="ingredients here"
+				android:textColor="@color/black"
+				android:fontFamily="sans-serif"
+				android:lineSpacingMultiplier="1.2"/>
+
+			<View
+				android:layout_width="match_parent"
+				android:layout_height="2dp"
+				android:layout_marginVertical="20dp"
+				android:background="@color/darkGray"
+				android:paddingHorizontal="20dp"/>
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Recipe"
+				android:textAlignment="center"
+				android:textColor="@color/black"
+				android:textSize="23sp"
+				android:fontFamily="sans-serif-black"/>
+
+			<TextView
+				android:id="@+id/recipe_text"
+				android:layout_marginTop="20dp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="recipe here"
+				android:textColor="@color/black"
+				android:fontFamily="sans-serif"
+				android:lineSpacingMultiplier="1.2"/>
+
+		</LinearLayout>
+	</ScrollView>
+
+	<FrameLayout android:id="@+id/next_steps_btn"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		app:layout_constraintBottom_toBottomOf="parent"
@@ -28,7 +203,7 @@
 		<TextView android:id="@+id/next_steps"
 			android:textSize="25sp"
 			android:textColor="@color/next_steps_color"
-			android:layout_marginLeft="50dp"
+			android:layout_marginLeft="40dp"
 			android:layout_marginTop="12dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

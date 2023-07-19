@@ -56,6 +56,25 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_marginTop="15dp"
+				android:text="@string/time_to_make_string"
+
+				android:layout_marginHorizontal="50dp"
+				/>
+
+			<EditText
+				android:id="@+id/time_to_make_input"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginHorizontal="20dp"
+				android:inputType="textMultiLine" />
+
+			<TextView android:id="@+id/time_to_make_string"
+				android:textStyle="bold"
+				android:textSize="30sp"
+				android:textColor="@color/next_steps_color"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="15dp"
 				android:text="@string/dish_name_string"
 
 				android:layout_marginHorizontal="50dp"
@@ -65,7 +84,6 @@
 				android:id="@+id/dish_name_input"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:hint="@string/ingredients_hint"
 				android:layout_marginHorizontal="20dp"
 				android:inputType="textMultiLine" />
 

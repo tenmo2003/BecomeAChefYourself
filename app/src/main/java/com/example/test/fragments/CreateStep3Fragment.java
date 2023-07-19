@@ -26,22 +26,12 @@ import java.util.List;
 
 public class CreateStep3Fragment extends Fragment {
 
-//    private CustomSpinner spinner_select;
-//    private SelectAdapter adapter;
 
     private Spinner typeChoice;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_post_3, container, false);
-
-
-//        spinner_select = view.findViewById(R.id.spinner_select);
-//
-//        spinner_select.setSpinnerEventsListener(this);
-//
-//        adapter = new SelectAdapter(getActivity(), Data.getSelectList());
-//        spinner_select.setAdapter(adapter);
 
 
         return view;
@@ -65,6 +55,7 @@ public class CreateStep3Fragment extends Fragment {
         EditText dishNameInput = view.findViewById(R.id.dish_name_input);
         EditText ingredientsInput = view.findViewById(R.id.ingredients_input);
         EditText recipeInput = view.findViewById(R.id.recipe_input);
+        EditText timeToMakeInput = view.findViewById(R.id.time_to_make_input);
 
         FrameLayout nextStepBtn = view.findViewById(R.id.next_steps_btn);
 
@@ -77,17 +68,10 @@ public class CreateStep3Fragment extends Fragment {
                 ShareFragment.dishName = dishNameInput.getText().toString();
                 ShareFragment.ingredients = ingredientsInput.getText().toString();
                 ShareFragment.recipe = recipeInput.getText().toString();
+                ShareFragment.timeToMake = timeToMakeInput.getText().toString();
 
 
-//                ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
-
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients);
-                if (result) {
-                    Toast.makeText(getActivity(), "Recipe shared successfully!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "We have failed to share your recipe!", Toast.LENGTH_SHORT).show();
-                }
+                ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
             }
         });
 

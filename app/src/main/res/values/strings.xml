@@ -74,6 +74,7 @@
     <string name="ingredients_hint">Ingredient 1; ingredient 2; ...</string>
     <string name="recipe_string">Recipe:</string>
     <string name="recipe_hint">Where the magic happens</string>
+    <string name="time_to_make_string">Estimated time to make:</string>
 
     <!-- create_post_4 strings -->
     <string name="upload_string">Upload</string>

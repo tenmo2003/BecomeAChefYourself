@@ -22,6 +22,7 @@ public class ShareFragment extends Fragment {
     public static String dishName;
     public static String ingredients;
     public static String recipe;
+    public static String timeToMake;
 
     public static ViewPager2 viewPager;
 
@@ -32,6 +33,7 @@ public class ShareFragment extends Fragment {
 
         viewPager = view.findViewById(R.id.view_pager);
         setUpViewPager(viewPager);
+        viewPager.setUserInputEnabled(false);
 
         return view;
     }
@@ -42,6 +44,7 @@ public class ShareFragment extends Fragment {
         adapter.addFragment(new CreateStep1Fragment());
         adapter.addFragment(new CreateStep2Fragment());
         adapter.addFragment(new CreateStep3Fragment());
+        adapter.addFragment(new CreateStep4Fragment());
 
         viewPager.setAdapter(adapter);
     }
