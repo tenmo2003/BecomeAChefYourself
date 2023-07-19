@@ -59,7 +59,7 @@
                     android:layout_marginLeft="20dp"
                     >
 
-                    <TextView android:id="@+id/user_username"
+                    <TextView android:id="@+id/user_fullname"
                         android:textSize="26sp"
                         android:textColor="@color/_61_8k_color"
                         android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
                         />
 
                     <TextView
-                        android:id="@+id/user_fullname"
+                        android:id="@+id/user_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="\@user full name"
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:text="@string/hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string"
+                android:text="bio"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:layout_marginLeft="15dp"/>
