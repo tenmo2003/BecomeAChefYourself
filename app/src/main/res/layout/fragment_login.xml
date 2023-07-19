@@ -7,7 +7,7 @@
         android:id="@+id/_bg__android_small___1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/_bg__android_small___1_shape" />
+        android:background="@color/white" />
 
 
     <ImageView
@@ -267,7 +267,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="93dp"
-            android:text="Let's Cook Together"
+            android:text="Login"
             android:textColor="@color/line_2_color"
             android:textSize="26sp"
             android:textStyle="bold"
