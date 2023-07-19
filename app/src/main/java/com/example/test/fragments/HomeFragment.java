@@ -51,7 +51,6 @@ public class HomeFragment extends Fragment {
     RecipeListAdapter recipeListAdapter;
     RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
-    Parcelable recipeListState, recommendRecipeState;
     LinearLayoutManager rcmLLayoutManager;
     Timer timer;
     TimerTask timerTask;
@@ -145,6 +144,12 @@ public class HomeFragment extends Fragment {
         setSortButtonBehavior();
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        autoScroll();
     }
 
     @Override

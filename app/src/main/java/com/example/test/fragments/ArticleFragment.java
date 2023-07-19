@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 public class ArticleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,7 +38,7 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        TextView dishNameTextView = view.findViewById(R.id.dish_name_text);
+        CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.dish_name_text);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
         TextView ingredientsTextView = view.findViewById(R.id.ingredients_text);
         TextView publisherTextView = view.findViewById(R.id.publisher_text);
@@ -55,7 +56,7 @@ public class ArticleFragment extends Fragment {
             String timeToMake = args.getString("time_to_make");
             String rating = args.getString("rating");
 
-            dishNameTextView.setText(dishName);
+            collapsingToolbarLayout.setTitle(dishName);
             recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
             ingredientsTextView.setText(formatIngredients(ingredients));
             publishedDateTextView.setText(publishedDate);
@@ -132,7 +133,6 @@ public class ArticleFragment extends Fragment {
                     .append(ingredient.substring(1))
                     .append("\n");
         }
-
         return builder.toString();
     }
 }
