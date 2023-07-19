@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Recommend recipe today"
+            android:text="@string/recommend_recipe_string"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:textFontWeight="900"
@@ -34,10 +34,14 @@
             android:background="@drawable/search_view_shape">
         </SearchView>
 
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,6 +94,7 @@
                 android:background="@drawable/sort_button_shape">
             </TextView>
         </LinearLayout>
+        </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"

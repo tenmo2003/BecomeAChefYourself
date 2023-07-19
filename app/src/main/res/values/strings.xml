@@ -3,15 +3,15 @@
     <!-- android_small___1 strings -->
 
     <string name="ek_img_content">ExportKit Image</string>
-    <string name="sign_up_ek1_string">Sign up</string>
-    <string name="or_ek1_string">OR</string>
-    <string name="forgot_password__string"><u>Forgot password?</u></string>
-    <string name="log_in_string">Log in</string>
-    <string name="username_string">Username</string>
-    <string name="password_string">Password</string>
-    <string name="login_ek1_string">Login</string>
+    <string name="sign_up_string">Đăng kí</string>
+    <string name="or_ek1_string">HOẶC</string>
+    <string name="forgot_password__string"><u>Quên mật khẩu</u></string>
+    <string name="log_in_string">Đăng nhập</string>
+    <string name="username_string">Tên đăng nhập</string>
+    <string name="password_string">Mật khẩu</string>
+    <string name="recommend_recipe_string">Đề xuất hôm nay</string>
 
-    <string name="app_name">Test</string>
+    <string name="app_name">Let\'s cook together</string>
     <string name="title_home">Home</string>
     <string name="title_search">Search</string>
     <string name="title_share">Share</string>
@@ -24,14 +24,12 @@
     <!-- user strings -->
 
     <string name="_61_8k_string">61.8K</string>
-    <string name="bookmarks_string">Bookmarks</string>
+    <string name="bookmarks_string">Đã lưu</string>
     <string name="_10_5m_string">10.5M</string>
-    <string name="followers_string">Followers</string>
+    <string name="followers_string">Người theo dõi</string>
     <string name="_100k_string">100K</string>
-    <string name="recipes_string">Recipes</string>
-    <string name="hi__i_like_to_think_of_my_cooking_as_expressions_of_love_for_my_family_and_friends__especially_when_it_s_european_dishes_or_asian_dishes__string">Hi, I like to think of my cooking as expressions of love for my family and friends, especially when its European dishes or Asian dishes! </string>
-    <string name="follow_string">Follow</string>
-    <string name="food_lover___influencer_string">Food lover &amp; Influencer</string>
+    <string name="recipes_string">Công thức</string>
+    <string name="follow_string">Theo dõi</string>
     <string name="gordon_ramsay_string">Gordon Ramsay</string>
     <string name="pizza_string">Pizza </string>
     <string name="gordon_ramsay_ek1_string">Gordon Ramsay</string>
@@ -40,44 +38,41 @@
 
     <!-- sign_up strings -->
 
-    <string name="sign_up_ek4_string">Sign up</string>
-    <string name="re_enter_password_string">Re-enter password</string>
-    <string name="sign_up_ek5_string">Sign up</string>
-    <string name="already_have_account__string">Already have account?</string>
-    <string name="most_follow">Most follow</string>
-    <string name="most_react">Most react</string>
-    <string name="most_recent">Most recent</string>
-    <string name="all">All</string>
+    <string name="re_enter_password_string">Nhập lại mật khẩu</string>
+    <string name="already_have_account__string">Đã có tài khoản?</string>
+    <string name="most_follow">Người dùng có lượng theo dõi nhiều nhất</string>
+    <string name="most_react">Nhiều lượt thích nhất</string>
+    <string name="most_recent">Gần đây nhất</string>
+    <string name="all">Tất cả</string>
 
     <!-- create_post_1 strings -->
 
-    <string name="next_steps_string">Next step</string>
-    <string name="create_your_posts_string">Create your posts</string>
-    <string name="flex_ek1_string">Flexible</string>
-    <string name="dinner_ek1_string">Dinner</string>
-    <string name="lunch_ek1_string">Lunch</string>
-    <string name="breakfast_ek1_string">Breakfast</string>
+    <string name="next_steps_string">Tiếp tục</string>
+    <string name="create_your_posts_string">Tạo bài viết</string>
+    <string name="flex_ek1_string">Linh hoạt</string>
+    <string name="dinner_ek1_string">Bữa tối</string>
+    <string name="lunch_ek1_string">Bữa trưa</string>
+    <string name="breakfast_ek1_string">Bữa sáng</string>
 
     <!-- create_post_2 strings -->
 
-    <string name="what_kind_of_serve_order__string">What kind of serve order?</string>
-    <string name="desserts_ek1_string">Desserts</string>
-    <string name="main_dishes_ek1_string">Main dishes</string>
-    <string name="appetizer_ek1_string">Appetizer</string>
+    <string name="desserts_ek1_string">Tráng miệng</string>
+    <string name="main_dishes_ek1_string">Món chính</string>
+    <string name="appetizer_ek1_string">Khai vị</string>
 
     <!-- create_post_3 strings -->
 
-    <string name="done_string">Preview</string>
-    <string name="type_string">What type of dish you have?</string>
-    <string name="dish_name_string">Dish\'s name:</string>
-    <string name="ingredients_string">Ingredients (separated with a semicolon):</string>
-    <string name="ingredients_hint">Ingredient 1; ingredient 2; ...</string>
-    <string name="recipe_string">Recipe:</string>
-    <string name="recipe_hint">Where the magic happens</string>
-    <string name="time_to_make_string">Estimated time to make:</string>
+    <string name="done_string">Xem trước</string>
+    <string name="type_string">Loại món ăn:</string>
+    <string name="dish_name_string">Tên món ăn:</string>
+    <string name="ingredients_string">Nguyên liệu (cách nhau bởi dấu ;)</string>
+    <string name="ingredients_hint">Nguyên liệu 1; nguyên liệu 2; …</string>
+    <string name="recipe_string">Công thức:</string>
+    <string name="recipe_hint">Bước 1:…</string>
+    <string name="time_to_make_string">Thời gian làm ước tính:</string>
 
     <!-- create_post_4 strings -->
-    <string name="upload_string">Upload</string>
+    <string name="upload_string">Đăng bài</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -2,26 +2,23 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
 
-	<View
-		android:id="@+id/_bg__android_small___1"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@drawable/_bg__android_small___1_shape" />
+
+
+
 
 	<ImageView
 		android:id="@+id/vector_1"
-		android:layout_width="307.81dp"
-		android:layout_height="483.5dp"
-		android:layout_marginStart="250dp"
-		android:layout_marginTop="315dp"
-		android:src="@drawable/vector_1" />
-
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/mask1" />
 
 	<ImageView
 		android:id="@+id/vector_2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:src="@drawable/vector_2" />
+		android:layout_width="400dp"
+		android:layout_height="448dp"
+		android:layout_marginStart="160dp"
+		android:layout_marginTop="310dp"
+		android:src="@drawable/mask2" />
 
 
 	<RelativeLayout
@@ -90,7 +87,7 @@
 				android:layout_width="wrap_content"
 				android:layout_height="35dp"
 				android:layout_centerInParent="true"
-				android:text="@string/sign_up_ek1_string"
+				android:text="@string/sign_up_string"
 				android:textColor="@color/log_in_color"
 				android:textSize="18sp"
 				android:textStyle="bold" />
