@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="200dp"
     android:id="@+id/recommend_recipe"
-    android:layout_margin="5dp"
-    app:cardCornerRadius="20dp">
-    <ImageView
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:id="@+id/recommend_recipe_img"
-        tools:ignore="MissingConstraints"
-        android:scaleType="centerCrop"
-        android:adjustViewBounds="true">
-    </ImageView>
-</androidx.cardview.widget.CardView>
+    android:layout_margin="5dp">
+    <androidx.cardview.widget.CardView
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cardCornerRadius="20dp"
+        android:elevation="0dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recommend_recipe_img"
+            tools:ignore="MissingConstraints"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true">
+        </ImageView>
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/recommend_recipe_title"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:textAlignment="gravity"
+        android:translationZ="2dp"
+        android:layout_margin="15dp">
+    </TextView>
+</RelativeLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/comment"
+    android:layout_marginVertical="5dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="3dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            android:layout_gravity="center">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/commenter_avatar"
+                android:background="@drawable/user_avatar"
+                android:scaleType="centerCrop">
+            </ImageView>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/commenter"
+            android:textSize="18sp"
+            android:text="nguoibinhluan"
+            android:layout_marginLeft="3dp">
+        </TextView>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/comment_content"
+        android:layout_marginLeft="15dp"
+        android:text="mon an nay qua ngon">
+    </TextView>
+</LinearLayout>

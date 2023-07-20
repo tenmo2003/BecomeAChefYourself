@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/nested_scroll_view"
     android:orientation="vertical"
-    android:background="@color/white"
-    >
+    android:background="@color/white">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,7 +16,6 @@
             android:text="@string/recommend_recipe_string"
             android:textSize="25sp"
             android:textColor="@color/black"
-            android:textFontWeight="900"
             android:padding="5dp">
         </TextView>
 
@@ -37,12 +35,13 @@
 
         <HorizontalScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="5dp">
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

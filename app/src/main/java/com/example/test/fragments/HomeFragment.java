@@ -2,12 +2,9 @@ package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,7 +30,6 @@ import com.example.test.database.DatabaseHelper;
 import com.example.test.databinding.FragmentHomeBinding;
 
 import java.text.Normalizer;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,13 +51,12 @@ public class HomeFragment extends Fragment {
     TimerTask timerTask;
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
-    List<Article> articlesList;
     DatabaseHelper dbHelper;
+    List<Article> articlesList, recommendRecipeList;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -70,9 +64,11 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        dbHelper = new DatabaseHelper(getActivity());
-
-        articlesList = dbHelper.getAllArticles();
+        if (articlesList == null) {
+            dbHelper = new DatabaseHelper(getActivity());
+            articlesList = dbHelper.getAllArticles();
+            recommendRecipeList = articlesList.subList(0, 5);
+        }
 
         //Recycler display recommend recipe
         recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
@@ -81,6 +77,7 @@ public class HomeFragment extends Fragment {
         recommendRecipeView.setLayoutManager(rcmLLayoutManager);
 
         recommendRecipeAdapter = new RecommendRecipeAdapter();
+        recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
         recommendRecipeView.setAdapter(recommendRecipeAdapter);
 
         SnapHelper snapHelper = new LinearSnapHelper();
@@ -179,7 +176,6 @@ public class HomeFragment extends Fragment {
                             } else {
                                 position++;
                                 recommendRecipeView.smoothScrollToPosition(position);
-                                Log.i("autoScroll:", String.valueOf(position));
                             }
                         }
                     });
@@ -198,7 +194,6 @@ public class HomeFragment extends Fragment {
             timer = null;
             timerTask = null;
             position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
-            Log.i("stopScroll:", String.valueOf(position));
         }
     }
 
@@ -230,7 +225,7 @@ public class HomeFragment extends Fragment {
             sortButton.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint({"ResourceAsColor", "ClickableViewAccessibility"})
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
                         for (TextView sortButton: sortButtons.values()) {
                             sortButton.getBackground().clearColorFilter();
                         }
