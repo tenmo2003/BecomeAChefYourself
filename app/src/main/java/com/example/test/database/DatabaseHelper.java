@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
+import com.example.test.components.Comment;
 import com.example.test.components.User;
 
 import java.util.ArrayList;
@@ -506,5 +507,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return bookmarked;
+    }
+
+    public List<Comment> getCommentWithArticleID(String articleID) {
+        List<Comment> commentList = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                "commenter",
+                "content"
+        };
+        String selection = "article_id=?";
+        String[] selectionArgs = { articleID };
+        Cursor cursor = db.query(
+                "comments",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+
+        try {
+            while (cursor.moveToNext()) {
+                String commenter = cursor.getString(cursor.getColumnIndexOrThrow("commenter"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+
+                Comment comment = new Comment(commenter, content);
+                commentList.add(comment);
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+
+        return commentList;
     }
 }

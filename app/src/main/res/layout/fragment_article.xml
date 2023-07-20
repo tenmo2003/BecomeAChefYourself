@@ -54,7 +54,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,12 +66,92 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginVertical="10dp"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="10dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@drawable/user_in_article_bg"
+                android:elevation="1dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/user_avatar_in_article"
+                        android:scaleType="centerCrop">
+                    </ImageView>
+                </androidx.cardview.widget.CardView>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="5dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/publisher_text"
+                        android:text="tennguoidung"
+                        android:textSize="20sp"
+                        android:letterSpacing="0.03"
+                        android:textColor="@color/colorPrimary">
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/followers_in_article"
+                            android:text="2 followers"
+                            android:textSize="11sp"
+                            android:layout_marginLeft="5dp">
+                        </TextView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/recipes_in_article"
+                            android:textSize="11sp"
+                            android:text="2 recipes"
+                            android:gravity="center"
+                            android:layout_weight="1">
+                        </TextView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="end">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/view_author_profile"
+                        android:background="@drawable/arrow"
+                        android:layout_gravity="center">
+                    </ImageView>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginVertical="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.55"
+                    android:layout_weight="0.8"
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
@@ -118,71 +199,46 @@
                         android:layout_height="40dp"
                         android:src="@drawable/clock" />
                     <TextView
-                        android:id="@+id/time_to_make_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:id="@+id/published_date_text"
                         android:gravity="center"
-                        android:text="35 phút" />
+                        android:text="Vua xong" />
                 </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    app:cardCornerRadius="20dp"
-                    android:elevation="0dp"
-                    android:layout_gravity="center">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/user_avatar_in_article"
-                        android:scaleType="centerCrop">
-                    </ImageView>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:id="@+id/publisher_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="username"
-                    android:textSize="18sp"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="5dp"
-                    android:layout_gravity="center_vertical" />
-
-                <TextView
-                    android:id="@+id/published_date_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Vừa xong"
-                    android:layout_gravity="center"
-                    android:gravity="end"
-                    android:layout_weight="1">
-                </TextView>
-
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:background="@color/gray"
-                android:layout_marginTop="30dp">
+                android:layout_marginTop="20dp">
             </View>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/ingredients"
-                android:layout_marginVertical="10dp"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-black" />
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ingredients"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-black"
+                    android:layout_weight="1">
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="6 thành phần"
+                    android:textColor="@color/colorAccent"
+                    android:gravity="end"
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
+                </TextView>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/ingredients_text"
@@ -193,13 +249,32 @@
                 android:fontFamily="sans-serif"
                 android:lineSpacingMultiplier="1.2"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/recipe"
-                android:layout_marginVertical="10dp"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-black"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/recipe"
+                    android:layout_marginVertical="10dp"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-black"
+                    android:layout_weight="1">
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/time_to_make_text"
+                    android:text="25 phút"
+                    android:textColor="@color/colorAccent"
+                    android:gravity="end"
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
+                </TextView>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/recipe_text"
@@ -208,7 +283,23 @@
                 android:text="recipe here"
                 android:textColor="@color/black"
                 android:fontFamily="sans-serif"
-                android:lineSpacingMultiplier="1.2"/>
+                android:lineSpacingMultiplier="1.2">
+            </TextView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/comment"
+                android:layout_marginVertical="10dp"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-black">
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/comment_list">
+            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

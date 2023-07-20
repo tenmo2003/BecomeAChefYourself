@@ -26,8 +26,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
-    List<Article> articleList;
-    Context context;
+    private List<Article> articleList;
+    private Context context;
 
     public void setArticleList(List<Article> articleList) {
         this.articleList = new ArrayList<>();
@@ -151,6 +151,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
+                args.putString("articleID", String.valueOf(article.getId()));
                 args.putString("dish_name", article.getDishName());
                 args.putString("recipe_content", article.getRecipe());
                 args.putString("ingredients", article.getIngredients());

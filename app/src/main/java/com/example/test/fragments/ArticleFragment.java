@@ -3,6 +3,7 @@ package com.example.test.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
+import com.example.test.adapters.CommentListAdapter;
+import com.example.test.components.Comment;
+import com.example.test.database.DatabaseHelper;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
-
-import org.w3c.dom.Text;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +31,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ArticleFragment extends Fragment {
+    List<Comment> commentList;
+    CommentListAdapter commentListAdapter;
+    RecyclerView commentListView;
+    DatabaseHelper dbHelper;
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_article, container, false);
@@ -48,9 +58,11 @@ public class ArticleFragment extends Fragment {
         TextView reactTextView = view.findViewById(R.id.react_count);
         TextView commentTextView = view.findViewById(R.id.cmt_count);
         ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
+        ImageView viewAuthorProfile = view.findViewById(R.id.view_author_profile);
 
         Bundle args = getArguments();
         if (args != null) {
+            String articleID = args.getString("articleID");
             String dishName = args.getString("dish_name");
             String recipeContent = args.getString("recipe_content");
             String ingredients = args.getString("ingredients");
@@ -70,9 +82,19 @@ public class ArticleFragment extends Fragment {
             commentTextView.setText(comments + " bình luận");
 
             userAvatar.setImageResource(R.drawable.user_avatar);
+
+            commentListAdapter = new CommentListAdapter();
+            dbHelper = new DatabaseHelper(getActivity());
+            commentList = dbHelper.getCommentWithArticleID(articleID);
+            commentListAdapter.setComments(commentList);
+
+            commentListView = view.findViewById(R.id.comment_list);
+            commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            commentListView.setHasFixedSize(true);
+            commentListView.setAdapter(commentListAdapter);
         }
 
-        publisherTextView.setOnClickListener(new View.OnClickListener() {
+        viewAuthorProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
