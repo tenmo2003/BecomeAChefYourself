@@ -157,7 +157,8 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 args.putString("publisher", article.getPublisher());
                 args.putString("publishedDate", article.getPublishedTime());
                 args.putString("time_to_make", article.getTimeToMake());
-                args.putString("rating", String.valueOf(article.getLikes()));
+                args.putString("reacts", String.valueOf(article.getLikes()));
+                args.putString("comments", String.valueOf(article.getComments()));
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }

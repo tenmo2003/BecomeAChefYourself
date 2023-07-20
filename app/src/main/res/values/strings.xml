@@ -40,7 +40,7 @@
 
     <string name="re_enter_password_string">Nhập lại mật khẩu</string>
     <string name="already_have_account__string">Đã có tài khoản?</string>
-    <string name="most_follow">Người dùng có lượng theo dõi nhiều nhất</string>
+    <string name="most_follow">Nhiều follow nhất</string>
     <string name="most_react">Nhiều lượt thích nhất</string>
     <string name="most_recent">Gần đây nhất</string>
     <string name="all">Tất cả</string>
@@ -73,6 +73,9 @@
 
     <!-- create_post_4 strings -->
     <string name="upload_string">Đăng bài</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
+    <!-- article strings -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="ingredients">Nguyên liệu</string>
+    <string name="recipe">Chế biến</string>
 </resources>

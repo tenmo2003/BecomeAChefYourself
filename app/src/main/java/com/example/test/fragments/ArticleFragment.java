@@ -1,11 +1,13 @@
 package com.example.test.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,24 +18,23 @@ import androidx.navigation.Navigation;
 import com.example.test.R;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import org.w3c.dom.Text;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ArticleFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-//        SearchViewModel searchViewModel =
-//                new ViewModelProvider(this).get(SearchViewModel.class);
-//
-//        binding = FragmentSearchBinding.inflate(inflater, container, false);
-//        View root = binding.getRoot();
-//
-//        final TextView textView = binding.textSearch;
-//        searchViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-//        return root;
-
         View view = inflater.inflate(R.layout.fragment_article, container, false);
 
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -44,7 +45,9 @@ public class ArticleFragment extends Fragment {
         TextView publisherTextView = view.findViewById(R.id.publisher_text);
         TextView publishedDateTextView = view.findViewById(R.id.published_date_text);
         TextView timeToMakeTextView = view.findViewById(R.id.time_to_make_text);
-        TextView ratingTextView = view.findViewById(R.id.ratings_text);
+        TextView reactTextView = view.findViewById(R.id.react_count);
+        TextView commentTextView = view.findViewById(R.id.cmt_count);
+        ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
 
         Bundle args = getArguments();
         if (args != null) {
@@ -54,15 +57,19 @@ public class ArticleFragment extends Fragment {
             String publisher = args.getString("publisher");
             String publishedDate = args.getString("publishedDate");
             String timeToMake = args.getString("time_to_make");
-            String rating = args.getString("rating");
+            String reacts = args.getString("reacts");
+            String comments = args.getString("comments");
 
             collapsingToolbarLayout.setTitle(dishName);
             recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
             ingredientsTextView.setText(formatIngredients(ingredients));
-            publishedDateTextView.setText(publishedDate);
+            publishedDateTextView.setText(postedTime(publishedDate));
             publisherTextView.setText(publisher);
             timeToMakeTextView.setText(timeToMake);
-            ratingTextView.setText(rating);
+            reactTextView.setText(reacts + " lượt thích");
+            commentTextView.setText(comments + " bình luận");
+
+            userAvatar.setImageResource(R.drawable.user_avatar);
         }
 
         publisherTextView.setOnClickListener(new View.OnClickListener() {
@@ -75,36 +82,6 @@ public class ArticleFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
             }
         });
-
-
-//        Html test text
-//        <h1>Spaghetti Bolognese Recipe</h1>
-//	<ul>
-//		<li><strong>Prep Time:</strong> 15 minutes</li>
-//		<li><strong>Cook Time:</strong> 1 hour</li>
-//		<li><strong>Total Time:</strong> 1 hour 15 minutes</li>
-//	</ul>
-//	<h2>Ingredients:</h2>
-//	<ul>
-//		<li>1 pound spaghetti</li>
-//		<li>1 pound ground beef</li>
-//		<li>1 onion, chopped</li>
-//		<li>2 cloves garlic, minced</li>
-//		<li>1 can (28 ounces) crushed tomatoes</li>
-//		<li>1 teaspoon dried basil</li>
-//		<li>1 teaspoon dried oregano</li>
-//		<li>1/2 teaspoon salt</li>
-//		<li>1/4 teaspoon black pepper</li>
-//		<li>Grated Parmesan cheese, for serving</li>
-//	</ul>
-//	<h2>Directions:</h2>
-//	<ol>
-//		<li>Bring a large pot of salted water to a boil. Add spaghetti and cook according to package directions.</li>
-//		<li>Meanwhile, in a large skillet over medium heat, cook ground beef, onion, and garlic until beef is no longer pink. Drain any excess fat.</li>
-//		<li>Add crushed tomatoes, basil, oregano, salt, and black pepper to the skillet. Bring to a simmer and cook for 20-30 minutes, stirring occasionally.</li>
-//		<li>Drain spaghetti and return to pot. Add sauce and toss to coat.</li>
-//		<li>Serve hot with grated Parmesan cheese.</li>
-//	</ol>
 
         Button backButton = view.findViewById(R.id.back_button);
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -134,5 +111,62 @@ public class ArticleFragment extends Fragment {
                     .append("\n");
         }
         return builder.toString();
+    }
+
+    private String postedTime(String publishedTime) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            int periodAsSecond = subTime(publishedTime, dateTimeFormatter.format(now));
+
+            int days = periodAsSecond / 3600 / 24;
+            if (days >= 365) {
+                return days / 365 + " năm trước";
+            }
+            if (days >= 30) {
+                return days / 30 + " tháng trước";
+            }
+            if (days >= 1) {
+                return days + " ngày trước";
+            }
+
+            if (periodAsSecond >= 3600) {
+                return periodAsSecond / 3600 + " giờ trước";
+            }
+            if (periodAsSecond >= 60) {
+                return periodAsSecond / 60 + " phút trước";
+            }
+            return "Vừa xong";
+        }
+        return "Đã từ rất lâu";
+    }
+
+    private int subTime(String past, String now) {
+        //DateTime format yyyy-MM-dd HH:mm:ss
+
+        //Convert DateTime to array
+        List<String> pastDate = Arrays.asList(past.split(" ")[0].split("-"));
+        List<String> pastTime = Arrays.asList(past.split(" ")[1].split(":"));
+        List<String> pastList = new ArrayList<>();
+        pastList.addAll(pastDate);
+        pastList.addAll(pastTime);
+
+        List<String> nowDate = Arrays.asList(now.split(" ")[0].split("-"));
+        List<String> nowTime = Arrays.asList(now.split(" ")[1].split(":"));
+        List<String> nowList = new ArrayList<>();
+        nowList.addAll(nowDate);
+        nowList.addAll(nowTime);
+
+        //Change time from GMT+0 to GMT+7
+        //pastList.set(3, String.valueOf(Integer.parseInt(pastList.get(4)) + 7));
+        //Sub year for year, month for month,...
+        int[] period = new int[6];
+        for (int i = 0; i < 6; i++) {
+            period[i] = Integer.parseInt(nowList.get(i)) - Integer.parseInt(pastList.get(i));
+        }
+
+        return (period[0] * 365 + period[1] * 30 + period[2]) * 24 * 3600
+                + (period[3] * 3600 + period[4] * 60 + period[5]);
     }
 }
