@@ -105,6 +105,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.dish_name.setText(articleList.get(position).getDishName());
         holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
+        holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         holder.isBookmark = MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId());
         if (holder.isBookmark) {
@@ -112,6 +113,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         } else {
             holder.bookmark.setImageResource(R.drawable.bookmark);
         }
+
         holder.dbHelper = dbHelper;
         holder.context = context;
     }
@@ -128,7 +130,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     TextView dish_name, user_name, cmt_count, react_count;
     ImageView dish_img, user_avatar, bookmark;
     boolean isBookmark;
-
     Context context;
     DatabaseHelper dbHelper;
 
@@ -145,8 +146,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         //default value
         user_avatar.setImageResource(R.drawable.user_avatar);
-        cmt_count.setText("12");
-
+        
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,7 +157,8 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 args.putString("publisher", article.getPublisher());
                 args.putString("publishedDate", article.getPublishedTime());
                 args.putString("time_to_make", article.getTimeToMake());
-                args.putString("rating", String.valueOf(article.getLikes()));
+                args.putString("reacts", String.valueOf(article.getLikes()));
+                args.putString("comments", String.valueOf(article.getComments()));
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }

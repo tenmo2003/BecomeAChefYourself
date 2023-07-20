@@ -7,6 +7,8 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,6 +59,12 @@ public class HomeFragment extends Fragment {
     List<Article> articlesList;
     DatabaseHelper dbHelper;
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+    }
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -74,10 +83,10 @@ public class HomeFragment extends Fragment {
         recommendRecipeAdapter = new RecommendRecipeAdapter();
         recommendRecipeView.setAdapter(recommendRecipeAdapter);
 
-        recommendRecipeView.scrollToPosition(position);
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recommendRecipeView);
-        recommendRecipeView.smoothScrollBy(500, 0);
+        recommendRecipeView.scrollToPosition(position);
+        recommendRecipeView.smoothScrollBy(200, 0);
 
         recommendRecipeView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -140,8 +149,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
-        recommendRecipeView.scrollToPosition(position);
+        autoScroll();
     }
 
     @Override
@@ -165,11 +173,14 @@ public class HomeFragment extends Fragment {
                     timerHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (position == -1) {
-                                position = 1;
+                            if (position == Integer.MAX_VALUE || position == -1) {
+                                position = Integer.MAX_VALUE / 2;
+                                recommendRecipeView.scrollToPosition(position);
+                            } else {
+                                position++;
+                                recommendRecipeView.smoothScrollToPosition(position);
+                                Log.i("autoScroll:", String.valueOf(position));
                             }
-                            recommendRecipeView.smoothScrollToPosition(position);
-                            position++;
                         }
                     });
                 }
@@ -186,7 +197,8 @@ public class HomeFragment extends Fragment {
                 timerTask.cancel();
             timer = null;
             timerTask = null;
-//            position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+            position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+            Log.i("stopScroll:", String.valueOf(position));
         }
     }
 

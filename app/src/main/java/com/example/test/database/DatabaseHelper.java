@@ -113,12 +113,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS article_dislikes");
         }
         if (oldVersion < 7) {
-            db.execSQL("DROP TABLE IF EXISTS bookmarks");
             db.execSQL("DROP TABLE IF EXISTS article_likes");
-            db.execSQL("DROP TABLE IF EXISTS comments");
+            db.execSQL("DROP TABLE IF EXISTS bookmarks");
+            //db.execSQL("DROP TABLE IF EXISTS comments");
+            //db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
             db.execSQL(SQL_CREATE_ENTRIES_BOOKMARK);
             db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
-            db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
         }
     }
 
@@ -252,9 +252,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
                 int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
                 articles.add(article);
             }
         } finally {
@@ -302,9 +303,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
                 int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
                 articles.add(article);
             }
         } finally {
@@ -354,9 +356,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
                 int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, publishedTime, timeToMake);
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
                 savedArticles.add(article);
             }
         } finally {
@@ -423,6 +426,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Define the arguments to replace the placeholder in the query
         String[] args = {username};
+
+        // Execute the query and obtain the result cursor
+        Cursor cursor = db.rawQuery(query, args);
+
+        // Get the count from the first column of the first row of the cursor
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        // Close the cursor and the database
+        cursor.close();
+        db.close();
+
+        // Return the count
+        return count;
+    }
+
+    public int getTotalCommentCount(int article_id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        // Define the query to get the count of followers for the given user
+        String query = "SELECT COUNT(*) FROM comments WHERE article_id=?";
+
+        // Define the arguments to replace the placeholder in the query
+        String[] args = {String.valueOf(article_id)};
 
         // Execute the query and obtain the result cursor
         Cursor cursor = db.rawQuery(query, args);
