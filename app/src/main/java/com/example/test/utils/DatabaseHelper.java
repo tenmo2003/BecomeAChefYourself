@@ -542,7 +542,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 selectionArgs,
                 null,
                 null,
-                null
+                "id DESC"
         );
 
 
@@ -560,5 +560,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return commentList;
+    }
+
+    public boolean addComment(String articleID, String commenter, String content) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("article_id", articleID);
+        values.put("commenter", commenter);
+        values.put("content", content);
+
+        long result = db.insert("comments", null, values);
+
+        db.close();
+
+        return result != -1;
     }
 }
