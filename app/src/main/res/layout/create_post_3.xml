@@ -113,12 +113,35 @@
 				android:text="@string/ingredients_string"
 				/>
 
-			<EditText
-				android:id="@+id/ingredients_input"
+			<LinearLayout
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:hint="@string/ingredients_hint"
-				android:inputType="textMultiLine" />
+				android:orientation="horizontal">
+				<EditText
+					android:id="@+id/ingredients_input"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:inputType="textMultiLine"
+					android:layout_weight="13"/>
+
+				<ImageButton
+					android:id="@+id/add_btn"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:src="@drawable/baseline_add_box_24"
+					android:backgroundTint="@color/color_bg_spinner"
+					/>
+
+			</LinearLayout>
+
+			<com.example.test.utils.ExpandedListView
+				android:id="@+id/ingredients_list"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:scrollbars="none"
+				android:padding="0px"
+				/>
 
 			<TextView android:id="@+id/recipe_string"
 				android:textStyle="bold"

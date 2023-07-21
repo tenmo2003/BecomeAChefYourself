@@ -66,8 +66,8 @@
     <string name="type_string">Loại món ăn:</string>
     <string name="dish_name_string">Tên món ăn:</string>
     <string name="image_string">Ảnh món ăn:</string>
-    <string name="ingredients_string">Nguyên liệu (cách nhau bởi dấu ;)</string>
-    <string name="ingredients_hint">Nguyên liệu 1; nguyên liệu 2; …</string>
+    <string name="ingredients_string">Nguyên liệu</string>
+    <string name="ingredients_hint">Nguyên liệu</string>
     <string name="recipe_string">Công thức:</string>
     <string name="recipe_hint">Bước 1:…</string>
     <string name="time_to_make_string">Thời gian làm ước tính:</string>

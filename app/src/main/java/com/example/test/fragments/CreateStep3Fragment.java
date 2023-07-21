@@ -1,16 +1,19 @@
 package com.example.test.fragments;
 
-import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -22,8 +25,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.test.R;
+import com.example.test.adapters.IngredientListAdapter;
+import com.example.test.utils.ExpandedListView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,6 +38,10 @@ public class CreateStep3Fragment extends Fragment {
     private Spinner typeChoice;
 
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
+
+    private static ExpandedListView ingredientsListView;
+    private static ArrayList<String> ingredientsList;
+    private static IngredientListAdapter ingredientsAdapter;
 
     ImageView imgInput;
     @Override
@@ -73,15 +81,21 @@ public class CreateStep3Fragment extends Fragment {
 
         List<String> types = new ArrayList<>(Arrays.asList("Món thịt", "Món hải sản", "Món chay", "Món canh", "Món rau", "Mì", "Bún", "Món cuốn", "Món xôi", "Món cơm", "Món bánh mặn", "Món bánh ngọt"));
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_item, types);
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_item, types);
 
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        typeChoice.setAdapter(adapter);
+        typeChoice.setAdapter(typeAdapter);
 
+        ingredientsListView = view.findViewById(R.id.ingredients_list);
+
+        ingredientsList = new ArrayList<>();
+
+        ingredientsAdapter = new IngredientListAdapter(getActivity(), ingredientsList);
+
+        ingredientsListView.setAdapter(ingredientsAdapter);
 
         EditText dishNameInput = view.findViewById(R.id.dish_name_input);
-        EditText ingredientsInput = view.findViewById(R.id.ingredients_input);
         EditText recipeInput = view.findViewById(R.id.recipe_input);
         EditText timeToMakeInput = view.findViewById(R.id.time_to_make_input);
 
@@ -90,6 +104,30 @@ public class CreateStep3Fragment extends Fragment {
         ImageView backBtn = view.findViewById(R.id.back_button);
 
         imgInput = view.findViewById(R.id.img_input);
+
+        ImageButton addIngredientBtn = view.findViewById(R.id.add_btn);
+        EditText ingredientInput = view.findViewById(R.id.ingredients_input);
+        StringBuilder ingredientString = new StringBuilder();
+
+        addIngredientBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ingredient = ingredientInput.getText().toString();
+
+                if (ingredient.equals("")) {
+                    Toast.makeText(getActivity(), "Xin hãy nhập nguyên liệu", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                addItem(ingredient);
+
+                if (ingredientString.toString().length() != 0) {
+                    ingredientString.append(';');
+                }
+                ingredientString.append(ingredient);
+
+                ingredientInput.setText("");
+            }
+        });
 
         imgInput.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +143,7 @@ public class CreateStep3Fragment extends Fragment {
             public void onClick(View view) {
                 ShareFragment.typeChoice = typeChoice.getSelectedItem().toString();
                 ShareFragment.dishName = dishNameInput.getText().toString();
-                ShareFragment.ingredients = ingredientsInput.getText().toString();
+                ShareFragment.ingredients = ingredientString.toString();
                 ShareFragment.recipe = recipeInput.getText().toString();
                 ShareFragment.timeToMake = timeToMakeInput.getText().toString();
 
@@ -126,5 +164,19 @@ public class CreateStep3Fragment extends Fragment {
             }
         });
 
+    }
+
+    public void addItem(String ingredient) {
+        ingredientsList.add(ingredient);
+
+        ingredientsAdapter.notifyDataSetChanged();
+
+        LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (ingredientsList.size() + 1) * 100);
+        ingredientsListView.setLayoutParams(mParam);
+    }
+
+    public static void removeItem(int position) {
+        ingredientsList.remove(position);
+        ingredientsAdapter.notifyDataSetChanged();
     }
 }
