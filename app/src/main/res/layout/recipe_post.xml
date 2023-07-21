@@ -111,12 +111,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/post_theme"
-                android:layout_marginRight="2dp"
+                android:layout_marginEnd="2dp"
                 android:paddingHorizontal="6dp"
                 android:paddingVertical="2dp">
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/cmt">
                 </ImageView>
 
@@ -124,10 +125,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cmt_count"
-                    android:textSize="13sp"
+                    android:textSize="11sp"
                     android:textColor="@color/black"
                     android:layout_gravity="center"
-                    android:layout_marginLeft="3dp">
+                    android:layout_marginStart="3dp">
                 </TextView>
             </LinearLayout>
 
@@ -138,16 +139,17 @@
                 android:paddingHorizontal="5dp"
                 android:paddingVertical="2dp">
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/react">
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/reacted"
+                    android:layout_gravity="center">
                 </ImageView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/react_count"
-                    android:textSize="13sp"
+                    android:textSize="11sp"
                     android:textColor="@color/black"
                     android:layout_gravity="center"
                     android:layout_marginLeft="1dp">

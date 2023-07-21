@@ -42,8 +42,8 @@ public class HomeFragment extends Fragment {
     SearchView searchView;
     HashMap<String, TextView> sortButtons = new HashMap<>();
 
-    RecipeListAdapter recipeListAdapter;
-    RecommendRecipeAdapter recommendRecipeAdapter;
+    static RecipeListAdapter recipeListAdapter;
+    static RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
     LinearLayoutManager rcmLLayoutManager;
     Timer timer;
@@ -63,26 +63,38 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        if (articlesList == null) {
+        //if (articlesList == null) {
             dbHelper = new DatabaseHelper(getActivity());
             articlesList = dbHelper.getAllArticles();
             recommendRecipeList = articlesList.subList(0, 5);
-        }
+
+            recommendRecipeAdapter = new RecommendRecipeAdapter();
+            recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
+
+            recipeListAdapter = new RecipeListAdapter();
+            recipeListAdapter.setArticleList(articlesList);
+        //}
 
         //Recycler display recommend recipe
         recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
         recommendRecipeView.setHasFixedSize(true);
         rcmLLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recommendRecipeView.setLayoutManager(rcmLLayoutManager);
-
-        recommendRecipeAdapter = new RecommendRecipeAdapter();
-        recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
         recommendRecipeView.setAdapter(recommendRecipeAdapter);
 
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recommendRecipeView);
         recommendRecipeView.scrollToPosition(position);
         recommendRecipeView.smoothScrollBy(200, 0);
+
+        //Recycler display grid recipe
+        recipeListView = view.findViewById(R.id.recipe_list);
+        recipeListView.setHasFixedSize(true);
+        recipeListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+
+        recipeListAdapter.setContext(getActivity());
+        recipeListView.setAdapter(recipeListAdapter);
+
 
         recommendRecipeView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -96,16 +108,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
-        //Recycler display grid recipe
-        recipeListView = view.findViewById(R.id.recipe_list);
-        recipeListView.setHasFixedSize(true);
-        recipeListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
-        recipeListAdapter = new RecipeListAdapter();
-        recipeListAdapter.setArticleList(articlesList);
-        recipeListAdapter.setContext(getActivity());
-        recipeListView.setAdapter(recipeListAdapter);
 
         //Search bar
         searchView = view.findViewById(R.id.search_view);

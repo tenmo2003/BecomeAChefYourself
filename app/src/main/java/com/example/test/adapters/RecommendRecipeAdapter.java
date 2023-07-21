@@ -22,8 +22,7 @@ public class RecommendRecipeAdapter extends RecyclerView.Adapter<RecommendRecipe
     List<Article> recommendRecipeList;
 
     public void setRecommendRecipeList(List<Article> recommendRecipeList) {
-        this.recommendRecipeList = new ArrayList<>();
-        this.recommendRecipeList.addAll(recommendRecipeList);
+        this.recommendRecipeList = new ArrayList<>(recommendRecipeList);
         notifyDataSetChanged();
     }
 
