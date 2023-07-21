@@ -1,6 +1,5 @@
 package com.example.test.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,10 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -160,6 +158,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 args.putString("time_to_make", article.getTimeToMake());
                 args.putString("reacts", String.valueOf(article.getLikes()));
                 args.putString("comments", String.valueOf(article.getComments()));
+                args.putString("imageURL", article.getImgURL());
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }

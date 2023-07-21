@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 
 public class SignUpFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,

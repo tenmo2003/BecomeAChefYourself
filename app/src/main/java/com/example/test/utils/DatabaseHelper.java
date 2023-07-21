@@ -1,12 +1,12 @@
-package com.example.test.database;
+package com.example.test.utils;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -42,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  likes INTEGER DEFAULT 0,\n" +
                                                             "  published_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
                                                             "  time_to_make TEXT," +
+                                                            "  image TEXT," +
                                                             "  FOREIGN KEY(publisher) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
 
@@ -197,7 +198,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients) {
+    public int getNextArticleID() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int maxID = (int) DatabaseUtils.longForQuery(db, "SELECT last_insert_rowid() FROM articles", null);
+        db.close();
+        return maxID + 1;
+    }
+
+    public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Create a new ContentValues object that contains the values for the new article
@@ -209,6 +217,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("meal", meal);
         values.put("serve_order_class", serve_order_class);
         values.put("type", type);
+        values.put("time_to_make", timeToMake);
+        values.put("image", imgURL);
 
         // Insert the new article into the database
         long result = db.insert("articles", null, values);
@@ -231,7 +241,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "ingredients",
                 "likes",
                 "published_time",
-                "time_to_make"
+                "time_to_make",
+                "image"
         };
         Cursor cursor = db.query(
                 "articles",
@@ -256,7 +267,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
+                String imgURL = cursor.getString(cursor.getColumnIndexOrThrow("image"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
                 articles.add(article);
             }
         } finally {
@@ -280,7 +292,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "ingredients",
                 "likes",
                 "published_time",
-                "time_to_make"
+                "time_to_make",
+                "image"
         };
         String selection = "publisher=?";
         String[] selectionArgs = { username };
@@ -307,7 +320,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
+                String imgURL = cursor.getString(cursor.getColumnIndexOrThrow("image"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
                 articles.add(article);
             }
         } finally {
@@ -331,7 +345,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "ingredients",
                 "likes",
                 "published_time",
-                "time_to_make"
+                "time_to_make",
+                "image"
         };
         String selection = "bookmarks.user=?";
         String[] selectionArgs = { username };
@@ -360,7 +375,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake);
+                String imgURL = cursor.getString(cursor.getColumnIndexOrThrow("image"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
                 savedArticles.add(article);
             }
         } finally {

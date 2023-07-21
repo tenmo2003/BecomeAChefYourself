@@ -12,9 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.test.R;
-import com.example.test.activities.MainActivity;
 import com.example.test.adapters.RecipeListAdapter;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 
 public class UserPostFragment extends Fragment {
 

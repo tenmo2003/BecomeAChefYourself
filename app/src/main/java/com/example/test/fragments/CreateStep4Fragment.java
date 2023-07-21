@@ -1,8 +1,10 @@
 package com.example.test.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +20,12 @@ import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
+import com.example.test.utils.ImageController;
 
 import java.time.LocalDate;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CreateStep4Fragment extends Fragment {
 
@@ -70,13 +75,37 @@ public class CreateStep4Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients);
-                if (result) {
-                    Toast.makeText(getActivity(), "Recipe shared successfully!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.navigation_home);
-                } else {
-                    Toast.makeText(getActivity(), "We have failed to share your recipe!", Toast.LENGTH_SHORT).show();
+                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, "https://tenmo2003.000webhostapp.com/article_" + dbHelper.getNextArticleID() + ".png");
+                if (ShareFragment.imageURI != null) {
+
+                    ProgressDialog progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage("Uploading...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i("Image Upload", "Uploading");
+                            ImageController.uploadImage(ShareFragment.imageURI, "article_" + dbHelper.getNextArticleID() + ".png", getContext());
+                            Log.i("Image Upload", "Uploaded");
+
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                    if (result) {
+                                        Toast.makeText(getActivity(), "Recipe shared successfully!", Toast.LENGTH_SHORT).show();
+                                        Navigation.findNavController(view).navigate(R.id.navigation_home);
+                                    } else {
+                                        Toast.makeText(getActivity(), "We have failed to share your recipe!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
+
             }
         });
     }

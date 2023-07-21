@@ -1,4 +1,4 @@
-package com.example.test.database;
+package com.example.test.utils;
 
 import android.util.Log;
 

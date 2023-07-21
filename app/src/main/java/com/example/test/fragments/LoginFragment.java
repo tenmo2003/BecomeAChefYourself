@@ -14,8 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
-import com.example.test.components.User;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
 
 public class LoginFragment extends Fragment {

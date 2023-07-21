@@ -1,5 +1,6 @@
 package com.example.test.fragments;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class ShareFragment extends Fragment {
     public static String ingredients;
     public static String recipe;
     public static String timeToMake;
+    public static Uri imageURI;
 
     public static ViewPager2 viewPager;
 

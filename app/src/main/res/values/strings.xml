@@ -65,6 +65,7 @@
     <string name="done_string">Xem trước</string>
     <string name="type_string">Loại món ăn:</string>
     <string name="dish_name_string">Tên món ăn:</string>
+    <string name="image_string">Ảnh món ăn:</string>
     <string name="ingredients_string">Nguyên liệu (cách nhau bởi dấu ;)</string>
     <string name="ingredients_hint">Nguyên liệu 1; nguyên liệu 2; …</string>
     <string name="recipe_string">Công thức:</string>

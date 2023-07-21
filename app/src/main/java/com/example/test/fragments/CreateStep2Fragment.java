@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,7 +36,13 @@ public class CreateStep2Fragment extends Fragment {
         nextStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
+                if (ShareFragment.serveOrderChoice == null) {
+                    Toast.makeText(getActivity(), "Vui lòng chọn một ô", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
+                }
             }
         });
 

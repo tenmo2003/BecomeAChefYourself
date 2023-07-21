@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -26,7 +25,7 @@ import com.example.test.R;
 import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.adapters.RecommendRecipeAdapter;
 import com.example.test.components.Article;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 import com.example.test.databinding.FragmentHomeBinding;
 
 import java.text.Normalizer;

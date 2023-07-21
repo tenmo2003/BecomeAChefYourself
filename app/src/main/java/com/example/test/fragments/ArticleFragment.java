@@ -1,7 +1,11 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,14 +25,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.test.R;
 import com.example.test.adapters.CommentListAdapter;
 import com.example.test.components.Comment;
-import com.example.test.database.DatabaseHelper;
+import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ArticleFragment extends Fragment {
     List<Comment> commentList;
@@ -71,6 +82,36 @@ public class ArticleFragment extends Fragment {
             String timeToMake = args.getString("time_to_make");
             String reacts = args.getString("reacts");
             String comments = args.getString("comments");
+            String imageURL = args.getString("imageURL");
+            ImageView dishImg = view.findViewById(R.id.dish_img);
+
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    URL newurl = null;
+                    try {
+                        newurl = new URL(imageURL);
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                    Bitmap mIcon_val;
+                    try {
+                        mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            dishImg.setImageBitmap(mIcon_val);
+                        }
+                    });
+                }
+            });
 
             collapsingToolbarLayout.setTitle(dishName);
             recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));

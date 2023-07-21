@@ -1,7 +1,5 @@
 package com.example.test.components;
 
-import com.example.test.database.DatabaseHelper;
-
 public class Article {
     private int id;
     private String dishName;
@@ -15,9 +13,10 @@ public class Article {
     private int comments;
     private String publishedTime;
     private String timeToMake;
+    private String imgURL;
 
     public Article(int id, String dishName, String publisher, String meal, String serveOrderClass, String type,
-                   String content, String ingredients, int likes, int comments, String publishedTime, String timeToMake) {
+                   String content, String ingredients, int likes, int comments, String publishedTime, String timeToMake, String imgURL) {
         this.id = id;
         this.dishName = dishName;
         this.publisher = publisher;
@@ -30,6 +29,7 @@ public class Article {
         this.comments = comments;
         this.publishedTime = publishedTime;
         this.timeToMake = timeToMake;
+        this.imgURL = imgURL;
     }
 
     public int getId() {
@@ -78,5 +78,8 @@ public class Article {
 
     public String getIngredients() {
         return ingredients;
+    }
+    public String getImgURL() {
+        return imgURL;
     }
 }
