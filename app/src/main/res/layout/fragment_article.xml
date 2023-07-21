@@ -28,9 +28,8 @@
             <ImageView
                 android:id="@+id/dish_img"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="270dp"
                 android:adjustViewBounds="true"
-                android:src="@drawable/beefsteak"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax">
             </ImageView>
@@ -83,7 +82,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:id="@+id/user_avatar_in_article"
+                        android:id="@+id/author_avatar_in_article"
                         android:scaleType="centerCrop">
                     </ImageView>
                 </androidx.cardview.widget.CardView>
@@ -296,10 +295,48 @@
                 android:fontFamily="sans-serif-black">
             </TextView>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="0dp"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/user_avatar_in_article"
+                        android:scaleType="centerCrop">
+                    </ImageView>
+                </androidx.cardview.widget.CardView>
+
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/comment_edit_text"
+                    android:textSize="15sp"
+                    android:gravity="bottom"
+                    android:layout_weight="4">
+                </EditText>
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:id="@+id/send_comment_btn"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="Gửi">
+                </Button>
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/comment_list">
+                android:id="@+id/comment_list"
+                android:padding="20dp">
             </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

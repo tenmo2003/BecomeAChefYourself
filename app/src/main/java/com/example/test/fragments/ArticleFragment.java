@@ -3,6 +3,7 @@ package com.example.test.fragments;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,9 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.adapters.CommentListAdapter;
 import com.example.test.components.Comment;
 import com.example.test.utils.DatabaseHelper;
@@ -40,6 +45,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.Objects;
 
 public class ArticleFragment extends Fragment {
     List<Comment> commentList;
@@ -68,72 +74,81 @@ public class ArticleFragment extends Fragment {
         TextView timeToMakeTextView = view.findViewById(R.id.time_to_make_text);
         TextView reactTextView = view.findViewById(R.id.react_count);
         TextView commentTextView = view.findViewById(R.id.cmt_count);
-        ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
+        ImageView authorAvatar = view.findViewById(R.id.author_avatar_in_article);
         ImageView viewAuthorProfile = view.findViewById(R.id.view_author_profile);
+        ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
+        EditText commentEditText = view.findViewById(R.id.comment_edit_text);
+        Button sendCommentBtn = view.findViewById(R.id.send_comment_btn);
+
+        //example data
+        authorAvatar.setImageResource(R.drawable.user_avatar);
+
+        if (MainActivity.loggedInUser != null) {
+            userAvatar.setImageResource(R.drawable.user_avatar);
+        } else {
+            userAvatar.setImageResource(R.drawable.ban);
+        }
 
         Bundle args = getArguments();
-        if (args != null) {
-            String articleID = args.getString("articleID");
-            String dishName = args.getString("dish_name");
-            String recipeContent = args.getString("recipe_content");
-            String ingredients = args.getString("ingredients");
-            String publisher = args.getString("publisher");
-            String publishedDate = args.getString("publishedDate");
-            String timeToMake = args.getString("time_to_make");
-            String reacts = args.getString("reacts");
-            String comments = args.getString("comments");
-            String imageURL = args.getString("imageURL");
-            ImageView dishImg = view.findViewById(R.id.dish_img);
+        assert args != null;
+        String articleID = args.getString("articleID");
+        String dishName = args.getString("dish_name");
+        String recipeContent = args.getString("recipe_content");
+        String ingredients = args.getString("ingredients");
+        String publisher = args.getString("publisher");
+        String publishedDate = args.getString("publishedDate");
+        String timeToMake = args.getString("time_to_make");
+        String reacts = args.getString("reacts");
+        String comments = args.getString("comments");
+        String imageURL = args.getString("imageURL");
+        ImageView dishImg = view.findViewById(R.id.dish_img);
 
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            Handler handler = new Handler(Looper.getMainLooper());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
 
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    URL newurl = null;
-                    try {
-                        newurl = new URL(imageURL);
-                    } catch (MalformedURLException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Bitmap mIcon_val;
-                    try {
-                        mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            dishImg.setImageBitmap(mIcon_val);
-                        }
-                    });
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                URL newurl = null;
+                try {
+                    newurl = new URL(imageURL);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
                 }
-            });
+                Bitmap mIcon_val;
+                try {
+                    mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
 
-            collapsingToolbarLayout.setTitle(dishName);
-            recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
-            ingredientsTextView.setText(formatIngredients(ingredients));
-            publishedDateTextView.setText(postedTime(publishedDate));
-            publisherTextView.setText(publisher);
-            timeToMakeTextView.setText(timeToMake);
-            reactTextView.setText(reacts + " lượt thích");
-            commentTextView.setText(comments + " bình luận");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        dishImg.setImageBitmap(mIcon_val);
+                    }
+                });
+            }
+        });
 
-            userAvatar.setImageResource(R.drawable.user_avatar);
+        collapsingToolbarLayout.setTitle(dishName);
+        recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
+        ingredientsTextView.setText(formatIngredients(ingredients));
+        publishedDateTextView.setText(postedTime(publishedDate));
+        publisherTextView.setText(publisher);
+        timeToMakeTextView.setText(timeToMake);
+        reactTextView.setText(reacts + " lượt thích");
+        commentTextView.setText(comments + " bình luận");
 
-            commentListAdapter = new CommentListAdapter();
-            dbHelper = new DatabaseHelper(getActivity());
-            commentList = dbHelper.getCommentWithArticleID(articleID);
-            commentListAdapter.setComments(commentList);
+        commentListAdapter = new CommentListAdapter();
+        dbHelper = new DatabaseHelper(getActivity());
+        commentList = dbHelper.getCommentWithArticleID(articleID);
+        commentListAdapter.setComments(commentList);
 
-            commentListView = view.findViewById(R.id.comment_list);
-            commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-            commentListView.setHasFixedSize(true);
-            commentListView.setAdapter(commentListAdapter);
-        }
+        commentListView = view.findViewById(R.id.comment_list);
+        commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        commentListView.setHasFixedSize(true);
+        commentListView.setAdapter(commentListAdapter);
 
         viewAuthorProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +166,30 @@ public class ArticleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Navigation.findNavController(v).navigateUp();
+            }
+        });
+
+        sendCommentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MainActivity.loggedInUser == null) {
+                    Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String commenter = MainActivity.loggedInUser.getUsername();
+                String content = commentEditText.getText().toString();
+
+                dbHelper.addComment(articleID, commenter, content);
+
+                commentEditText.setText("");
+                commentEditText.clearFocus();
+
+                //Hide device keyboard
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                commentListAdapter.addNewComment(new Comment(commenter, content));
             }
         });
     }
