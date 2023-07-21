@@ -1,6 +1,7 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
@@ -103,33 +104,51 @@ public class ArticleFragment extends Fragment {
         String imageURL = args.getString("imageURL");
         ImageView dishImg = view.findViewById(R.id.dish_img);
 
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
+        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
 
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                URL newurl = null;
-                try {
-                    newurl = new URL(imageURL);
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
-                Bitmap mIcon_val;
-                try {
-                    mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        dishImg.setImageBitmap(mIcon_val);
-                    }
-                });
+        MainActivity.runTask(() -> {
+            URL newurl = null;
+            try {
+                newurl = new URL(imageURL);
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
             }
-        });
+            try {
+                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, () -> {
+            dishImg.setImageBitmap(mIcon_val[0]);
+        }, MainActivity.progressDialog);
+
+//        ExecutorService executor = Executors.newSingleThreadExecutor();
+//        Handler handler = new Handler(Looper.getMainLooper());
+//
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                URL newurl = null;
+//                try {
+//                    newurl = new URL(imageURL);
+//                } catch (MalformedURLException e) {
+//                    throw new RuntimeException(e);
+//                }
+//                Bitmap mIcon_val;
+//                try {
+//                    mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        dishImg.setImageBitmap(mIcon_val);
+//                    }
+//                });
+//            }
+//        });
 
         collapsingToolbarLayout.setTitle(dishName);
         recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));

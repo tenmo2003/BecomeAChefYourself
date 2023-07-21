@@ -1,6 +1,9 @@
 package com.example.test.activities;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MenuItem;
 
 import com.example.test.R;
@@ -17,11 +20,16 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
     public static SQLConnection sqlConnection;
+
+    public static ProgressDialog progressDialog;
 
     public static User loggedInUser = null;
 
@@ -49,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        progressDialog = new ProgressDialog(this);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -80,6 +90,30 @@ public class MainActivity extends AppCompatActivity {
                 }
                 item.setChecked(true);
                 return false;
+            }
+        });
+    }
+
+    public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                background.run();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        result.run();
+                        progressDialog.dismiss();
+                    }
+                });
             }
         });
     }
