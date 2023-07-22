@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
 
@@ -58,7 +59,11 @@ public class LoginFragment extends Fragment {
 
                 if (result) {
                     Toast.makeText(getActivity(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.navigation_profile);
+                    if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+                        Navigation.findNavController(view).navigate(R.id.navigation_admin);
+                    } else {
+                        Navigation.findNavController(view).navigate(R.id.navigation_profile);
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Logged in failed! Check your credentials", Toast.LENGTH_SHORT).show();
                 }

@@ -1,10 +1,8 @@
 package com.example.test.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +22,6 @@ import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
 import java.time.LocalDate;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class CreateStep4Fragment extends Fragment {
 
@@ -58,10 +54,10 @@ public class CreateStep4Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, "https://tenmo2003.000webhostapp.com/article_" + dbHelper.getNextArticleID() + ".png");
+                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + ".jpg");
                 if (ShareFragment.imageURI != null) {
                     MainActivity.runTask(() -> {
-                        ImageController.uploadImage(ShareFragment.imageURI, "article_" + dbHelper.getNextArticleID() + ".png", getContext());
+                        ImageController.uploadImage(ShareFragment.imageURI, "article_" + MainActivity.loggedInUser.getUsername() + dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + ".jpg", getContext());
                     }, () -> {
                         if (result) {
                             Toast.makeText(getActivity(), "Recipe shared successfully!", Toast.LENGTH_SHORT).show();
@@ -87,6 +83,11 @@ public class CreateStep4Fragment extends Fragment {
         TextView publishedDateTextView = fView.findViewById(R.id.published_date_text);
         TextView timeToMakeTextView = fView.findViewById(R.id.time_to_make_text);
         TextView ratingTextView = fView.findViewById(R.id.ratings_text);
+        ImageView dishImg = fView.findViewById(R.id.image);
+
+        if (ShareFragment.imageURI != null) {
+            dishImg.setImageURI(ShareFragment.imageURI);
+        }
 
         dishNameTextView.setText(ShareFragment.dishName);
         recipeContentTextView.setText(Html.fromHtml(ShareFragment.recipe, Html.FROM_HTML_MODE_COMPACT));

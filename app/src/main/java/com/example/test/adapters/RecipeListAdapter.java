@@ -1,6 +1,8 @@
 package com.example.test.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +16,15 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.utils.DatabaseHelper;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -31,6 +37,15 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         this.articleList = new ArrayList<>();
         this.articleList.addAll(articleList);
         notifyDataSetChanged();
+    }
+
+    public void addToArticleList(List<Article> list) {
+        this.articleList.addAll(list);
+        notifyDataSetChanged();
+    }
+
+    public List<Article> getArticleList() {
+        return articleList;
     }
 
     public void setContext(Context context) {
@@ -101,7 +116,25 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.article = articleList.get(position);
         holder.user_name.setText(articleList.get(position).getPublisher());
         holder.dish_name.setText(articleList.get(position).getDishName());
-        holder.dish_img.setImageResource(R.drawable.beefsteak);
+        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
+
+        MainActivity.runTask(() -> {
+            URL newurl = null;
+            try {
+                newurl = new URL(articleList.get(position).getImgURL());
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, () -> {
+            holder.dish_img.setImageBitmap(mIcon_val[0]);
+        }, null);
+//        Glide.with(context).load(articleList.get(position).getImgURL()).into(holder.dish_img);
+//        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
         DatabaseHelper dbHelper = new DatabaseHelper(context);
@@ -119,6 +152,11 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     @Override
     public int getItemCount() {
         return articleList.size();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return articleList.get(position).getId();
     }
 }
 
@@ -144,21 +182,12 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
         //default value
         user_avatar.setImageResource(R.drawable.user_avatar);
-        
+
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Bundle args = new Bundle();
-                args.putString("articleID", String.valueOf(article.getId()));
-                args.putString("dish_name", article.getDishName());
-                args.putString("recipe_content", article.getRecipe());
-                args.putString("ingredients", article.getIngredients());
-                args.putString("publisher", article.getPublisher());
-                args.putString("publishedDate", article.getPublishedTime());
-                args.putString("time_to_make", article.getTimeToMake());
-                args.putString("reacts", String.valueOf(article.getLikes()));
-                args.putString("comments", String.valueOf(article.getComments()));
-                args.putString("imageURL", article.getImgURL());
+                args.putInt("articleID", article.getId());
 
                 Navigation.findNavController(view).navigate(R.id.navigation_article, args);
             }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.components.User;
@@ -15,6 +16,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -70,20 +74,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
-//
-//                NavDestination currentDestination = navController.getCurrentDestination();
-//                if (currentDestination != null && currentDestination.getId() == id) {
-//                    // If the user is already on the selected navigation item, do nothing
-//                    return true;
-//                }
+
+                NavDestination currentDestination = navController.getCurrentDestination();
+                if (currentDestination != null && currentDestination.getId() == id) {
+                    // If the user is already on the selected navigation item, do nothing
+                    return true;
+                }
 
                 if (id == R.id.navigation_home) {
                     navController.navigate(R.id.navigation_home);
                 } else if (id == R.id.navigation_share) {
-                    navController.navigate(R.id.navigation_share);
+                    if (loggedInUser == null) {
+                        navController.navigate(R.id.navigation_login);
+                    } else {
+                        navController.navigate(R.id.navigation_share);
+                    }
                 } else if (id == R.id.navigation_profile) {
                     if (loggedInUser != null) {
-                        navController.navigate(R.id.navigation_profile);
+                        if (loggedInUser.getUsername().equals("admin")) {
+                            navController.navigate(R.id.navigation_admin);
+                        } else {
+                                navController.navigate(R.id.navigation_profile);
+                            }
                     } else {
                         navController.navigate(R.id.navigation_login);
                     }
@@ -95,9 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {
-        progressDialog.setMessage("Loading");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if (progressDialog != null)
+            progressDialog.show();
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -110,8 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        result.run();
-                        progressDialog.dismiss();
+                        if (result != null)
+                            result.run();
+                        if (progressDialog != null)
+                            progressDialog.dismiss();
                     }
                 });
             }

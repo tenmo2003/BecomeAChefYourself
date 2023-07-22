@@ -18,6 +18,8 @@
         android:layout_height="448dp"
         android:layout_marginStart="160dp"
         android:layout_marginTop="310dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:src="@drawable/mask2" />
 
 

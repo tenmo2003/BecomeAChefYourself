@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment {
 
         //if (articlesList == null) {
             dbHelper = new DatabaseHelper(getActivity());
+//            articlesList = dbHelper.getNArticlesFromIndex(0, 10);
             articlesList = dbHelper.getAllArticles();
             recommendRecipeList = articlesList.subList(0, 5);
 
@@ -90,7 +91,8 @@ public class HomeFragment extends Fragment {
         //Recycler display grid recipe
         recipeListView = view.findViewById(R.id.recipe_list);
         recipeListView.setHasFixedSize(true);
-        recipeListView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        recipeListView.setLayoutManager(gridLayoutManager);
 
         recipeListAdapter.setContext(getActivity());
         recipeListView.setAdapter(recipeListAdapter);
@@ -108,6 +110,18 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+//        recipeListView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                if (gridLayoutManager.findLastVisibleItemPosition() ==  recipeListAdapter.getArticleList().size() - 1) {
+//                    recipeListAdapter.addToArticleList(dbHelper.getNArticlesFromIndex(recipeListAdapter.getArticleList().size(), 10));
+//                    articlesList = recipeListAdapter.getArticleList();
+//                }
+//            }
+//        });
 
         //Search bar
         searchView = view.findViewById(R.id.search_view);

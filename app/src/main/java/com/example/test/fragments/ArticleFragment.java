@@ -1,15 +1,10 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +12,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,26 +23,24 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.CommentListAdapter;
+import com.example.test.components.Article;
 import com.example.test.components.Comment;
 import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.Objects;
 
 public class ArticleFragment extends Fragment {
     List<Comment> commentList;
@@ -66,6 +60,9 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        dbHelper = new DatabaseHelper(getActivity());
+
+
         CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.dish_name_text);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
         TextView ingredientsTextView = view.findViewById(R.id.ingredients_text);
@@ -83,16 +80,14 @@ public class ArticleFragment extends Fragment {
 
         Bundle args = getArguments();
         assert args != null;
-        String articleID = args.getString("articleID");
-        String dishName = args.getString("dish_name");
-        String recipeContent = args.getString("recipe_content");
-        String ingredients = args.getString("ingredients");
-        String publisher = args.getString("publisher");
-        String publishedDate = args.getString("publishedDate");
-        String timeToMake = args.getString("time_to_make");
-        String reacts = args.getString("reacts");
-        String comments = args.getString("comments");
-        String imageURL = args.getString("imageURL");
+        int articleID = 0;
+        if (args.containsKey("articleID")) {
+             articleID = args.getInt("articleID");
+        } else if (args.containsKey("reportID")) {
+            articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
+        }
+        Article article = dbHelper.getArticleWithId(articleID);
+
         ImageView dishImg = view.findViewById(R.id.dish_img);
 
         //test data
@@ -100,11 +95,10 @@ public class ArticleFragment extends Fragment {
 
         final boolean[] isLike = {false};
 
-        dbHelper = new DatabaseHelper(getActivity());
 
         if (MainActivity.loggedInUser != null) {
             userAvatar.setImageResource(R.drawable.user_avatar);
-            isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), articleID);
+            isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID));
             if (isLike[0]) {
                 reactBtn.setImageResource(R.drawable.reacted);
             } else {
@@ -115,64 +109,35 @@ public class ArticleFragment extends Fragment {
             reactBtn.setImageResource(R.drawable.react);
         }
 
-        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
-
-        MainActivity.runTask(() -> {
-            URL newurl = null;
-            try {
-                newurl = new URL(imageURL);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+        ProgressBar progressBar = view.findViewById(R.id.progressbar);
+        Glide.with(getActivity()).load(article.getImgURL()).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                progressBar.setVisibility(View.GONE);
+                return false;
             }
-            try {
-                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                progressBar.setVisibility(View.GONE);
+                return false;
             }
-        }, () -> {
-            dishImg.setImageBitmap(mIcon_val[0]);
-        }, MainActivity.progressDialog);
+        }).into(dishImg);
 
-//        ExecutorService executor = Executors.newSingleThreadExecutor();
-//        Handler handler = new Handler(Looper.getMainLooper());
-//
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                URL newurl = null;
-//                try {
-//                    newurl = new URL(imageURL);
-//                } catch (MalformedURLException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                Bitmap mIcon_val;
-//                try {
-//                    mIcon_val = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-//
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        dishImg.setImageBitmap(mIcon_val);
-//                    }
-//                });
-//            }
-//        });
-
-        collapsingToolbarLayout.setTitle(dishName);
-        recipeContentTextView.setText(Html.fromHtml(recipeContent, Html.FROM_HTML_MODE_COMPACT));
-        ingredientsTextView.setText(formatIngredients(ingredients));
-        publishedDateTextView.setText(postedTime(publishedDate));
-        publisherTextView.setText(publisher);
-        timeToMakeTextView.setText(timeToMake);
-        reactTextView.setText(reacts + " lượt thích");
-        commentTextView.setText(comments + " bình luận");
+        collapsingToolbarLayout.setTitle(article.getDishName());
+        recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
+        ingredientsTextView.setText(formatIngredients(article.getIngredients()));
+        publishedDateTextView.setText(postedTime(article.getPublishedTime()));
+        publisherTextView.setText(article.getPublisher());
+        timeToMakeTextView.setText(article.getTimeToMake());
+        reactTextView.setText(article.getLikes() + " lượt thích");
+        commentTextView.setText(article.getComments() + " bình luận");
 
         commentListAdapter = new CommentListAdapter();
-        commentList = dbHelper.getCommentWithArticleID(articleID);
+        commentList = dbHelper.getCommentWithArticleID(String.valueOf(articleID));
         commentListAdapter.setComments(commentList);
+        commentListAdapter.setContext(getActivity());
+        commentListAdapter.setDbHelper(dbHelper);
 
         commentListView = view.findViewById(R.id.comment_list);
         commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -198,6 +163,7 @@ public class ArticleFragment extends Fragment {
             }
         });
 
+        int finalArticleID = articleID;
         reactBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,12 +177,12 @@ public class ArticleFragment extends Fragment {
 
                 if (isLike[0]) {
                     isLike[0] = false;
-                    dbHelper.removeLike(MainActivity.loggedInUser.getUsername(), Integer.parseInt(articleID));
+                    dbHelper.removeLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
                     reactBtn.setImageResource(R.drawable.react);
                     reactTextView.setText((react_count - 1) + " lượt thích");
                 } else {
                     isLike[0] = true;
-                    dbHelper.addLike(MainActivity.loggedInUser.getUsername(), Integer.parseInt(articleID));
+                    dbHelper.addLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
                     reactBtn.setImageResource(R.drawable.reacted);
                     reactTextView.setText((react_count + 1) + " lượt thích");
                 }
@@ -235,7 +201,7 @@ public class ArticleFragment extends Fragment {
                 String commenter = MainActivity.loggedInUser.getUsername();
                 String content = commentEditText.getText().toString();
 
-                dbHelper.addComment(articleID, commenter, content);
+                dbHelper.addComment(String.valueOf(finalArticleID), commenter, content);
 
                 commentEditText.setText("");
                 commentEditText.clearFocus();
@@ -244,7 +210,7 @@ public class ArticleFragment extends Fragment {
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-                commentListAdapter.addNewComment(new Comment(commenter, content));
+                commentListAdapter.addNewComment(new Comment(dbHelper.getLastCommentID(), commenter, content, finalArticleID));
                 commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
             }
         });

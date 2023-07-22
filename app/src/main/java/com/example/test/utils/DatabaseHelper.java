@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
+import com.example.test.components.Report;
 import com.example.test.components.User;
 
 import java.util.ArrayList;
@@ -78,7 +79,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY(followed) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
                                                             "  FOREIGN KEY(follower) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
-    public static final int DB_VERSION = 7;
+
+    public static final String SQL_CREATE_ENTRIES_REPORTS = "CREATE TABLE reports (\n" +
+                                                            "  id INTEGER PRIMARY KEY,\n" +
+                                                            "  reporter TEXT NOT NULL,\n" +
+                                                            "  article_id INTEGER,\n" +
+                                                            "  comment_id INTEGER,\n" +
+                                                            "  reason TEXT NOT NULL,\n" +
+                                                            "  FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                            "  FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                                                            ");";
+    public static final int DB_VERSION = 8;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -97,6 +108,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
 
         db.execSQL(SQL_CREATE_ENTRIES_FOLLOWS);
+
+        db.execSQL(SQL_CREATE_ENTRIES_REPORTS);
     }
 
     @Override
@@ -122,6 +135,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(SQL_CREATE_ENTRIES_BOOKMARK);
             db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
         }
+
+        if (oldVersion < 8) {
+            db.execSQL(SQL_CREATE_ENTRIES_REPORTS);
+        }
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
     public boolean signUpUser(String username, String password, String fullname) {
@@ -198,11 +221,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public int getNextArticleID() {
+    public int getLastCommentID() {
         SQLiteDatabase db = this.getReadableDatabase();
-        int maxID = (int) DatabaseUtils.longForQuery(db, "SELECT last_insert_rowid() FROM articles", null);
+        int maxID = (int) DatabaseUtils.longForQuery(db, "SELECT MAX(id) FROM comments", null);
         db.close();
-        return maxID + 1;
+        return maxID;
     }
 
     public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
@@ -225,6 +248,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
         return result != -1;
+    }
+
+    public boolean removeArticle(int articleID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Define the WHERE clause to identify the article to be removed
+        String whereClause = "id = ?";
+        String[] whereArgs = {String.valueOf(articleID)};
+
+        // Delete the article from the database
+        int rowsDeleted = db.delete("articles", whereClause, whereArgs);
+
+        db.close();
+
+        // Return true if at least one row was deleted, indicating successful removal
+        return rowsDeleted > 0;
     }
 
     public List<Article> getAllArticles() {
@@ -276,6 +315,110 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
         }
         return articles;
+    }
+
+    public List<Article> getNArticlesFromIndex(int startIndex, int count) {
+        List<Article> articles = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "id",
+                "dish_name",
+                "publisher",
+                "meal",
+                "serve_order_class",
+                "type",
+                "recipe",
+                "ingredients",
+                "likes",
+                "published_time",
+                "time_to_make",
+                "image"
+        };
+        String sortOrder = "published_time DESC";
+        String limitClause = startIndex + ", " + count; // limitClause specifies the range of articles to return
+        Cursor cursor = db.query(
+                "articles",
+                projection,
+                null,
+                null,
+                null,
+                null,
+                sortOrder,
+                limitClause
+        );
+        try {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String dishName = cursor.getString(cursor.getColumnIndexOrThrow("dish_name"));
+                String publisher = cursor.getString(cursor.getColumnIndexOrThrow("publisher"));
+                String meal = cursor.getString(cursor.getColumnIndexOrThrow("meal"));
+                String serveOrderClass = cursor.getString(cursor.getColumnIndexOrThrow("serve_order_class"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
+                String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
+                int likes = getTotalLikeCount(id);
+                int comments = getTotalCommentCount(id);
+                String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
+                String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
+                String imgURL = cursor.getString(cursor.getColumnIndexOrThrow("image"));
+                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                articles.add(article);
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+        return articles;
+    }
+
+    public Article getArticleWithId(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                "dish_name",
+                "publisher",
+                "meal",
+                "serve_order_class",
+                "type",
+                "recipe",
+                "ingredients",
+                "likes",
+                "published_time",
+                "time_to_make",
+                "image"
+        };
+        String selection = "id = ?";
+        String[] selectionArgs = { String.valueOf(id) };
+        Cursor cursor = db.query(
+                "articles",
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        Article article = null;
+        try {
+            if (cursor.moveToFirst()) {
+                String dishName = cursor.getString(cursor.getColumnIndexOrThrow("dish_name"));
+                String publisher = cursor.getString(cursor.getColumnIndexOrThrow("publisher"));
+                String meal = cursor.getString(cursor.getColumnIndexOrThrow("meal"));
+                String serveOrderClass = cursor.getString(cursor.getColumnIndexOrThrow("serve_order_class"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
+                String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
+                int likes = getTotalLikeCount(id);
+                int comments = getTotalCommentCount(id);
+                String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
+                String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
+                String imgURL = cursor.getString(cursor.getColumnIndexOrThrow("image"));
+                article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+            }
+        } finally {
+            cursor.close();
+            db.close();
+        }
+        return article;
     }
 
     public List<Article> getArticlesFromUser(String username) {
@@ -507,6 +650,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public int getTotalArticleCount(String username) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT COUNT(id) FROM articles WHERE publisher=?";
+
+        String[] args = {username};
+
+        Cursor cursor = db.rawQuery(query, args);
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
+    public boolean reportComment(int comment_id, String reporter, String reason, int articleID) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("reporter", reporter);
+        values.put("comment_id", comment_id);
+        values.put("reason", reason);
+        values.put("article_id", articleID);
+        long result = db.insert("reports", null, values);
+        return result != -1;
+    }
+
     public boolean addBookmark(String user, int articleID) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -550,6 +724,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         String[] projection = {
+                "id",
                 "commenter",
                 "content"
         };
@@ -568,10 +743,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                 String commenter = cursor.getString(cursor.getColumnIndexOrThrow("commenter"));
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
 
-                Comment comment = new Comment(commenter, content);
+                Comment comment = new Comment(id, commenter, content, Integer.parseInt(articleID));
                 commentList.add(comment);
             }
         } finally {
@@ -633,6 +809,109 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
 
+        return rowsDeleted > 0;
+    }
+
+    public List<Report> getAllCommentReports() {
+        List<Report> reportList = new ArrayList<>();
+        String selectQuery = "SELECT r.id, r.reporter, r.article_id, r.comment_id, r.reason, c.content " +
+                "FROM reports r " +
+                "LEFT JOIN comments c ON r.comment_id = c.id " +
+                "WHERE r.comment_id IS NOT NULL";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
+                @SuppressLint("Range") String reporter = cursor.getString(cursor.getColumnIndex("reporter"));
+                @SuppressLint("Range") int articleId = cursor.getInt(cursor.getColumnIndex("article_id"));
+                @SuppressLint("Range") int commentId = cursor.getInt(cursor.getColumnIndex("comment_id"));
+                @SuppressLint("Range") String reason = cursor.getString(cursor.getColumnIndex("reason"));
+                @SuppressLint("Range") String content = cursor.getString(cursor.getColumnIndex("content"));
+
+                Report report = new Report(id, reporter, articleId, commentId, reason, null, content);
+                reportList.add(report);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return reportList;
+    }
+
+    public List<Report> getAllArticleReports() {
+        List<Report> reportList = new ArrayList<>();
+        String selectQuery = "SELECT r.id, r.reporter, r.article_id, a.dish_name, r.comment_id, r.reason " +
+                "FROM reports r " +
+                "LEFT JOIN articles a ON r.article_id = a.id " +
+                "WHERE r.comment_id IS NULL";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
+                @SuppressLint("Range") String reporter = cursor.getString(cursor.getColumnIndex("reporter"));
+                @SuppressLint("Range") int articleId = cursor.getInt(cursor.getColumnIndex("article_id"));
+                @SuppressLint("Range") String dishName = cursor.getString(cursor.getColumnIndex("dish_name"));
+                @SuppressLint("Range") int commentId = cursor.getInt(cursor.getColumnIndex("comment_id"));
+                @SuppressLint("Range") String reason = cursor.getString(cursor.getColumnIndex("reason"));
+
+                Report report = new Report(id, reporter, articleId, commentId, reason, dishName, null);
+                reportList.add(report);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+        return reportList;
+    }
+
+    @SuppressLint("Range")
+    public int getArticleIDWithReportID(int reportID) {
+        int articleID = -1;
+
+        // Define the SQL query to join the comments and articles tables and retrieve the article ID
+        String selectQuery = "SELECT articles.id AS article_id " +
+                "FROM reports " +
+                "INNER JOIN articles ON reports.article_id = articles.id " +
+                "WHERE reports.id = ?";
+
+        // Get a readable database object
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Execute the query and get a cursor to retrieve the results
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(reportID)});
+
+        // Check if the cursor contains any rows and retrieve the article ID
+        if (cursor.moveToFirst()) {
+            articleID = cursor.getInt(cursor.getColumnIndex("article_id"));
+        }
+
+        // Close the cursor and database objects
+        cursor.close();
+        db.close();
+
+        // Return the article ID
+        return articleID;
+    }
+
+    public boolean removeReport(int reportID) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Define the WHERE clause to identify the report to be removed
+        String whereClause = "id = ?";
+        String[] whereArgs = {String.valueOf(reportID)};
+
+        // Delete the report from the database
+        int rowsDeleted = db.delete("reports", whereClause, whereArgs);
+
+        db.close();
+
+        // Return true if at least one row was deleted, indicating successful removal
         return rowsDeleted > 0;
     }
 }
