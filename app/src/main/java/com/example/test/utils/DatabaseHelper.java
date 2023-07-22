@@ -117,8 +117,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (oldVersion < 7) {
             db.execSQL("DROP TABLE IF EXISTS article_likes");
             db.execSQL("DROP TABLE IF EXISTS bookmarks");
-            //db.execSQL("DROP TABLE IF EXISTS comments");
-            //db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
+            db.execSQL("DROP TABLE IF EXISTS comments");
+            db.execSQL(SQL_CREATE_ENTRIES_COMMENT);
             db.execSQL(SQL_CREATE_ENTRIES_BOOKMARK);
             db.execSQL(SQL_CREATE_ENTRIES_ARTICLE_LIKE);
         }
@@ -263,7 +263,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
-                int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
@@ -316,7 +316,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
-                int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
@@ -371,7 +371,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
                 String content = cursor.getString(cursor.getColumnIndexOrThrow("recipe"));
                 String ingredients = cursor.getString(cursor.getColumnIndexOrThrow("ingredients"));
-                int likes = cursor.getInt(cursor.getColumnIndexOrThrow("likes"));
+                int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = cursor.getString(cursor.getColumnIndexOrThrow("published_time"));
                 String timeToMake = cursor.getString(cursor.getColumnIndexOrThrow("time_to_make"));
@@ -487,6 +487,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public int getTotalLikeCount(int article_id) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT COUNT(*) FROM article_likes WHERE article=?";
+
+        String[] args = {String.valueOf(article_id)};
+
+        Cursor cursor = db.rawQuery(query, args);
+
+        int count = 0;
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0);
+        }
+
+        cursor.close();
+        db.close();
+
+        return count;
+    }
+
     public boolean addBookmark(String user, int articleID) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -576,5 +596,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return result != -1;
+    }
+
+    public boolean checkLiked(String user, String articleID) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM article_likes WHERE user=? AND article=?", new String[] {user, String.valueOf(articleID)});
+
+        boolean liked = cursor.moveToFirst();
+
+        cursor.close();
+        db.close();
+
+        return liked;
+    }
+
+    public boolean addLike(String user, int articleID) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put("user", user);
+        values.put("article", articleID);
+
+        long result = db.insert("article_likes", null, values);
+
+        db.close();
+
+        return result != -1;
+    }
+
+    public boolean removeLike(String user, int articleID) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        int rowsDeleted = db.delete("article_likes", "user=? AND article=?", new String[] {user, String.valueOf(articleID)});
+
+        db.close();
+
+        return rowsDeleted > 0;
     }
 }

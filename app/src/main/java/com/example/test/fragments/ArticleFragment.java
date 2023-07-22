@@ -54,7 +54,6 @@ public class ArticleFragment extends Fragment {
     RecyclerView commentListView;
     DatabaseHelper dbHelper;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_article, container, false);
@@ -78,17 +77,9 @@ public class ArticleFragment extends Fragment {
         ImageView authorAvatar = view.findViewById(R.id.author_avatar_in_article);
         ImageView viewAuthorProfile = view.findViewById(R.id.view_author_profile);
         ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
+        ImageView reactBtn = view.findViewById(R.id.react_btn);
         EditText commentEditText = view.findViewById(R.id.comment_edit_text);
         Button sendCommentBtn = view.findViewById(R.id.send_comment_btn);
-
-        //example data
-        authorAvatar.setImageResource(R.drawable.user_avatar);
-
-        if (MainActivity.loggedInUser != null) {
-            userAvatar.setImageResource(R.drawable.user_avatar);
-        } else {
-            userAvatar.setImageResource(R.drawable.ban);
-        }
 
         Bundle args = getArguments();
         assert args != null;
@@ -103,6 +94,26 @@ public class ArticleFragment extends Fragment {
         String comments = args.getString("comments");
         String imageURL = args.getString("imageURL");
         ImageView dishImg = view.findViewById(R.id.dish_img);
+
+        //test data
+        authorAvatar.setImageResource(R.drawable.user_avatar);
+
+        final boolean[] isLike = {false};
+
+        dbHelper = new DatabaseHelper(getActivity());
+
+        if (MainActivity.loggedInUser != null) {
+            userAvatar.setImageResource(R.drawable.user_avatar);
+            isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), articleID);
+            if (isLike[0]) {
+                reactBtn.setImageResource(R.drawable.reacted);
+            } else {
+                reactBtn.setImageResource(R.drawable.react);
+            }
+        } else {
+            userAvatar.setImageResource(R.drawable.ban);
+            reactBtn.setImageResource(R.drawable.react);
+        }
 
         final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
 
@@ -160,7 +171,6 @@ public class ArticleFragment extends Fragment {
         commentTextView.setText(comments + " bình luận");
 
         commentListAdapter = new CommentListAdapter();
-        dbHelper = new DatabaseHelper(getActivity());
         commentList = dbHelper.getCommentWithArticleID(articleID);
         commentListAdapter.setComments(commentList);
 
@@ -188,6 +198,32 @@ public class ArticleFragment extends Fragment {
             }
         });
 
+        reactBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MainActivity.loggedInUser == null) {
+                    Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                //get react count number
+                int react_count = Integer.parseInt(reactTextView.getText().toString().split(" ")[0]);
+
+                if (isLike[0]) {
+                    isLike[0] = false;
+                    dbHelper.removeLike(MainActivity.loggedInUser.getUsername(), Integer.parseInt(articleID));
+                    reactBtn.setImageResource(R.drawable.react);
+                    reactTextView.setText((react_count - 1) + " lượt thích");
+                } else {
+                    isLike[0] = true;
+                    dbHelper.addLike(MainActivity.loggedInUser.getUsername(), Integer.parseInt(articleID));
+                    reactBtn.setImageResource(R.drawable.reacted);
+                    reactTextView.setText((react_count + 1) + " lượt thích");
+                }
+
+            }
+        });
+
         sendCommentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,6 +245,7 @@ public class ArticleFragment extends Fragment {
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
                 commentListAdapter.addNewComment(new Comment(commenter, content));
+                commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
             }
         });
     }
