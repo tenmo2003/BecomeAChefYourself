@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
 import androidx.annotation.Nullable;
 
@@ -18,6 +19,7 @@ import com.example.test.components.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -913,5 +915,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Return true if at least one row was deleted, indicating successful removal
         return rowsDeleted > 0;
+    }
+
+    public int updateProfile(String username, String fullname, boolean fullnameUpdate,
+                                 String bio, boolean bioUpdate, String oldPassword, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        if (fullnameUpdate) {
+            values.put("fullname", fullname);
+        }
+
+        if (bioUpdate) {
+            values.put("bio", bio);
+        }
+
+        if (!Objects.equals(oldPassword, "") && !Objects.equals(newPassword, "")) {
+            Cursor cursor = db.rawQuery("SELECT password FROM user WHERE username=?", new String[] {username});
+            if (cursor.moveToFirst()) {
+                String currentPassword = "";
+                currentPassword = cursor.getString(0);
+                if (oldPassword.equals(currentPassword)) {
+                    values.put("password", newPassword);
+                } else {
+                    return -1;
+                }
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (values.isEmpty()) {
+                return 0;
+            }
+        }
+
+        int intCursor = db.update(
+                "user",
+                values,
+                "username=?",
+                new String[] {username}
+        );
+
+        return 1;
     }
 }

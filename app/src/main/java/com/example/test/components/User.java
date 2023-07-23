@@ -40,6 +40,9 @@ public class User {
     }
 
     public String getFullname() {
+        if (fullname == null) {
+            return "";
+        }
         return fullname;
     }
 
@@ -56,6 +59,9 @@ public class User {
     }
 
     public String getBio() {
+        if (bio == null) {
+            return "";
+        }
         return bio;
     }
 

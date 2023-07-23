@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,8 +39,8 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     ViewPager2 viewPager2;
     TabLayout tabLayout;
     SectionsPagerAdapter sectionsPagerAdapter;
+    public User profileUser;
 
-    public static User profileUser;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_user, container, false);
@@ -51,13 +52,15 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+
         Bundle args = getArguments();
         if (args != null) {
             String username = args.getString("username");
-            DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
             profileUser = dbHelper.getUserWithUsername(username);
         } else {
-            profileUser = MainActivity.loggedInUser;
+            //reload profile if change
+            profileUser = dbHelper.getUserWithUsername(MainActivity.loggedInUser.getUsername());
         }
 
         TextView usernameTv = view.findViewById(R.id.user_username);
@@ -174,6 +177,12 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         if (menuItem.getItemId() == R.id.edit_profile_menu) {
+            Bundle args = new Bundle();
+            args.putString("username", profileUser.getUsername());
+            args.putString("fullname", profileUser.getFullname());
+            args.putString("bio", profileUser.getBio());
+
+            Navigation.findNavController(fragmentView).navigate(R.id.navigation_edit_profile, args);
             return true;
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -196,8 +205,8 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     private void setupViewPager(ViewPager2 viewPager2) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
-        adapter.addFragment(new UserPostFragment());
-        adapter.addFragment(new UserSavedFragment());
+        adapter.addFragment(new UserPostFragment(profileUser));
+        adapter.addFragment(new UserSavedFragment(profileUser));
         viewPager2.setAdapter(adapter);
     }
 }

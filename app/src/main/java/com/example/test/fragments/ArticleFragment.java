@@ -195,6 +195,8 @@ public class ArticleFragment extends Fragment {
             public void onClick(View view) {
                 if (MainActivity.loggedInUser == null) {
                     Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     return;
                 }
 

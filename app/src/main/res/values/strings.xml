@@ -80,4 +80,5 @@
     <string name="ingredients">Nguyên liệu</string>
     <string name="recipe">Chế biến</string>
     <string name="comment">Bình luận</string>
+    <string name="title_edit_profile">Edit Profile</string>
 </resources>
