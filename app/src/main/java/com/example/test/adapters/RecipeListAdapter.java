@@ -24,6 +24,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
@@ -65,11 +66,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
             public int compare(Article article1, Article article2) {
                 int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
                 int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
-                if (follow1 > follow2) {
-                    return -1;
-                } else {
-                    return 1;
-                }
+                return Integer.compare(follow2, follow1);
             }
         });
         notifyDataSetChanged();
@@ -79,11 +76,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         articleList.sort(new Comparator<Article>() {
             @Override
             public int compare(Article article1, Article article2) {
-                if (article1.getLikes() < article2.getLikes()) {
-                    return 1;
-                } else {
-                    return -1;
-                }
+                return Integer.compare(article2.getLikes(), article1.getLikes());
             }
         });
         notifyDataSetChanged();
@@ -101,11 +94,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
                 } else if (date1.compareTo(date2) > 0) {
                     return -1;
                 } else {
-                    if (time1.compareTo(time2) < 0) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return Integer.compare(0, time1.compareTo(time2));
                 }
             }
         });

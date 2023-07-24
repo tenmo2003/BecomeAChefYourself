@@ -1,6 +1,9 @@
 package com.example.test.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -10,10 +13,16 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -126,34 +135,98 @@ public class HomeFragment extends Fragment {
         //Search bar
         searchView = view.findViewById(R.id.search_view);
         searchView.clearFocus();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 searchArticle(s);
+                searchView.clearFocus();
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                recipeListAdapter.setArticleList(articlesList);
+                if (s.equals("") && recipeListAdapter.getArticleList().size() != articlesList.size()) {
+                    recipeListAdapter.setArticleList(articlesList);
+                }
                 return true;
             }
         });
 
         //Sort button
-        sortButtons.put("all", view.findViewById(R.id.all));
+        sortButtons.put("default_sort", view.findViewById(R.id.default_sort));
         sortButtons.put("most_follow", view.findViewById(R.id.most_follow));
         sortButtons.put("most_react", view.findViewById(R.id.most_react));
         sortButtons.put("most_recent", view.findViewById(R.id.most_recent));
 
         setSortButtonBehavior();
+
+        //Filter
+        Button filterButton = view.findViewById(R.id.filter_btn);
+        LinearLayout filterField = view.findViewById(R.id.filter_field);
+        RadioGroup mealFilter = view.findViewById(R.id.meal_filter);
+        RadioGroup serveOrderClassFilter = view.findViewById(R.id.serve_order_class_filter);
+        RadioGroup typeFilter = view.findViewById(R.id.type_filter);
+        TextView applyFilter = view.findViewById(R.id.apply_filter);
+        TextView clearFilter = view.findViewById(R.id.clear_filter);
+
+        filterField.setVisibility(View.GONE);
+
+        applyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<String> filterList = new ArrayList<>();
+                HashMap<Integer, String> filterItems = new HashMap<>();
+
+                filterItems.put(-1, "");
+
+                filterItems.put(R.id.breakfast_item, "Bữa sáng");
+                filterItems.put(R.id.lunch_item, "Bữa trưa");
+                filterItems.put(R.id.dinner_item, "Bữa tối");
+                filterItems.put(R.id.flexible_item, "Linh hoạt");
+
+                filterItems.put(R.id.appetizer_item, "Món khai vị");
+                filterItems.put(R.id.main_item, "Món chính");
+                filterItems.put(R.id.dessert_item, "Món tráng miệng");
+
+                filterItems.put(R.id.meat_item, "Món thịt");
+                filterItems.put(R.id.seafood, "Món hải sản");
+                filterItems.put(R.id.vegetarian, "Món chay");
+                filterItems.put(R.id.soup, "Món canh");
+
+                filterList.add(filterItems.get(mealFilter.getCheckedRadioButtonId()));
+                filterList.add(filterItems.get(serveOrderClassFilter.getCheckedRadioButtonId()));
+                filterList.add(filterItems.get(typeFilter.getCheckedRadioButtonId()));
+
+                filterArticle(filterList);
+            }
+        });
+
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mealFilter.clearCheck();
+                serveOrderClassFilter.clearCheck();
+                typeFilter.clearCheck();
+                if (recipeListAdapter.getArticleList().size() != articlesList.size()) {
+                    recipeListAdapter.setArticleList(articlesList);
+                }
+            }
+        });
+
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (filterField.getVisibility() == View.GONE) {
+                    filterField.setVisibility(View.VISIBLE);
+                } else {
+                    filterField.setVisibility(View.GONE);
+                }
+            }
+        });
+
 
         return view;
     }
@@ -234,7 +307,7 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("ClickableViewAccessibility")
     public void setSortButtonBehavior(){
-        Objects.requireNonNull(sortButtons.get("all")).getBackground()
+        Objects.requireNonNull(sortButtons.get("default_sort")).getBackground()
                 .setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
         for (TextView sortButton: sortButtons.values()) {
             sortButton.setOnTouchListener(new View.OnTouchListener() {
@@ -247,7 +320,7 @@ public class HomeFragment extends Fragment {
 
                         v.getBackground().setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
 
-                        if (v == sortButtons.get("all")) {
+                        if (v == sortButtons.get("default_sort")) {
                             recipeListAdapter.setArticleList(articlesList);
                         } else if (v == sortButtons.get("most_follow")) {
                             recipeListAdapter.sortByFollow(dbHelper);
@@ -261,5 +334,35 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void filterArticle(List<String> filterList) {
+        // No filter has passed
+        if (filterList.get(0).equals("") && filterList.get(1).equals("") && filterList.get(2).equals("")) {
+            if (recipeListAdapter.getArticleList().size() != articlesList.size()) {
+                recipeListAdapter.setArticleList(articlesList);
+            }
+            return;
+        }
+
+        // Reset data when re-filter
+        for (TextView sortButton: sortButtons.values()) {
+            sortButton.getBackground().clearColorFilter();
+        }
+        Objects.requireNonNull(sortButtons.get("default_sort")).getBackground().
+                setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
+        recipeListAdapter.setArticleList(articlesList);
+
+        List<Article> filteredArticle = new ArrayList<>();
+        for (Article article: recipeListAdapter.getArticleList()) {
+            boolean matchMeal = article.getMeal().equals(filterList.get(0)) || filterList.get(0).equals("");
+            boolean matchServeOrderClass = article.getServeOrderClass().equals(filterList.get(1)) || filterList.get(1).equals("");
+            boolean matchType = article.getType().equals(filterList.get(2)) || filterList.get(2).equals("");
+
+            if (matchMeal && matchServeOrderClass && matchType) {
+                filteredArticle.add(article);
+            }
+        }
+        recipeListAdapter.setArticleList(filteredArticle);
     }
 }

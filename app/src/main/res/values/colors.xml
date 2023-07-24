@@ -19,6 +19,7 @@
 	<color name="darkGray">#AEAEAE</color>
 	<color name="mainTheme">#2F6C6D</color>
 	<color name="red">#FF2D2D</color>
+	<color name="redLowOpa">#80F05454</color>
 
 	<color name="_bg__android_small___1_color">#FFAF5A</color>
 	<color name="sign_up_ek1_color">#2F6C6D</color>
