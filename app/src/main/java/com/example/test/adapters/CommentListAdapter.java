@@ -64,7 +64,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         holder.context = context;
         holder.dbHelper = dbHelper;
         int curPos = position;
-        if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+        if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals("admin")) {
             holder.commentView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
