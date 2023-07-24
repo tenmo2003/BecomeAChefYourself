@@ -42,8 +42,9 @@
             </androidx.appcompat.widget.SearchView>
 
             <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="25dp"
+                android:id="@+id/filter_btn"
                 android:background="@drawable/filter"
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
@@ -51,6 +52,7 @@
             </Button>
         </LinearLayout>
 
+        <include layout="@layout/filter"/>
 
         <HorizontalScrollView
             android:layout_width="wrap_content"
@@ -64,8 +66,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/all"
-                    android:text="@string/all"
+                    android:id="@+id/default_sort"
+                    android:text="@string/default_sort"
                     android:textColor="@color/black"
                     android:gravity="center"
                     android:paddingHorizontal="12dp"
