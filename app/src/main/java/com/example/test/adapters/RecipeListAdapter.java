@@ -3,18 +3,27 @@ package com.example.test.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
@@ -115,24 +124,37 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.article = articleList.get(position);
         holder.user_name.setText(articleList.get(position).getPublisher());
         holder.dish_name.setText(articleList.get(position).getDishName());
-        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
+//        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
+//
+//        MainActivity.runTask(() -> {
+//            URL newurl = null;
+//            try {
+//                newurl = new URL(articleList.get(position).getImgURL());
+//            } catch (MalformedURLException e) {
+//                throw new RuntimeException(e);
+//            }
+//            try {
+//                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }, () -> {
+//            holder.progressBar.setVisibility(View.GONE);
+//            holder.dish_img.setImageBitmap(mIcon_val[0]);
+//        }, null);
+        Glide.with(context).load(articleList.get(position).getImgURL()).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                holder.progressBar.setVisibility(View.GONE);
+                return false;
+            }
 
-        MainActivity.runTask(() -> {
-            URL newurl = null;
-            try {
-                newurl = new URL(articleList.get(position).getImgURL());
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                holder.progressBar.setVisibility(View.GONE);
+                return false;
             }
-            try {
-                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }, () -> {
-            holder.dish_img.setImageBitmap(mIcon_val[0]);
-        }, null);
-//        Glide.with(context).load(articleList.get(position).getImgURL()).into(holder.dish_img);
+        }).into(holder.dish_img);
 //        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
@@ -167,6 +189,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     boolean isBookmark;
     Context context;
     DatabaseHelper dbHelper;
+    ProgressBar progressBar;
 
     public RecipeViewHolder(View itemView) {
         super(itemView);
@@ -178,6 +201,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         cmt_count = itemView.findViewById(R.id.cmt_count);
         react_count = itemView.findViewById(R.id.react_count);
         bookmark = itemView.findViewById(R.id.bookmark);
+        progressBar = itemView.findViewById(R.id.progressbar);
 
         //default value
         user_avatar.setImageResource(R.drawable.user_avatar);

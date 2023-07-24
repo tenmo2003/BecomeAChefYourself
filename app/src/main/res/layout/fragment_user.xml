@@ -115,7 +115,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginVertical="25dp"
+            android:layout_marginVertical="20dp"
             android:paddingHorizontal="15dp">
 
             <LinearLayout
@@ -125,8 +125,8 @@
                 android:layout_weight="1"
                 android:gravity="center">
 
-                <TextView android:id="@+id/_post_count"
-                    android:textSize="22sp"
+                <TextView android:id="@+id/post_count"
+                    android:textSize="20sp"
                     android:textColor="@color/_61_8k_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -135,7 +135,7 @@
                     />
 
                 <TextView android:id="@+id/recipes"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textColor="@color/bookmarks_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -151,8 +151,8 @@
                 android:layout_weight="1"
                 android:gravity="center">
 
-                <TextView android:id="@+id/_follower_count"
-                    android:textSize="22sp"
+                <TextView android:id="@+id/follower_count"
+                    android:textSize="20sp"
                     android:textColor="@color/_61_8k_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                     />
 
                 <TextView android:id="@+id/followers"
-                    android:textSize="17sp"
+                    android:textSize="15sp"
                     android:textColor="@color/bookmarks_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -179,13 +179,13 @@
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/_bookmark_count"
+                    android:id="@+id/likes_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/_100k_string"
                     android:textColor="@color/_61_8k_color"
-                    android:textSize="22sp"
-
+                    android:textSize="20sp"
+                    android:gravity="center"
                     />
 
                 <TextView
@@ -194,79 +194,12 @@
                     android:layout_height="wrap_content"
                     android:text="@string/bookmarks_string"
                     android:textColor="@color/bookmarks_color"
-                    android:textSize="17sp"
-
+                    android:textSize="15sp"
+                    android:gravity="center"
                     />
             </LinearLayout>
         </LinearLayout>
 
-
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="5dp">-->
-
-    <!--        <ImageView-->
-    <!--            android:src="@drawable/__img___icon_grid"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_weight="2"-->
-    <!--            />-->
-
-
-    <!--        <ImageView-->
-    <!--            android:src="@drawable/icon_bookmarks"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:layout_weight="2"-->
-    <!--            />-->
-
-    <!--    </LinearLayout>-->
-
-
-    <!--    <LinearLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="5dp"-->
-    <!--        android:orientation="horizontal">-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:orientation="vertical"-->
-    <!--            android:layout_weight="1"-->
-    <!--            android:gravity="center">-->
-    <!--            <ImageView-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:src="@drawable/black_your_posts_24"-->
-    <!--                />-->
-
-    <!--            <View-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="2dp"-->
-    <!--                android:background="@color/black"/>-->
-    <!--        </LinearLayout>-->
-
-    <!--        <LinearLayout-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:orientation="vertical"-->
-    <!--            android:layout_weight="1"-->
-    <!--            android:gravity="center">-->
-    <!--            <ImageView-->
-    <!--                android:id="@+id/user_bookmark_tab"-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="wrap_content"-->
-    <!--                android:src="@drawable/gray_bookmark_border_24"-->
-    <!--                />-->
-
-    <!--            <View-->
-    <!--                android:layout_width="wrap_content"-->
-    <!--                android:layout_height="2dp"-->
-    <!--                android:background="@color/darkGray"/>-->
-    <!--        </LinearLayout>-->
-    <!--    </LinearLayout>-->
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
