@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
                                                             "  FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
-    public static final int DB_VERSION = 8;
+    public static final int DB_VERSION = 9;
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -140,6 +140,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (oldVersion < 8) {
             db.execSQL(SQL_CREATE_ENTRIES_REPORTS);
+        }
+
+        if (oldVersion < 9) {
+            db.execSQL("DROP TABLE IF EXISTS bookmarks");
+            db.execSQL(SQL_CREATE_ENTRIES_BOOKMARK);
         }
     }
 
@@ -292,7 +297,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null,
                 null,
                 null,
-                "published_time DESC"
+                "id DESC"
         );
         try {
             while (cursor.moveToNext()) {
@@ -776,6 +781,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean removeComment(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int rowsAffected = db.delete("comments", "id = ?", new String[]{String.valueOf(id)});
+        db.close();
+
+        return rowsAffected > 0;
+    }
+
     public boolean checkLiked(String user, String articleID) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -957,5 +970,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         return 1;
+    }
+
+    public List<Integer> getUserProfileStats(String username) {
+        List<Integer> userProfileStats = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Get the number of recipes for the user
+        String recipesQuery = "SELECT COUNT(*) FROM articles WHERE publisher = ?";
+        String[] recipesArgs = {username};
+        Cursor recipesCursor = db.rawQuery(recipesQuery, recipesArgs);
+        int numRecipes = 0;
+        if (recipesCursor.moveToFirst()) {
+            numRecipes = recipesCursor.getInt(0);
+        }
+        recipesCursor.close();
+        userProfileStats.add(numRecipes);
+
+        // Get the number of followers for the user
+        String followersQuery = "SELECT COUNT(*) FROM follows WHERE followed = ?";
+        String[] followersArgs = {username};
+        Cursor followersCursor = db.rawQuery(followersQuery, followersArgs);
+        int numFollowers = 0;
+        if (followersCursor.moveToFirst()) {
+            numFollowers = followersCursor.getInt(0);
+        }
+        followersCursor.close();
+        userProfileStats.add(numFollowers);
+
+        // Get the number of likes accumulated by the user
+        String likesQuery = "SELECT COUNT(*) FROM article_likes al " +
+                "INNER JOIN articles a ON al.article = a.id " +
+                "WHERE a.publisher = ?";
+        String[] likesArgs = {username};
+        Cursor likesCursor = db.rawQuery(likesQuery, likesArgs);
+        int numLikes = 0;
+        if (likesCursor.moveToFirst()) {
+            numLikes = likesCursor.getInt(0);
+        }
+        likesCursor.close();
+        userProfileStats.add(numLikes);
+
+        db.close();
+
+        return userProfileStats;
     }
 }

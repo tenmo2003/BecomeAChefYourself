@@ -63,6 +63,39 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         holder.comment_content.setText(comments.get(position).getContent());
         holder.context = context;
         holder.dbHelper = dbHelper;
+        int curPos = position;
+        if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+            holder.commentView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Xác nhận")
+                            .setMessage("Bạn có chắc chắn muốn xoá comment này")
+                            .setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // User clicked the "Yes" button, proceed with removal
+                                    boolean result = dbHelper.removeComment(comments.get(curPos).getId());
+                                    if (result) {
+                                        comments.remove(curPos);
+                                        notifyDataSetChanged();
+                                    } else {
+                                        Toast.makeText(context, "Xoá thất bại", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Huỷ", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    // User clicked the "No" button, do nothing
+                                }
+                            })
+                            .create()
+                            .show();
+                    return false;
+                }
+            });
+        }
     }
 
     @Override
@@ -77,6 +110,8 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
     TextView commenter;
     TextView comment_content;
 
+    View commentView;
+
     Context context;
     DatabaseHelper dbHelper;
 
@@ -85,6 +120,7 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
         comment_avatar = itemView.findViewById(R.id.commenter_avatar);
         commenter = itemView.findViewById(R.id.commenter);
         comment_content = itemView.findViewById(R.id.comment_content);
+        commentView = itemView;
 
 
         TextView report = itemView.findViewById(R.id.report_btn);

@@ -32,6 +32,8 @@ import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.List;
+
 public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
     private View fragmentView;
@@ -68,6 +70,14 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         TextView bioTv = view.findViewById(R.id.user_bio);
         RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
         ImageView popupMenu = view.findViewById(R.id.user_menu);
+
+        List<Integer> stats = dbHelper.getUserProfileStats(profileUser.getUsername());
+        TextView postCountTv = view.findViewById(R.id.post_count);
+        TextView followerCountTv = view.findViewById(R.id.follower_count);
+        TextView likeCountTv = view.findViewById(R.id.likes_count);
+        postCountTv.setText(String.valueOf(stats.get(0)));
+        followerCountTv.setText(String.valueOf(stats.get(1)));
+        likeCountTv.setText(String.valueOf(stats.get(2)));
 
         usernameTv.setText(profileUser.getUsername());
         fullnameTv.setText(profileUser.getFullname());
@@ -186,8 +196,8 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             return true;
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("Logout");
-            builder.setMessage("Are you sure you want to log out?");
+            builder.setTitle("Đăng xuất");
+            builder.setMessage("Bạn chắc chắn muốn đăng xuất chứ?");
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

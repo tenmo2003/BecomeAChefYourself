@@ -91,17 +91,20 @@ public class MainActivity extends AppCompatActivity {
                     navController.navigate(R.id.navigation_home);
                 } else if (id == R.id.navigation_share) {
                     if (loggedInUser == null) {
+                        Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
                         navController.navigate(R.id.navigation_login);
+                        navView.getMenu().findItem(R.id.navigation_user).setChecked(true);
+                        return false;
                     } else {
                         navController.navigate(R.id.navigation_share);
                     }
-                } else if (id == R.id.navigation_profile) {
+                } else if (id == R.id.navigation_user) {
                     if (loggedInUser != null) {
                         if (loggedInUser.getUsername().equals("admin")) {
                             navController.navigate(R.id.navigation_admin);
                         } else {
-                                navController.navigate(R.id.navigation_profile);
-                            }
+                            navController.navigate(R.id.navigation_profile);
+                        }
                     } else {
                         navController.navigate(R.id.navigation_login);
                     }

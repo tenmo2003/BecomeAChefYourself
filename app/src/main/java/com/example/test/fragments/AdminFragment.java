@@ -1,18 +1,23 @@
 package com.example.test.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.adapters.MyExpandableListAdapter;
 import com.example.test.components.Article;
 import com.example.test.components.Report;
@@ -40,6 +45,27 @@ public class AdminFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ImageView logoutBtn = view.findViewById(R.id.logout_btn);
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Đăng xuất");
+                builder.setMessage("Bạn chắc chắn muốn đăng xuất chứ?");
+                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Perform logout action here
+                        MainActivity.loggedInUser = null;
+                        Navigation.findNavController(view).navigate(R.id.navigation_login);
+                    }
+                });
+                builder.setNegativeButton("Huỷ", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
 
         List<String> parentItems = new ArrayList<>(Arrays.asList("Báo cáo về bình luận", "Báo cáo về bài đăng", "Các bài đăng"));
 

@@ -1,7 +1,9 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -13,11 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -85,6 +90,11 @@ public class ArticleFragment extends Fragment {
              articleID = args.getInt("articleID");
         } else if (args.containsKey("reportID")) {
             articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+                actionBar.setCustomView(createCustomActionBar());
+            }
         }
         Article article = dbHelper.getArticleWithId(articleID);
 
@@ -194,7 +204,7 @@ public class ArticleFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
                     InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     return;
@@ -216,6 +226,45 @@ public class ArticleFragment extends Fragment {
                 commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
             }
         });
+    }
+
+    private View createCustomActionBar() {
+        // Create a RelativeLayout to hold the custom ActionBar
+        RelativeLayout customActionBarLayout = new RelativeLayout(getActivity());
+        customActionBarLayout.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        customActionBarLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+        // Create the button and set its attributes
+        Button btnHandleReport = new Button(getActivity());
+        btnHandleReport.setId(View.generateViewId()); // Generate a unique ID for the button
+        btnHandleReport.setText("Handle Report");
+        btnHandleReport.setTextColor(Color.WHITE);
+        btnHandleReport.setPadding(16, 8, 16, 8);
+//        btnHandleReport.setBackground(getResources().getDrawable(R.drawable.custom_button_background));
+
+        // Define the layout parameters for the button
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        layoutParams.setMargins(0, 0, 16, 0); // Set margins (adjust as needed)
+
+        // Add the button to the custom ActionBar layout
+        customActionBarLayout.addView(btnHandleReport, layoutParams);
+
+        // Set the click listener for the button
+        btnHandleReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Handle the report button click here
+                // For example, show a dialog to handle the report
+//                handleReport();
+            }
+        });
+
+        return customActionBarLayout;
     }
 
     @Override

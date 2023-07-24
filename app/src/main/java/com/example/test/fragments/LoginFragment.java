@@ -58,14 +58,14 @@ public class LoginFragment extends Fragment {
                 boolean result = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
 
                 if (result) {
-                    Toast.makeText(getActivity(), "Logged in successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                     if (MainActivity.loggedInUser.getUsername().equals("admin")) {
                         Navigation.findNavController(view).navigate(R.id.navigation_admin);
                     } else {
                         Navigation.findNavController(view).navigate(R.id.navigation_profile);
                     }
                 } else {
-                    Toast.makeText(getActivity(), "Logged in failed! Check your credentials", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show();
                 }
             }
         });
