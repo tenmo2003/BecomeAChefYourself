@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nested_scroll_view"
     android:orientation="vertical"
     android:background="@color/white">
@@ -25,13 +26,31 @@
             android:id="@+id/recommend_recipe_list">
         </androidx.recyclerview.widget.RecyclerView>
 
-        <SearchView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:id="@+id/search_view"
-            android:layout_margin="15dp"
-            android:background="@drawable/search_view_shape">
-        </SearchView>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="15dp">
+            <androidx.appcompat.widget.SearchView
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:id="@+id/search_view"
+                android:background="@drawable/search_view_shape"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@color/transparent"
+                android:layout_weight="1">
+            </androidx.appcompat.widget.SearchView>
+
+            <Button
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/filter"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1">
+            </Button>
+        </LinearLayout>
+
 
         <HorizontalScrollView
             android:layout_width="wrap_content"

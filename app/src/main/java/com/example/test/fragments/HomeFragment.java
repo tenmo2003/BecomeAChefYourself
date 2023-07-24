@@ -1,6 +1,7 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -10,10 +11,12 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -126,23 +129,24 @@ public class HomeFragment extends Fragment {
         //Search bar
         searchView = view.findViewById(R.id.search_view);
         searchView.clearFocus();
+
+        //searchView.setQueryHint(getQueryHints());
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 searchArticle(s);
+                searchView.clearFocus();
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                return false;
-            }
-        });
-
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                recipeListAdapter.setArticleList(articlesList);
+                if (s.equals("") && recipeListAdapter.getArticleList().size() != articlesList.size()) {
+                    recipeListAdapter.setArticleList(articlesList);
+                }
                 return true;
             }
         });
@@ -261,5 +265,13 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private List<String> getQueryHints() {
+        List<String> queryHints = new ArrayList<>();
+        for (Article article: articlesList) {
+            queryHints.add(article.getDishName());
+        }
+        return queryHints;
     }
 }

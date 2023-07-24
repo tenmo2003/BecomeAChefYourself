@@ -2,6 +2,7 @@ package com.example.test.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.test.R;
@@ -20,6 +22,7 @@ import com.example.test.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -100,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
                         if (loggedInUser.getUsername().equals("admin")) {
                             navController.navigate(R.id.navigation_admin);
                         } else {
-                                navController.navigate(R.id.navigation_profile);
-                            }
+                            navController.navigate(R.id.navigation_profile);
+                        }
                     } else {
                         navController.navigate(R.id.navigation_login);
                     }
@@ -138,12 +141,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //Clear focus on touch outside EditText
+    // Clear focus on touch outside EditText, and hide keyboard on touch outside SearchView
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             View v = getCurrentFocus();
             if (v instanceof EditText) {
+                Rect outRect = new Rect();
+                v.getGlobalVisibleRect(outRect);
+                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                    v.clearFocus();
+                }
+            } else if (v instanceof SearchView) {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {

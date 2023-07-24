@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;

@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_marginVertical="10dp"
+        android:layout_marginHorizontal="15dp">
 
         <Button
             android:layout_width="30dp"
@@ -23,8 +24,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Chỉnh sửa thông tin cá nhân"
-            android:textSize="22sp"
-            android:textColor="@color/colorPrimaryDark"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_weight="1">
@@ -44,47 +46,41 @@
         android:layout_height="wrap_content"
         android:id="@+id/avatar_border"
         android:background="@drawable/avatar_border"
-        android:padding="10dp"
+        android:padding="7dp"
+        android:layout_margin="10dp"
         android:layout_gravity="center">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/avatar_frame">
-                <androidx.cardview.widget.CardView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    app:cardCornerRadius="100dp"
-                    app:cardElevation="0dp"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/user_avatar"
-                        android:background="@drawable/user_avatar"
-                        android:scaleType="centerCrop">
-                    </ImageView>
-                </androidx.cardview.widget.CardView>
+            android:layout_width="125dp"
+            android:layout_height="125dp">
+            <androidx.cardview.widget.CardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/user_avatar"
+                    android:background="@drawable/arrow"
+                    android:scaleType="centerCrop">
+                </ImageView>
+            </androidx.cardview.widget.CardView>
 
             <Button
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:background="@drawable/edit"
-                app:layout_constraintRight_toRightOf="@id/avatar_frame"
-                app:layout_constraintBottom_toBottomOf="@id/avatar_frame">
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
             </Button>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorPrimary"
-        android:layout_marginTop="20dp">
-    </View>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -94,8 +90,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tên đăng nhập:"
-            android:textSize="20sp">
+            android:text="Tên đăng nhập"
+            android:textSize="18sp">
         </TextView>
 
         <TextView
@@ -104,51 +100,57 @@
             android:id="@+id/username"
             android:gravity="center_vertical"
             android:textSize="15sp"
-            android:text="NguyenVanBa">
+            android:paddingHorizontal="2dp"
+            android:textColor="@color/black">
         </TextView>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Tên người dùng:"
-            android:textSize="20sp">
-        </TextView>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:textSize="15sp"
-            android:id="@+id/fullname_edit_text">
-        </EditText>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Bio: "
-            android:textSize="20sp">
+            android:layout_marginTop="10dp"
+            android:text="Tên người dùng"
+            android:textSize="18sp">
         </TextView>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:id="@+id/fullname_edit_text"
             android:textSize="15sp"
-            android:id="@+id/bio_edit_text">
+            android:inputType="text"
+            android:layout_marginHorizontal="2dp">
         </EditText>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Đổi mật khẩu: "
+            android:layout_marginTop="10dp"
+            android:text="Bio"
+            android:textSize="18sp">
+        </TextView>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/bio_edit_text"
+            android:textSize="15sp"
+            android:inputType="text"
+            android:layout_marginHorizontal="2dp">
+        </EditText>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Đổi mật khẩu"
             android:textSize="20sp">
         </TextView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -162,9 +164,9 @@
 
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="38dp"
                     android:id="@+id/old_password"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:inputType="textPassword">
                 </EditText>
             </LinearLayout>
@@ -188,9 +190,9 @@
 
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="38dp"
                     android:id="@+id/new_password"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:inputType="textPassword">
                 </EditText>
             </LinearLayout>

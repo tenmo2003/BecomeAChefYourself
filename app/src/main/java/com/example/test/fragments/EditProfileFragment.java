@@ -2,9 +2,9 @@ package com.example.test.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +12,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -32,6 +36,19 @@ public class EditProfileFragment extends Fragment {
     private String username;
     private String fullname;
     private String bio;
+    private ImageView userAvatar;
+    private final ActivityResultLauncher<PickVisualMediaRequest> startActivityIntent = registerForActivityResult(
+            new ActivityResultContracts.PickVisualMedia(),
+            new ActivityResultCallback<Uri>() {
+                @Override
+                public void onActivityResult(Uri uri) {
+                    if (uri != null) {
+                        userAvatar.setImageURI(uri);
+                    } else {
+                        return;
+                    }
+                }
+            });
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,9 +63,9 @@ public class EditProfileFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getContext());
 
+        userAvatar = view.findViewById(R.id.user_avatar);
         Button backButton = view.findViewById(R.id.back_button);
         Button updateProfileButton = view.findViewById(R.id.update_profile_btn);
-        ConstraintLayout avatar_frame = view.findViewById(R.id.avatar_frame);
         TextView usernameTextView = view.findViewById(R.id.username);
         EditText fullnameEditText = view.findViewById(R.id.fullname_edit_text);
         EditText bioEditText = view.findViewById(R.id.bio_edit_text);
@@ -64,6 +81,15 @@ public class EditProfileFragment extends Fragment {
         usernameTextView.setText(username);
         fullnameEditText.setText(fullname);
         bioEditText.setText(bio);
+
+        userAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityIntent.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
+        });
 
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,16 +123,16 @@ public class EditProfileFragment extends Fragment {
                     Toast.makeText(getContext(), "Cập nhập thông tin thành công", Toast.LENGTH_SHORT).show();
                     fullname = fullnameEditText.getText().toString();
                     bio = bioEditText.getText().toString();
-
-                    //clear focus and hide device keyboard
-                    View v = getActivity().getCurrentFocus();
-                    if (v instanceof EditText) {
-                        v.clearFocus();
-                        InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
                 } else if (updateSuccess == -1) {
                     Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
+                }
+
+                //clear focus and hide device keyboard
+                View v = getActivity().getCurrentFocus();
+                if (v instanceof EditText) {
+                    v.clearFocus();
+                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
 
                 oldPasswordEditText.setText("");
@@ -120,26 +146,6 @@ public class EditProfileFragment extends Fragment {
                 Navigation.findNavController(view).navigateUp();
             }
         });
-
-        avatar_frame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                // Registers a photo picker activity launcher in single-select mode.
-//                ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
-//                        registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-//                            int flag = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-//                            //getActivity().contentResolver.takePersistableUriPermission(uri, flag);
-//                        });
-//
-//                // Launch the photo picker and let the user choose only images/videos of a
-//                // specific MIME type, such as GIFs.
-//                String mimeType = "image/gif";
-//                pickMedia.launch(new PickVisualMediaRequest.Builder()
-//                        .setMediaType(new ActivityResultContracts.PickVisualMedia.SingleMimeType(mimeType))
-//                        .build());
-            }
-        });
-
     }
 
     @Override
