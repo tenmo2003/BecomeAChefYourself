@@ -14,13 +14,17 @@ import android.view.ViewGroup;
 
 import com.example.test.R;
 import com.example.test.adapters.RecipeListAdapter;
+import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
 public class UserSavedFragment extends Fragment {
-
     RecyclerView userSavedList;
-
     DatabaseHelper dbHelper;
+    private final User profileUser;
+
+    public UserSavedFragment(User profileUser) {
+        this.profileUser = profileUser;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,7 +44,7 @@ public class UserSavedFragment extends Fragment {
         userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
-        adapter.setArticleList(dbHelper.getUserSavedArticles(UserFragment.profileUser.getUsername()));
+        adapter.setArticleList(dbHelper.getUserSavedArticles(profileUser.getUsername()));
         adapter.setContext(getActivity());
 
         userSavedList.setAdapter(adapter);
