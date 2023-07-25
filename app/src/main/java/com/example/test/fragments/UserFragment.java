@@ -36,6 +36,7 @@ import com.example.test.activities.MainActivity;
 import com.example.test.adapters.SectionsPagerAdapter;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
+import com.example.test.utils.SaveSharedPreference;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -232,6 +233,9 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 public void onClick(DialogInterface dialog, int which) {
                     // Perform logout action here
                     MainActivity.loggedInUser = null;
+                    // Clear preference file
+                    SaveSharedPreference.setUserName(getContext(), "");
+
                     Navigation.findNavController(fragmentView).navigate(R.id.navigation_login);
                 }
             });

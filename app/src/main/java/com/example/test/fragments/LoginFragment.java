@@ -17,6 +17,7 @@ import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.databinding.FragmentUserBinding;
+import com.example.test.utils.SaveSharedPreference;
 
 public class LoginFragment extends Fragment {
 
@@ -59,6 +60,10 @@ public class LoginFragment extends Fragment {
 
                 if (result) {
                     Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+
+                    // Save login status in preference file
+                    SaveSharedPreference.setUserName(getContext(), usernameTv.getText().toString());
+
                     if (MainActivity.loggedInUser.getUsername().equals("admin")) {
                         Navigation.findNavController(view).navigate(R.id.navigation_admin);
                     } else {
