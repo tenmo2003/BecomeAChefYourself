@@ -2,11 +2,14 @@ package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,6 +44,7 @@ import com.example.test.components.Article;
 import com.example.test.components.Comment;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
+import com.example.test.utils.SaveSharedPreference;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.time.LocalDateTime;
@@ -83,6 +88,8 @@ public class ArticleFragment extends Fragment {
         EditText commentEditText = view.findViewById(R.id.comment_edit_text);
         Button sendCommentBtn = view.findViewById(R.id.send_comment_btn);
         ImageView bookmark = view.findViewById(R.id.bookmark_in_article);
+        TextView reportBtn = view.findViewById(R.id.report_btn);
+        TextView removeBtn = view.findViewById(R.id.remove_btn);
 
         Bundle args = getArguments();
         assert args != null;
@@ -92,6 +99,7 @@ public class ArticleFragment extends Fragment {
         } else if (args.containsKey("reportID")) {
             articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
         }
+        int finalArticleID = articleID;
 
         Article article = dbHelper.getArticleWithId(articleID);
 
@@ -145,6 +153,39 @@ public class ArticleFragment extends Fragment {
                 }
             }).into(authorAvatar);
 
+        }
+
+        if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(author.getUsername()))) {
+            removeBtn.setVisibility(View.VISIBLE);
+            removeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Xoá bài");
+                    builder.setMessage("Bạn chắc chắn muốn xoá bài viết chứ?");
+                    builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dbHelper.removeArticle(finalArticleID);
+                            Navigation.findNavController(view).navigateUp();
+                        }
+                    });
+                    builder.setNegativeButton("Huỷ", null);
+                    AlertDialog dialog = builder.create();
+
+                    dialog.show();
+
+                    // Get the positive and negative buttons
+                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                    // Set the text color of the positive button
+                    positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+                    // Set the text color of the negative button
+                    negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+                }
+            });
         }
 
         final boolean[] isLike = {false};
@@ -218,7 +259,6 @@ public class ArticleFragment extends Fragment {
             }
         });
 
-        int finalArticleID = articleID;
         reactBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -269,6 +309,52 @@ public class ArticleFragment extends Fragment {
 
                 commentListAdapter.addNewComment(new Comment(dbHelper.getLastCommentID(), commenter, content, finalArticleID));
                 commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
+            }
+        });
+
+        reportBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MainActivity.loggedInUser == null) {
+                    Toast.makeText(getActivity(), "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
+                    Navigation.findNavController(view).navigate(R.id.navigation_login);
+                    return;
+                }
+
+                final EditText reasonEditText = new EditText(getActivity());
+                reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                reasonEditText.setHint("Lí do");
+
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                        .setTitle("Báo cáo bài viết")
+                        .setMessage("Vấn đề của bài viết này:")
+                        .setView(reasonEditText)
+                        .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String reporter = MainActivity.loggedInUser.getUsername(); // replace with actual user who reported the comment
+                                String reason = reasonEditText.getText().toString();
+                                boolean success = dbHelper.reportArticle(finalArticleID, reporter, reason);
+
+                                if (success) {
+                                    Toast.makeText(getActivity(), "Báo cáo của bạn đã được gửi để xem xét", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Gửi báo cáo thất bại", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                        .setNegativeButton("Huỷ", null)
+                        .show();
+
+                // Get the positive and negative buttons
+                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                // Set the text color of the positive button
+                positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+                // Set the text color of the negative button
+                negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
             }
         });
     }

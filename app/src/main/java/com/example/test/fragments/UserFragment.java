@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -134,7 +135,7 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 @Override
                 public void onClick(View view) {
                     if (MainActivity.loggedInUser == null) {
-                        Toast.makeText(getActivity(), "Please login first!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
                         Navigation.findNavController(view).navigate(R.id.navigation_login);
                         return;
                     }
@@ -242,6 +243,16 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             builder.setNegativeButton("No", null);
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            // Get the positive and negative buttons
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+            // Set the text color of the positive button
+            positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+            // Set the text color of the negative button
+            negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
             return true;
         }
     }

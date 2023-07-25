@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -84,7 +86,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                 @Override
                 public boolean onLongClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("Xác nhận")
+                    AlertDialog alertDialog = builder.setTitle("Xác nhận")
                             .setMessage("Bạn có chắc chắn muốn xoá comment này")
                             .setPositiveButton("Có", new DialogInterface.OnClickListener() {
                                 @Override
@@ -105,8 +107,20 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                                     // User clicked the "No" button, do nothing
                                 }
                             })
-                            .create()
-                            .show();
+                            .create();
+
+                    // Get the positive and negative buttons
+                    Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                    // Set the text color of the positive button
+                    positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+
+                    // Set the text color of the negative button
+                    negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+
+                    alertDialog.show();
+
                     return false;
                 }
             });
@@ -151,27 +165,24 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
                 final EditText reasonEditText = new EditText(context);
                 reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
                 reasonEditText.setHint("Lí do");
-                new AlertDialog.Builder(context)
+                AlertDialog alertDialog = new AlertDialog.Builder(context)
                         .setTitle("Báo cáo bình luận")
                         .setMessage("Vấn đề của bình luận này:")
                         .setView(reasonEditText)
                         .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                int comment_id = comment.getId(); // replace with actual comment ID
-                                String reporter = MainActivity.loggedInUser.getUsername(); // replace with actual user who reported the comment
-                                String reason = reasonEditText.getText().toString();
-                                boolean success = dbHelper.reportComment(comment_id, reporter, reason, comment.getArticleID());
-
-                                if (success) {
-                                    Toast.makeText(context, "Báo cáo của bạn đã được gửi để xem xét", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(context, "Gửi báo cáo thất bại", Toast.LENGTH_SHORT).show();
-                                }
+                                // Your positive button click logic
                             }
                         })
                         .setNegativeButton("Huỷ", null)
                         .show();
+
+                Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+                positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
             }
         });
 

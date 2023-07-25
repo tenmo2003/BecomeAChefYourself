@@ -206,6 +206,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<User> getAllUser() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<User> userList = new ArrayList<>();
+
+        // Query to select all users from the "user" table
+        Cursor cursor = db.rawQuery("SELECT * FROM user", null);
+
+        // Loop through the cursor to extract each user's information
+        while (cursor.moveToNext()) {
+            @SuppressLint("Range") String username = cursor.getString(cursor.getColumnIndex("username"));
+            @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
+            @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
+            @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
+
+            // Create a User object and add it to the list
+            User user = new User(username, fullname, points, bio, imageURL);
+            userList.add(user);
+        }
+
+        // Close the cursor and database
+        cursor.close();
+        db.close();
+
+        // Return the list of users
+        return userList;
+    }
+
     public User getUserWithUsername(String username) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -685,6 +713,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("reporter", reporter);
         values.put("comment_id", comment_id);
+        values.put("reason", reason);
+        values.put("article_id", articleID);
+        long result = db.insert("reports", null, values);
+        return result != -1;
+    }
+
+    public boolean reportArticle(int articleID, String reporter, String reason) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("reporter", reporter);
         values.put("reason", reason);
         values.put("article_id", articleID);
         long result = db.insert("reports", null, values);
