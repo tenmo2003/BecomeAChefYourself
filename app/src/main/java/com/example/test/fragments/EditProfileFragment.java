@@ -40,6 +40,8 @@ import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
+import java.util.Random;
+
 public class EditProfileFragment extends Fragment {
     private DatabaseHelper dbHelper;
     private String username;
@@ -125,6 +127,7 @@ public class EditProfileFragment extends Fragment {
                 if (oldPasswordChange && newPasswordChange) {
                     if (oldPasswordEditText.getText().toString().equals(newPasswordEditText.getText().toString())) {
                         Toast.makeText(getContext(), "Mật khẩu mới không được trùng với mật khẩu cũ", Toast.LENGTH_SHORT).show();
+                        return;
                     } else {
                         oldPassword = oldPasswordEditText.getText().toString();
                         newPassword = newPasswordEditText.getText().toString();
@@ -139,10 +142,7 @@ public class EditProfileFragment extends Fragment {
 
                 String imageURL = "";
                 if (imageChanged) {
-                    MainActivity.runTask(() -> {
-                        ImageController.uploadImage(imageURI, "user_" + MainActivity.loggedInUser.getUsername() + ".jpg", getContext());
-                    }, null, MainActivity.progressDialog);
-                    imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + ".jpg";
+                    imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + "_" + new Random().nextInt() + ".jpg";
                 }
 
                 int updateSuccess = dbHelper.updateProfile(username, fullnameEditText.getText().toString(), fullnameUpdate,
@@ -151,9 +151,18 @@ public class EditProfileFragment extends Fragment {
 
 
                 if (updateSuccess == 1) {
-                    Toast.makeText(getContext(), "Cập nhập thông tin thành công", Toast.LENGTH_SHORT).show();
                     fullname = fullnameEditText.getText().toString();
                     bio = bioEditText.getText().toString();
+
+                    int startIndex = imageURL.indexOf("user");
+                    String finalImageURL = imageURL.substring(startIndex);
+                    MainActivity.runTask(() -> {
+                        ImageController.uploadImage(imageURI, finalImageURL, getContext());
+                    }, () -> {
+                        Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                    }, MainActivity.progressDialog);
+
+                    MainActivity.loggedInUser.setAvatarURL(imageURL);
                 } else if (updateSuccess == -1) {
                     Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
                 }

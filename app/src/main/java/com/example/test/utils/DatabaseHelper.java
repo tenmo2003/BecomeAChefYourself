@@ -172,7 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("username", username);
         values.put("password", password);
         values.put("fullname", fullname);
-        db.insert("users", null, values);
+        db.insert("user", null, values);
 
         cursor.close();
         db.close();
