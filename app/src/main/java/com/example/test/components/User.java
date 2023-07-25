@@ -46,6 +46,10 @@ public class User {
         return avatarURL;
     }
 
+    public void setAvatarURL(String avatarURL) {
+        this.avatarURL = avatarURL;
+    }
+
     public String getFullname() {
         if (fullname == null) {
             return "";
