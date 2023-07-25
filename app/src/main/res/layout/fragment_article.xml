@@ -86,6 +86,19 @@
                 android:orientation="horizontal"
                 android:gravity="right">
                 <TextView
+                    android:id="@+id/edit_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sửa"
+                    android:textSize="20sp"
+                    android:textColor="@color/mainTheme"
+                    android:gravity="right|center_vertical"
+                    android:layout_gravity="right"
+                    android:padding="5dp"
+                    android:layout_marginHorizontal="10dp"
+                    android:visibility="gone"
+                    />
+                <TextView
                     android:id="@+id/report_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

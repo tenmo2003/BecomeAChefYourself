@@ -61,6 +61,22 @@ public class CreateStep2Fragment extends Fragment {
         View selectionBackground2 = view.findViewById(R.id.background_main);
         View selectionBackground3 = view.findViewById(R.id.background_dessert);
 
+        if (ShareFragment.editing) {
+            if (ShareFragment.serveOrderChoice.equals("Món khai vị")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner_selected);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner);
+            } else if (ShareFragment.serveOrderChoice.equals("Món chính")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner_selected);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner);
+            } else if (ShareFragment.serveOrderChoice.equals("Món tráng miệng")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner_selected);
+            }
+        }
+
         // Set onClickListener to each FrameLayout
         selection1.setOnClickListener(new View.OnClickListener() {
             @Override

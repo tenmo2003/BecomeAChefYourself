@@ -28,12 +28,34 @@ public class ShareFragment extends Fragment {
     public static String recipe;
     public static String timeToMake;
     public static Uri imageURI;
+    public static String imageURL;
+    public static boolean imageChanged;
+    public static boolean editing;
+    public static int articleID;
 
     public static ViewPager2 viewPager;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_share, container, false);
+
+        editing = false;
+        imageChanged = false;
+        Bundle args = getArguments();
+
+        if (args != null) {
+            articleID = args.getInt("articleID");
+            mealChoice = args.getString("mealChoice");
+            typeChoice = args.getString("typeChoice");
+            serveOrderChoice = args.getString("serveOrderChoice");
+            dishName = args.getString("dishName");
+            ingredients = args.getString("ingredients");
+            recipe = args.getString("recipe");
+            timeToMake = args.getString("timeToMake");
+            imageURL = args.getString("imageURL");
+            editing = args.getBoolean("editing");
+        }
+
 
         viewPager = view.findViewById(R.id.view_pager);
         setUpViewPager(viewPager);

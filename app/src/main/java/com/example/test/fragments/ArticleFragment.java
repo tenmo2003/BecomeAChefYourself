@@ -90,6 +90,7 @@ public class ArticleFragment extends Fragment {
         ImageView bookmark = view.findViewById(R.id.bookmark_in_article);
         TextView reportBtn = view.findViewById(R.id.report_btn);
         TextView removeBtn = view.findViewById(R.id.remove_btn);
+        TextView editBtn = view.findViewById(R.id.edit_btn);
 
         Bundle args = getArguments();
         assert args != null;
@@ -357,6 +358,28 @@ public class ArticleFragment extends Fragment {
                 negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
             }
         });
+
+        if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals(author.getUsername()))) {
+            editBtn.setVisibility(View.VISIBLE);
+            editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle args = new Bundle();
+                    args.putInt("articleID", finalArticleID);
+                    args.putString("mealChoice", article.getMeal());
+                    args.putString("typeChoice", article.getType());
+                    args.putString("serveOrderChoice", article.getServeOrderClass());
+                    args.putString("dishName", article.getDishName());
+                    args.putString("ingredients", article.getIngredients());
+                    args.putString("recipe", article.getRecipe());
+                    args.putString("timeToMake", article.getTimeToMake());
+                    args.putString("imageURL", article.getImgURL());
+                    args.putBoolean("editing", true);
+
+                    Navigation.findNavController(view).navigate(R.id.navigation_share, args);
+                }
+            });
+        }
     }
 
     private View createCustomActionBar() {

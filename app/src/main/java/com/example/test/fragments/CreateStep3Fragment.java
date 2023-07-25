@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.adapters.IngredientListAdapter;
 import com.example.test.utils.ExpandedListView;
@@ -43,6 +44,8 @@ public class CreateStep3Fragment extends Fragment {
     private static ArrayList<String> ingredientsList;
     private static IngredientListAdapter ingredientsAdapter;
 
+    private static StringBuilder ingredientString;
+
     ImageView imgInput;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,11 +57,9 @@ public class CreateStep3Fragment extends Fragment {
                     // Callback is invoked after the user selects a media item or closes the
                     // photo picker.
                     if (uri != null) {
-                        Log.d("PhotoPicker", "Selected URI: " + uri);
                         imgInput.setImageURI(uri);
                         ShareFragment.imageURI = uri;
-                        Log.i("path", ShareFragment.imageURI.getPath());
-
+                        ShareFragment.imageChanged = true;
                     } else {
                         Log.d("PhotoPicker", "No media selected");
                     }
@@ -107,7 +108,23 @@ public class CreateStep3Fragment extends Fragment {
 
         ImageButton addIngredientBtn = view.findViewById(R.id.add_btn);
         EditText ingredientInput = view.findViewById(R.id.ingredients_input);
-        StringBuilder ingredientString = new StringBuilder();
+        ingredientString = new StringBuilder();
+
+        if (ShareFragment.editing) {
+            typeChoice.setSelection(types.indexOf(ShareFragment.typeChoice));
+            dishNameInput.setText(ShareFragment.dishName);
+            recipeInput.setText(ShareFragment.recipe);
+            ingredientString.append(ShareFragment.ingredients);
+
+            String[] ingredients = ShareFragment.ingredients.split(";\\s*");
+
+            for (String s : ingredients) {
+                addItem(s);
+            }
+
+            timeToMakeInput.setText(ShareFragment.timeToMake);
+            Glide.with(getActivity()).load(ShareFragment.imageURL).into(imgInput);
+        }
 
         addIngredientBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,6 +203,19 @@ public class CreateStep3Fragment extends Fragment {
     }
 
     public static void removeItem(int position) {
+        StringBuilder updatedIngredientString = new StringBuilder();
+
+        String[] ingredientsArray = ingredientString.toString().split(";");
+        for (String ingredient : ingredientsArray) {
+            if (!ingredient.equals(ingredientsList.get(position))) {
+                if (updatedIngredientString.length() != 0) {
+                    updatedIngredientString.append(';');
+                }
+                updatedIngredientString.append(ingredient);
+            }
+        }
+        ingredientString = updatedIngredientString;
+
         ingredientsList.remove(position);
         ingredientsAdapter.notifyDataSetChanged();
     }

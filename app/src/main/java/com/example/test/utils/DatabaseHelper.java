@@ -288,6 +288,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean editArticle(int articleId, String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Create a new ContentValues object that contains the updated values for the article
+        ContentValues values = new ContentValues();
+        values.put("dish_name", dishName);
+        values.put("publisher", publisher);
+        values.put("recipe", recipe);
+        values.put("ingredients", ingredients);
+        values.put("meal", meal);
+        values.put("serve_order_class", serve_order_class);
+        values.put("type", type);
+        values.put("time_to_make", timeToMake);
+        values.put("image", imgURL);
+
+        // Update the article in the database
+        int rowsAffected = db.update("articles", values, "id=?", new String[]{String.valueOf(articleId)});
+
+        db.close();
+
+        // Check if the update was successful
+        return rowsAffected > 0;
+    }
+
     public boolean removeArticle(int articleID) {
         SQLiteDatabase db = this.getWritableDatabase();
 
