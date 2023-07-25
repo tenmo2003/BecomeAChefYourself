@@ -68,7 +68,6 @@ public class ArticleFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getActivity());
 
-
         CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.dish_name_text);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
         TextView ingredientsTextView = view.findViewById(R.id.ingredients_text);
@@ -83,6 +82,7 @@ public class ArticleFragment extends Fragment {
         ImageView reactBtn = view.findViewById(R.id.react_btn);
         EditText commentEditText = view.findViewById(R.id.comment_edit_text);
         Button sendCommentBtn = view.findViewById(R.id.send_comment_btn);
+        ImageView bookmark = view.findViewById(R.id.bookmark_in_article);
 
         Bundle args = getArguments();
         assert args != null;
@@ -92,7 +92,35 @@ public class ArticleFragment extends Fragment {
         } else if (args.containsKey("reportID")) {
             articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
         }
+
         Article article = dbHelper.getArticleWithId(articleID);
+
+        final boolean[] isBookmark = {MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleID)};
+        if (isBookmark[0]) {
+            bookmark.setImageResource(R.drawable.bookmarked);
+        } else {
+            bookmark.setImageResource(R.drawable.bookmark);
+        }
+
+        bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (MainActivity.loggedInUser == null) {
+                    Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!isBookmark[0]) {
+                    isBookmark[0] = true;
+                    dbHelper.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    bookmark.setImageResource(R.drawable.bookmarked);
+                } else {
+                    isBookmark[0] = false;
+                    dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    bookmark.setImageResource(R.drawable.bookmark);
+                }
+            }
+        });
 
         ImageView dishImg = view.findViewById(R.id.dish_img);
 

@@ -54,6 +54,15 @@
                     android:background="@drawable/back_btn"
                     android:layout_gravity="top">
                 </Button>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="32dp"
+                    android:id="@+id/bookmark_in_article"
+                    android:background="@drawable/bookmark"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_gravity="end">
+                </ImageView>
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -80,7 +89,7 @@
                 android:paddingVertical="10dp"
                 android:layout_marginHorizontal="5dp"
                 android:background="@drawable/user_in_article_bg"
-                android:elevation="1dp">
+                android:elevation="2dp">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="50dp"
@@ -335,16 +344,16 @@
                     android:id="@+id/comment_edit_text"
                     android:textSize="15sp"
                     android:gravity="bottom"
-                    android:layout_weight="4">
+                    android:layout_weight="9">
                 </EditText>
 
                 <Button
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="30dp"
                     android:id="@+id/send_comment_btn"
                     android:layout_weight="1"
                     android:layout_gravity="center"
-                    android:text="Gửi">
+                    android:background="@drawable/send_comment">
                 </Button>
             </LinearLayout>
 

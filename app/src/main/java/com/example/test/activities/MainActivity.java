@@ -17,8 +17,10 @@ import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.components.User;
+import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.SQLConnection;
 import com.example.test.databinding.ActivityMainBinding;
+import com.example.test.utils.SaveSharedPreference;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -78,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
         // menu should be considered as top level destinations.
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(navView, navController);
+
+        // Auto login if user logged before
+        if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {
+            DatabaseHelper dbHelper = new DatabaseHelper(MainActivity.this);
+            MainActivity.loggedInUser = dbHelper.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
+        }
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -142,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
     // Clear focus on touch outside EditText, and hide keyboard on touch outside SearchView
     @Override

@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:cardCornerRadius="20dp"
-        android:elevation="0dp">
+        app:cardElevation="0dp">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
