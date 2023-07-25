@@ -30,6 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                         "  password TEXT NOT NULL,\n" +
                                                         "  fullname TEXT NOT NULL, \n" +
                                                         "  points INTEGER DEFAULT 0,\n" +
+                                                        "  avatar TEXT,\n" +
                                                         "  bio TEXT \n" +
                                                         "); ";
 
@@ -189,7 +190,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
-            User user = new User(username, password, fullname, points, bio);
+            @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
+            User user = new User(username, password, fullname, points, bio, imageURL);
 
             MainActivity.loggedInUser = user;
 
@@ -215,7 +217,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
-            User user = new User(username, fullname, points, bio);
+            @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
+            User user = new User(username, fullname, points, bio, imageURL);
 
             cursor.close();
             db.close();
@@ -931,7 +934,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int updateProfile(String username, String fullname, boolean fullnameUpdate,
-                                 String bio, boolean bioUpdate, String oldPassword, String newPassword) {
+                                 String bio, boolean bioUpdate, String oldPassword, String newPassword, String avatarURL) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -942,6 +945,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (bioUpdate) {
             values.put("bio", bio);
         }
+
+        values.put("avatar", avatarURL);
 
         if (!Objects.equals(oldPassword, "") && !Objects.equals(newPassword, "")) {
             Cursor cursor = db.rawQuery("SELECT password FROM user WHERE username=?", new String[] {username});

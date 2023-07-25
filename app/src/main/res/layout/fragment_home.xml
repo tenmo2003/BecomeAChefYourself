@@ -42,7 +42,7 @@
             </androidx.appcompat.widget.SearchView>
 
             <Button
-                android:layout_width="20dp"
+                android:layout_width="50dp"
                 android:layout_height="25dp"
                 android:id="@+id/filter_btn"
                 android:background="@drawable/filter"

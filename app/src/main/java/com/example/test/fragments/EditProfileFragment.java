@@ -2,6 +2,7 @@ package com.example.test.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -28,8 +29,16 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
+import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
+import com.example.test.utils.ImageController;
 
 public class EditProfileFragment extends Fragment {
     private DatabaseHelper dbHelper;
@@ -37,12 +46,16 @@ public class EditProfileFragment extends Fragment {
     private String fullname;
     private String bio;
     private ImageView userAvatar;
+    private Uri imageURI;
+    private boolean imageChanged;
     private final ActivityResultLauncher<PickVisualMediaRequest> startActivityIntent = registerForActivityResult(
             new ActivityResultContracts.PickVisualMedia(),
             new ActivityResultCallback<Uri>() {
                 @Override
                 public void onActivityResult(Uri uri) {
                     if (uri != null) {
+                        imageChanged = true;
+                        imageURI = uri;
                         userAvatar.setImageURI(uri);
                     } else {
                         return;
@@ -53,6 +66,8 @@ public class EditProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_profile, container, false);
+
+        imageChanged = false;
 
         return view;
     }
@@ -77,6 +92,12 @@ public class EditProfileFragment extends Fragment {
         username = args.getString("username");
         fullname = args.getString("fullname");
         bio = args.getString("bio");
+
+        User user = dbHelper.getUserWithUsername(username);
+
+        if (!user.getAvatarURL().equals("")) {
+            Glide.with(getActivity()).load(user.getAvatarURL()).into(userAvatar);
+        }
 
         usernameTextView.setText(username);
         fullnameEditText.setText(fullname);
@@ -116,8 +137,18 @@ public class EditProfileFragment extends Fragment {
                     }
                 }
 
+                String imageURL = "";
+                if (imageChanged) {
+                    MainActivity.runTask(() -> {
+                        ImageController.uploadImage(imageURI, "user_" + MainActivity.loggedInUser.getUsername() + ".jpg", getContext());
+                    }, null, MainActivity.progressDialog);
+                    imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + ".jpg";
+                }
+
                 int updateSuccess = dbHelper.updateProfile(username, fullnameEditText.getText().toString(), fullnameUpdate,
-                        bioEditText.getText().toString(), bioUpdate, oldPassword, newPassword);
+                        bioEditText.getText().toString(), bioUpdate, oldPassword, newPassword, imageURL);
+
+
 
                 if (updateSuccess == 1) {
                     Toast.makeText(getContext(), "Cập nhập thông tin thành công", Toast.LENGTH_SHORT).show();

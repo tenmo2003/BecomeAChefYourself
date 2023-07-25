@@ -38,6 +38,7 @@ import com.example.test.activities.MainActivity;
 import com.example.test.adapters.CommentListAdapter;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
+import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
@@ -90,24 +91,40 @@ public class ArticleFragment extends Fragment {
              articleID = args.getInt("articleID");
         } else if (args.containsKey("reportID")) {
             articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-                actionBar.setCustomView(createCustomActionBar());
-            }
         }
         Article article = dbHelper.getArticleWithId(articleID);
 
         ImageView dishImg = view.findViewById(R.id.dish_img);
 
         //test data
-        authorAvatar.setImageResource(R.drawable.user_avatar);
+        User author = dbHelper.getUserWithUsername(article.getPublisher());
+        if (author.getAvatarURL().equals("")) {
+            authorAvatar.setImageResource(R.drawable.baseline_person_24);
+        } else {
+            ProgressBar progress = view.findViewById(R.id.avatar_progressbar);
+            progress.setVisibility(View.VISIBLE);
+            Glide.with(getActivity()).load(author.getAvatarURL()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    progress.setVisibility(View.GONE);
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    progress.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(authorAvatar);
+
+        }
 
         final boolean[] isLike = {false};
 
 
         if (MainActivity.loggedInUser != null) {
-            userAvatar.setImageResource(R.drawable.user_avatar);
+            Glide.with(getActivity()).load(MainActivity.loggedInUser.getAvatarURL()).into(userAvatar);
+
             isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID));
             if (isLike[0]) {
                 reactBtn.setImageResource(R.drawable.reacted);

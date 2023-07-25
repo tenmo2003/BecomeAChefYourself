@@ -66,7 +66,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/user_avatar"
-                    android:background="@drawable/arrow"
+                    android:src="@drawable/baseline_person_24"
                     android:scaleType="centerCrop">
                 </ImageView>
             </androidx.cardview.widget.CardView>

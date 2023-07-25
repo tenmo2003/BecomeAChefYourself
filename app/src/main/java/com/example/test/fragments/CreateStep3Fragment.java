@@ -141,19 +141,29 @@ public class CreateStep3Fragment extends Fragment {
         nextStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShareFragment.typeChoice = typeChoice.getSelectedItem().toString();
-                ShareFragment.dishName = dishNameInput.getText().toString();
-                ShareFragment.ingredients = ingredientString.toString();
-                ShareFragment.recipe = recipeInput.getText().toString();
-                ShareFragment.timeToMake = timeToMakeInput.getText().toString();
 
-                if (ShareFragment.typeChoice == null || ShareFragment.dishName == null || ShareFragment.ingredients == null || ShareFragment.recipe == null || ShareFragment.timeToMake == null) {
-                    Toast.makeText(getActivity(), "Vui lòng điền hết các thông tin", Toast.LENGTH_SHORT).show();
-                } else {
+
+                if (typeChoice.getSelectedItem() != null &&
+                        dishNameInput.getText() != null && !dishNameInput.getText().toString().isEmpty() &&
+                        ingredientString != null && !ingredientString.toString().isEmpty() &&
+                        recipeInput.getText() != null && !recipeInput.getText().toString().isEmpty() &&
+                        timeToMakeInput.getText() != null && !timeToMakeInput.getText().toString().isEmpty()) {
+                    // All EditText fields have valid input
+                    // Perform the desired action here
+                    ShareFragment.typeChoice = typeChoice.getSelectedItem().toString();
+                    ShareFragment.dishName = dishNameInput.getText().toString();
+                    ShareFragment.ingredients = ingredientString.toString();
+                    ShareFragment.recipe = recipeInput.getText().toString();
+                    ShareFragment.timeToMake = timeToMakeInput.getText().toString();
+
                     ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
+
+                } else {
+                    // One or more EditText fields are empty or null
+                    // Handle the case where input is missing
+                    Toast.makeText(getActivity(), "Vui lòng điền hết các thông tin", Toast.LENGTH_SHORT).show();
+
                 }
-
-
             }
         });
 

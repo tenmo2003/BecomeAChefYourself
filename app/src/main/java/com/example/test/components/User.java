@@ -6,20 +6,23 @@ public class User {
     private String fullname;
     private int points;
     private String bio;
+    private String avatarURL;
 
-    public User(String username, String password, String fullname, int points, String bio) {
+    public User(String username, String password, String fullname, int points, String bio, String avatarURL) {
         this.username = username;
         this.password = password;
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
+        this.avatarURL = avatarURL;
     }
 
-    public User(String username, String fullname, int points, String bio) {
+    public User(String username, String fullname, int points, String bio, String avatarURL) {
         this.username = username;
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
+        this.avatarURL = avatarURL;
     }
 
     //getters and setters
@@ -37,6 +40,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAvatarURL() {
+        return avatarURL;
     }
 
     public String getFullname() {

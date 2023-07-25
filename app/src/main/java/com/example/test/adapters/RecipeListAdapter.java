@@ -28,6 +28,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
+import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
 import java.io.IOException;
@@ -143,10 +144,29 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
                 return false;
             }
         }).into(holder.dish_img);
+
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        User user = dbHelper.getUserWithUsername(holder.user_name.getText().toString());
+        if (!user.getAvatarURL().equals("")) {
+            Glide.with(context).load(user.getAvatarURL()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(holder.user_avatar);
+        } else {
+            holder.user_avatar.setImageResource(R.drawable.baseline_person_24);
+        }
 //        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
         holder.isBookmark = MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId());
         if (holder.isBookmark) {
             holder.bookmark.setImageResource(R.drawable.bookmarked);
@@ -192,7 +212,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         progressBar = itemView.findViewById(R.id.progressbar);
 
         //default value
-        user_avatar.setImageResource(R.drawable.user_avatar);
 
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override

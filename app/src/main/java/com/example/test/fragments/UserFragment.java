@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.SectionsPagerAdapter;
@@ -70,6 +77,26 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         TextView bioTv = view.findViewById(R.id.user_bio);
         RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
         ImageView popupMenu = view.findViewById(R.id.user_menu);
+        ImageView userAvatar = view.findViewById(R.id.user_avatar);
+
+        ProgressBar progressBar = view.findViewById(R.id.progressbar);
+
+        if (!profileUser.getAvatarURL().equals("")) {
+            progressBar.setVisibility(View.VISIBLE);
+            Glide.with(getActivity()).load(profileUser.getAvatarURL()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(userAvatar);
+        }
 
         List<Integer> stats = dbHelper.getUserProfileStats(profileUser.getUsername());
         TextView postCountTv = view.findViewById(R.id.post_count);
@@ -94,12 +121,12 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 View follow_frame = view.findViewById(R.id.follow_frame);
                 follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
                 TextView follow_text = view.findViewById(R.id.follow_text);
-                follow_text.setText("Follow");
+                follow_text.setText("Theo dõi");
             } else {
                 View follow_frame = view.findViewById(R.id.follow_frame);
                 follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
                 TextView follow_text = view.findViewById(R.id.follow_text);
-                follow_text.setText("Following");
+                follow_text.setText("Đang theo dõi");
             }
 
             followBtn.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +146,7 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                             follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
                             TextView follow_text = view.findViewById(R.id.follow_text);
                             follow_text.setText("Following");
+                            followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) + 1));
                         }
                     } else {
                         boolean result = databaseHelper.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername());
@@ -128,6 +156,7 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                             follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
                             TextView follow_text = view.findViewById(R.id.follow_text);
                             follow_text.setText("Follow");
+                            followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) - 1));
                         }
                     }
                 }
@@ -216,7 +245,9 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private void setupViewPager(ViewPager2 viewPager2) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
         adapter.addFragment(new UserPostFragment(profileUser));
-        adapter.addFragment(new UserSavedFragment(profileUser));
+        if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
+            adapter.addFragment(new UserSavedFragment(profileUser));
+        }
         viewPager2.setAdapter(adapter);
     }
 }

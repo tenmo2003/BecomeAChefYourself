@@ -3,6 +3,7 @@ package com.example.test.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Comment;
@@ -63,6 +70,14 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         holder.comment_content.setText(comments.get(position).getContent());
         holder.context = context;
         holder.dbHelper = dbHelper;
+
+        if (dbHelper.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL().equals("")) {
+            holder.comment_avatar.setImageResource(R.drawable.baseline_person_24);
+        } else {
+            Glide.with(context).load(dbHelper.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL()).into(holder.comment_avatar);
+        }
+
+
         int curPos = position;
         if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals("admin")) {
             holder.commentView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -160,6 +175,5 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
             }
         });
 
-        comment_avatar.setImageResource(R.drawable.user_avatar);
     }
 }
