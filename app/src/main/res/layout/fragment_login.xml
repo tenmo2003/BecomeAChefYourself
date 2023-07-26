@@ -17,7 +17,7 @@
         android:layout_width="400dp"
         android:layout_height="448dp"
         android:layout_marginStart="160dp"
-        android:layout_marginTop="310dp"
+        android:layout_marginBottom="-70dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@drawable/mask2" />
@@ -102,10 +102,11 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/forgot_password_"
-            android:layout_width="match_parent"
+            android:id="@+id/forgot_password_btn"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forgot_password__string"
+            android:layout_centerHorizontal="true"
+            android:text="@string/forgot_password_underlined_string"
             android:textColor="@color/line_2_color"
             android:textSize="16sp"
             android:gravity="center"/>

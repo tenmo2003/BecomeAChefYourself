@@ -111,17 +111,20 @@ public class EditProfileFragment extends Fragment {
                 boolean bioUpdate = !bio.equals(bioEditText.getText().toString());
 
                 if (fullnameUpdate || bioUpdate || imageChanged) {
-                    String imageURL = "";
+                    String imageURL = user.getAvatarURL();
 
                     fullname = fullnameEditText.getText().toString();
                     bio = bioEditText.getText().toString();
+
+                    if (imageChanged) {
+                        imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + "_" + new Random().nextInt() + ".jpg";
+                    }
 
                     boolean updateSuccess = dbHelper.updateProfile(username, fullname,
                             bio, imageURL, imageChanged);
 
                     if (updateSuccess) {
                         if (imageChanged) {
-                            imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + "_" + new Random().nextInt() + ".jpg";
                             int startIndex = imageURL.indexOf("user");
                             String finalImageURL = imageURL.substring(startIndex);
                             MainActivity.runTask(() -> {

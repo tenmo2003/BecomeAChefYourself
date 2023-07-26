@@ -4,13 +4,14 @@ public class User {
     private String username;
     private String password;
     private String fullname;
+    private String email;
     private int points;
     private String bio;
     private String avatarURL;
     private int banned;
     private int reportLevel;
 
-    public User(String username, String password, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel) {
+    public User(String username, String password, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel, String email) {
         this.username = username;
         this.password = password;
         this.fullname = fullname;
@@ -23,9 +24,10 @@ public class User {
         }
         this.banned = banned;
         this.reportLevel = reportLevel;
+        this.email = email;
     }
 
-    public User(String username, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel) {
+    public User(String username, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel, String email) {
         this.username = username;
         this.fullname = fullname;
         this.points = points;
@@ -37,6 +39,7 @@ public class User {
         }
         this.banned = banned;
         this.reportLevel = reportLevel;
+        this.email = email;
     }
 
     //getters and setters
@@ -104,6 +107,14 @@ public class User {
 
     public int getReportLevel() {
         return reportLevel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setReportLevel(int reportLevel) {

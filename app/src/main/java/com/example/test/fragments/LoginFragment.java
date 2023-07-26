@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,12 +17,10 @@ import androidx.navigation.Navigation;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
-import com.example.test.databinding.FragmentUserBinding;
+import com.example.test.utils.MailSender;
 import com.example.test.utils.SaveSharedPreference;
 
 public class LoginFragment extends Fragment {
-
-    private FragmentUserBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +46,7 @@ public class LoginFragment extends Fragment {
 
         Button loginBtn = view.findViewById(R.id.login_button);
         Button toSignUpBtn = view.findViewById(R.id.to_sign_up_button);
+        TextView forgotPasswordBtn = view.findViewById(R.id.forgot_password_btn);
 
         EditText usernameTv = view.findViewById(R.id.login_username_input);
         EditText passwordTv = view.findViewById(R.id.login_password_input);
@@ -82,6 +82,13 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Navigation.findNavController(view).navigate(R.id.navigation_sign_up);
+            }
+        });
+
+        forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(view).navigate(R.id.navigation_forget_password);
             }
         });
 

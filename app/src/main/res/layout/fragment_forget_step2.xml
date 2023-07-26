@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ForgetStep1Fragment"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/email_sent_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:textAlignment="center"
+        android:text="Một mã xác thực đã được gửi về email ten**@***.com"
+        android:textSize="22sp"
+        android:textColor="@color/black"
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <View
+            android:id="@+id/rectangle_1"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:background="@drawable/rectangle_1_shape" />
+
+        <EditText
+            android:id="@+id/code_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:paddingLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:ems="14"
+            android:hint="Mã xác thực"
+            android:textColor="@color/username_color"
+            android:textSize="16sp"
+            android:inputType="number"
+            android:background="@drawable/no_underline_edittext"/>
+
+        <View
+            android:id="@+id/rectangle_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/rectangle_3_shape" />
+
+        <RelativeLayout
+            android:id="@+id/passwordicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="11dp">
+
+            <ImageView
+                android:id="@+id/vector"
+                android:layout_width="18dp"
+                android:layout_height="21dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginTop="1dp"
+                android:src="@drawable/lock" />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/rectangle_6"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/rectangle_6" />
+
+        <TextView
+            android:id="@+id/log_in"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Xác thực"
+            android:textColor="@color/log_in_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/next_btn"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:alpha="0"
+            android:layout_centerHorizontal="true"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

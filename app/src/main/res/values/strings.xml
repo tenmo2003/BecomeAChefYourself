@@ -5,10 +5,13 @@
     <string name="ek_img_content">ExportKit Image</string>
     <string name="sign_up_string">Đăng kí</string>
     <string name="or_ek1_string">HOẶC</string>
-    <string name="forgot_password__string"><u>Quên mật khẩu</u></string>
+    <string name="forgot_password_underlined_string"><u>Quên mật khẩu</u></string>
+    <string name="forgot_password_string">Quên mật khẩu</string>
+    <string name="save_password_string">Lưu mật khẩu</string>
     <string name="log_in_string">Đăng nhập</string>
     <string name="username_string">Tên đăng nhập</string>
     <string name="password_string">Mật khẩu</string>
+    <string name="new_password_string">Mật khẩu mới</string>
     <string name="recommend_recipe_string">Đề xuất hôm nay</string>
 
     <string name="app_name">Let\'s cook together</string>

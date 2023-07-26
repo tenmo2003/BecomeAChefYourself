@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                         "  username TEXT PRIMARY KEY,\n" +
                                                         "  password TEXT NOT NULL,\n" +
                                                         "  fullname TEXT NOT NULL, \n" +
+                                                        "  email TEXT NOT NULL, \n" +
                                                         "  points INTEGER DEFAULT 0,\n" +
                                                         "  avatar TEXT,\n" +
                                                         "  bio TEXT \n," +
@@ -190,12 +191,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             // If the user exists in the database, create a User object and return it
             @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
             @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
             @SuppressLint("Range") int banned = cursor.getInt(cursor.getColumnIndex("banned"));
             @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
-            User user = new User(username, password, fullname, points, bio, imageURL, banned, reportLevel);
+            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
 
             if (banned == 1) {
                 return -1;
@@ -261,6 +263,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             @SuppressLint("Range") String username = cursor.getString(cursor.getColumnIndex("username"));
             @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
             @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
@@ -268,7 +271,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
 
             // Create a User object and add it to the list
-            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel);
+            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
             userList.add(user);
         }
 
@@ -289,12 +292,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             // If the user exists in the database, create a User object and return it
             @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
             @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
             @SuppressLint("Range") int banned = cursor.getInt(cursor.getColumnIndex("banned"));
             @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
-            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel);
+            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
 
             cursor.close();
             db.close();
@@ -1079,6 +1083,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 return false;
             }
         }
+
+        int updateRow = db.update(
+                "user",
+                values,
+                "username=?",
+                new String[] {username}
+        );
+
+        return updateRow > 0;
+    }
+
+    public boolean changePassword(String username, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("password", newPassword);
 
         int updateRow = db.update(
                 "user",
