@@ -70,6 +70,13 @@ public class CreateStep4Fragment extends Fragment {
                                 Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                             }
                         }, MainActivity.progressDialog);
+                    } else {
+                        if (result) {
+                            Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(view).navigate(R.id.navigation_home);
+                        } else {
+                            Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 } else {
                     String imageURL = ShareFragment.imageURL;
