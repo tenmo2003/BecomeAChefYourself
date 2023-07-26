@@ -57,11 +57,15 @@ public class CreateStep4Fragment extends Fragment {
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
                 if (!ShareFragment.editing) {
-                    String imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
+                    String imageURL = "";
+                    if (ShareFragment.imageChanged) {
+                        imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
+                    }
                     boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL);
-                    if (ShareFragment.imageURI != null) {
+                    if (ShareFragment.imageChanged) {
+                        String finalImageURL = imageURL;
                         MainActivity.runTask(() -> {
-                            ImageController.uploadImage(ShareFragment.imageURI, imageURL.substring(imageURL.indexOf("article")), getContext());
+                            ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
                         }, () -> {
                             if (result) {
                                 Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();

@@ -123,7 +123,8 @@ public class CreateStep3Fragment extends Fragment {
             }
 
             timeToMakeInput.setText(ShareFragment.timeToMake);
-            Glide.with(getActivity()).load(ShareFragment.imageURL).into(imgInput);
+            if (!ShareFragment.imageURL.equals(""))
+                Glide.with(getActivity()).load(ShareFragment.imageURL).into(imgInput);
         }
 
         addIngredientBtn.setOnClickListener(new View.OnClickListener() {

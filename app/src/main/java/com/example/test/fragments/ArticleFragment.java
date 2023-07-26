@@ -193,7 +193,11 @@ public class ArticleFragment extends Fragment {
 
 
         if (MainActivity.loggedInUser != null) {
-            Glide.with(getActivity()).load(MainActivity.loggedInUser.getAvatarURL()).into(userAvatar);
+            if (!MainActivity.loggedInUser.getAvatarURL().equals("")) {
+                Glide.with(getActivity()).load(MainActivity.loggedInUser.getAvatarURL()).into(userAvatar);
+            } else {
+                userAvatar.setImageResource(R.drawable.baseline_person_24);
+            }
 
             isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID));
             if (isLike[0]) {
@@ -207,19 +211,25 @@ public class ArticleFragment extends Fragment {
         }
 
         ProgressBar progressBar = view.findViewById(R.id.progressbar);
-        Glide.with(getActivity()).load(article.getImgURL()).listener(new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                progressBar.setVisibility(View.GONE);
-                return false;
-            }
+        if (article.getImgURL().equals("")) {
+            dishImg.setImageResource(R.drawable.no_preview);
 
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                progressBar.setVisibility(View.GONE);
-                return false;
-            }
-        }).into(dishImg);
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+            Glide.with(getActivity()).load(article.getImgURL()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(dishImg);
+        }
 
         collapsingToolbarLayout.setTitle(article.getDishName());
         recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
