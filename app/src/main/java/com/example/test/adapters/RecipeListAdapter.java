@@ -1,8 +1,6 @@
 package com.example.test.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -31,9 +29,6 @@ import com.example.test.components.Article;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
