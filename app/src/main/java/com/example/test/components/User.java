@@ -7,22 +7,28 @@ public class User {
     private int points;
     private String bio;
     private String avatarURL;
+    private int banned;
+    private int reportLevel;
 
-    public User(String username, String password, String fullname, int points, String bio, String avatarURL) {
+    public User(String username, String password, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel) {
         this.username = username;
         this.password = password;
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
         this.avatarURL = avatarURL;
+        this.banned = banned;
+        this.reportLevel = reportLevel;
     }
 
-    public User(String username, String fullname, int points, String bio, String avatarURL) {
+    public User(String username, String fullname, int points, String bio, String avatarURL, int banned, int reportLevel) {
         this.username = username;
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
         this.avatarURL = avatarURL;
+        this.banned = banned;
+        this.reportLevel = reportLevel;
     }
 
     //getters and setters
@@ -78,5 +84,21 @@ public class User {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public int getBanned() {
+        return banned;
+    }
+
+    public void setBanned(int banned) {
+        this.banned = banned;
+    }
+
+    public int getReportLevel() {
+        return reportLevel;
+    }
+
+    public void setReportLevel(int reportLevel) {
+        this.reportLevel = reportLevel;
     }
 }

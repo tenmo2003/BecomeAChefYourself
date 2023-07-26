@@ -16,12 +16,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 public class CreateStep4Fragment extends Fragment {
 
@@ -54,20 +56,60 @@ public class CreateStep4Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-                boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + ".jpg");
-                if (ShareFragment.imageURI != null) {
-                    MainActivity.runTask(() -> {
-                        ImageController.uploadImage(ShareFragment.imageURI, "article_" + MainActivity.loggedInUser.getUsername() + dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + ".jpg", getContext());
-                    }, () -> {
+                if (!ShareFragment.editing) {
+                    String imageURL = "";
+                    if (ShareFragment.imageChanged) {
+                        imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
+                    }
+                    boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL);
+                    if (ShareFragment.imageChanged) {
+                        String finalImageURL = imageURL;
+                        MainActivity.runTask(() -> {
+                            ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
+                        }, () -> {
+                            if (result) {
+                                Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(view).navigate(R.id.navigation_home);
+                            } else {
+                                Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
+                            }
+                        }, MainActivity.progressDialog);
+                    } else {
                         if (result) {
-                            Toast.makeText(getActivity(), "Recipe shared successfully!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
                             Navigation.findNavController(view).navigate(R.id.navigation_home);
                         } else {
-                            Toast.makeText(getActivity(), "We have failed to share your recipe!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                         }
-                    }, MainActivity.progressDialog);
-                }
+                    }
+                } else {
+                    String imageURL = ShareFragment.imageURL;
+                    if (ShareFragment.imageChanged) {
+                        imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
+                    }
+                    boolean result = dbHelper.editArticle(ShareFragment.articleID, ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL);
 
+                    if (ShareFragment.imageChanged) {
+                        String finalImageURL = imageURL;
+                        MainActivity.runTask(() -> {
+                            ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
+                        }, () -> {
+                            if (result) {
+                                Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(view).navigate(R.id.navigation_home);
+                            } else {
+                                Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
+                            }
+                        }, MainActivity.progressDialog);
+                    } else {
+                        if (result) {
+                            Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(view).navigate(R.id.navigation_home);
+                        } else {
+                            Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
             }
         });
     }
@@ -87,6 +129,8 @@ public class CreateStep4Fragment extends Fragment {
 
         if (ShareFragment.imageURI != null) {
             dishImg.setImageURI(ShareFragment.imageURI);
+        } else if (ShareFragment.editing) {
+            Glide.with(getActivity()).load(ShareFragment.imageURL).into(dishImg);
         }
 
         dishNameTextView.setText(ShareFragment.dishName);

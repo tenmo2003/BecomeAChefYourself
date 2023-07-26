@@ -131,19 +131,26 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 //            holder.progressBar.setVisibility(View.GONE);
 //            holder.dish_img.setImageBitmap(mIcon_val[0]);
 //        }, null);
-        Glide.with(context).load(articleList.get(position).getImgURL()).listener(new RequestListener<Drawable>() {
-            @Override
-            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                holder.progressBar.setVisibility(View.GONE);
-                return false;
-            }
+        if (articleList.get(position).getImgURL().equals("")) {
+            holder.dish_img.setImageResource(R.drawable.no_preview);
 
-            @Override
-            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                holder.progressBar.setVisibility(View.GONE);
-                return false;
-            }
-        }).into(holder.dish_img);
+        } else {
+            holder.progressBar.setVisibility(View.VISIBLE);
+            Glide.with(context).load(articleList.get(position).getImgURL()).listener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    holder.dish_img.setImageResource(R.drawable.no_preview);
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    holder.progressBar.setVisibility(View.GONE);
+                    return false;
+                }
+            }).into(holder.dish_img);
+        }
 
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         User user = dbHelper.getUserWithUsername(holder.user_name.getText().toString());

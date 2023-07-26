@@ -21,7 +21,6 @@ public class CreateStep1Fragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.create_post_1, container, false);
 
-
         return view;
     }
 
@@ -52,6 +51,30 @@ public class CreateStep1Fragment extends Fragment {
         View selectionBackground2 = view.findViewById(R.id.background_lunch);
         View selectionBackground3 = view.findViewById(R.id.background_dinner);
         View selectionBackground4 = view.findViewById(R.id.background_flex);
+
+        if (ShareFragment.editing) {
+            if (ShareFragment.mealChoice.equals("Bữa sáng")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner_selected);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground4.setBackgroundResource(R.drawable.make_corner);
+            } else if (ShareFragment.mealChoice.equals("Bữa sáng")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner_selected);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground4.setBackgroundResource(R.drawable.make_corner);
+            } else if (ShareFragment.mealChoice.equals("Bữa sáng")) {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner_selected);
+                selectionBackground4.setBackgroundResource(R.drawable.make_corner);
+            } else {
+                selectionBackground1.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground2.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground3.setBackgroundResource(R.drawable.make_corner);
+                selectionBackground4.setBackgroundResource(R.drawable.make_corner_selected);
+            }
+        }
 
         // Set onClickListener to each FrameLayout
         selection1.setOnClickListener(new View.OnClickListener() {

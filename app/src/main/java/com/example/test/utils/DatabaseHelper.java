@@ -31,7 +31,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                         "  fullname TEXT NOT NULL, \n" +
                                                         "  points INTEGER DEFAULT 0,\n" +
                                                         "  avatar TEXT,\n" +
-                                                        "  bio TEXT \n" +
+                                                        "  bio TEXT \n," +
+                                                        "  banned INTEGER DEFAULT 0, \n" +
+                                                        "  reportLevel INTEGER DEFAULT 0 \n" +
                                                         "); ";
 
     public static final String SQL_CREATE_ENTRIES_ARTICLE = "CREATE TABLE articles (\n" +
@@ -179,7 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean userAuthentication(String username, String password) {
+    public int userAuthentication(String username, String password) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Check if the given username and password combination exists in the database
@@ -191,19 +193,91 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
             @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
-            User user = new User(username, password, fullname, points, bio, imageURL);
+            @SuppressLint("Range") int banned = cursor.getInt(cursor.getColumnIndex("banned"));
+            @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
+            User user = new User(username, password, fullname, points, bio, imageURL, banned, reportLevel);
+
+            if (banned == 1) {
+                return -1;
+            }
 
             MainActivity.loggedInUser = user;
 
             cursor.close();
             db.close();
-            return true;
+            return 1;
         } else {
             // If the user does not exist in the database, return null
             cursor.close();
             db.close();
-            return false;
+            return 0;
         }
+    }
+
+    @SuppressLint("Range")
+    public void increaseReportLevelForUser(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // First, retrieve the current reportLevel for the specified user
+        Cursor cursor = db.query("user", new String[]{"reportLevel"}, "username=?", new String[]{username}, null, null, null);
+
+        int currentReportLevel = 0;
+        if (cursor.moveToFirst()) {
+            currentReportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
+        }
+
+        cursor.close();
+
+        // Increment the reportLevel by 1
+        ContentValues values = new ContentValues();
+        values.put("reportLevel", currentReportLevel + 1);
+
+        // Update the user row with the new reportLevel
+        db.update("user", values, "username=?", new String[]{username});
+
+        db.close();
+    }
+
+    public void banUser(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Set the 'banned' column to 1 for the specified user
+        ContentValues values = new ContentValues();
+        values.put("banned", 1);
+        db.update("user", values, "username=?", new String[]{username});
+
+        db.close();
+    }
+
+
+    public List<User> getAllUser() {
+        SQLiteDatabase db = getReadableDatabase();
+        List<User> userList = new ArrayList<>();
+
+        // Query to select all users from the "user" table
+        Cursor cursor = db.rawQuery("SELECT * FROM user", null);
+
+        // Loop through the cursor to extract each user's information
+        while (cursor.moveToNext()) {
+            @SuppressLint("Range") String username = cursor.getString(cursor.getColumnIndex("username"));
+            @SuppressLint("Range") String fullname = cursor.getString(cursor.getColumnIndex("fullname"));
+            @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
+            @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
+            @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
+            @SuppressLint("Range") int banned = cursor.getInt(cursor.getColumnIndex("banned"));
+            @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
+
+            // Create a User object and add it to the list
+            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel);
+            userList.add(user);
+        }
+
+        // Close the cursor and database
+        cursor.close();
+        db.close();
+
+        // Return the list of users
+        return userList;
     }
 
     public User getUserWithUsername(String username) {
@@ -218,7 +292,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             @SuppressLint("Range") int points = cursor.getInt(cursor.getColumnIndex("points"));
             @SuppressLint("Range") String bio = cursor.getString(cursor.getColumnIndex("bio"));
             @SuppressLint("Range") String imageURL = cursor.getString(cursor.getColumnIndex("avatar"));
-            User user = new User(username, fullname, points, bio, imageURL);
+            @SuppressLint("Range") int banned = cursor.getInt(cursor.getColumnIndex("banned"));
+            @SuppressLint("Range") int reportLevel = cursor.getInt(cursor.getColumnIndex("reportLevel"));
+            User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel);
 
             cursor.close();
             db.close();
@@ -258,6 +334,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
         return result != -1;
+    }
+
+    public boolean editArticle(int articleId, String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Create a new ContentValues object that contains the updated values for the article
+        ContentValues values = new ContentValues();
+        values.put("dish_name", dishName);
+        values.put("publisher", publisher);
+        values.put("recipe", recipe);
+        values.put("ingredients", ingredients);
+        values.put("meal", meal);
+        values.put("serve_order_class", serve_order_class);
+        values.put("type", type);
+        values.put("time_to_make", timeToMake);
+        values.put("image", imgURL);
+
+        // Update the article in the database
+        int rowsAffected = db.update("articles", values, "id=?", new String[]{String.valueOf(articleId)});
+
+        db.close();
+
+        // Check if the update was successful
+        return rowsAffected > 0;
     }
 
     public boolean removeArticle(int articleID) {
@@ -685,6 +785,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("reporter", reporter);
         values.put("comment_id", comment_id);
+        values.put("reason", reason);
+        values.put("article_id", articleID);
+        long result = db.insert("reports", null, values);
+        return result != -1;
+    }
+
+    public boolean reportArticle(int articleID, String reporter, String reason) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("reporter", reporter);
         values.put("reason", reason);
         values.put("article_id", articleID);
         long result = db.insert("reports", null, values);

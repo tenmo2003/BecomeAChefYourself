@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
@@ -105,14 +108,19 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                builder.setMessage("Do you want to remove?");
+
+                builder.setMessage("Bạn chắc chắn muốn xoá không?");
+                if (groupList.get(i).equals("Danh sách các người dùng")) {
+                    builder.setMessage("Bạn chắc chắn muốn cấm người dùng này?");
+                }
                 builder.setCancelable(true);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int ii) {
                         List<String> childList = collection.get(groupList.get(i));
                         childList.remove(i1);
-                        if (child.equals("Báo cáo về bình luận")) {
+                        String group = groupList.get(i);
+                        if (group.equals("Báo cáo về bình luận") || group.equals("Báo cáo về bài đăng")) {
                             // Split the string by the dot (.)
                             String[] parts = child.split("\\.");
 
@@ -123,7 +131,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                             int id = Integer.parseInt(idString);
 
                             dbHelper.removeReport(id);
-                        } else {
+                        } else if (group.equals("Danh sách các bài đăng")){
                             // Split the string by the dot (.)
                             String[] parts = child.split("\\.");
 
@@ -134,12 +142,18 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                             int id = Integer.parseInt(idString);
 
                             dbHelper.removeArticle(id);
+                        } else {
+                            String[] parts = child.split("\\.");
+
+                            String username = parts[1].trim(); // Remove any leading/trailing whitespaces
+
+                            dbHelper.banUser(username);
                         }
                         notifyDataSetChanged();
                     }
                 });
 
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Huỷ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.cancel();
@@ -148,25 +162,62 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
+
+                // Get the positive and negative buttons
+                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                // Set the text color of the positive button
+                positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+
+                // Set the text color of the negative button
+                negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
             }
         });
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Bundle args = new Bundle();
+                String group = groupList.get(i);
+                if (group.equals("Báo cáo về bình luận") || group.equals("Báo cáo về bài đăng")) {
+                    Bundle args = new Bundle();
 
-                // Split the string by the dot (.)
-                String[] parts = child.split("\\.");
+                    // Split the string by the dot (.)
+                    String[] parts = child.split("\\.");
 
-                // Get the first part and remove any leading or trailing white spaces
-                String idString = parts[0].trim();
+                    // Get the first part and remove any leading or trailing white spaces
+                    String idString = parts[0].trim();
 
-                // Parse the ID string to an integer
-                int id = Integer.parseInt(idString);
+                    // Parse the ID string to an integer
+                    int id = Integer.parseInt(idString);
 
-                args.putInt("reportID", id);
-                Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+                    args.putInt("reportID", id);
+                    Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+                } else if (group.equals("Danh sách các bài đăng")){
+                    Bundle args = new Bundle();
+
+                    // Split the string by the dot (.)
+                    String[] parts = child.split("\\.");
+
+                    // Get the first part and remove any leading or trailing white spaces
+                    String idString = parts[0].trim();
+
+                    // Parse the ID string to an integer
+                    int id = Integer.parseInt(idString);
+
+                    args.putInt("articleID", id);
+                    Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+                } else {
+                    String[] parts = child.split("\\.");
+
+                    String username = parts[1].trim(); // Remove any leading/trailing whitespaces
+
+                    Bundle args = new Bundle();
+
+                    args.putString("username", username);
+
+                    Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
+                }
             }
         });
         return view;

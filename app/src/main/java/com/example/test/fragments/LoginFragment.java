@@ -56,9 +56,9 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-                boolean result = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
+                int result = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
 
-                if (result) {
+                if (result == 1) {
                     Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
                     // Save login status in preference file
@@ -69,8 +69,11 @@ public class LoginFragment extends Fragment {
                     } else {
                         Navigation.findNavController(view).navigate(R.id.navigation_profile);
                     }
-                } else {
+                } else if (result == 0) {
                     Toast.makeText(getActivity(), "Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "Đăng nhập thất bại! Người dùng đã bị cấm", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
