@@ -55,6 +55,12 @@
         tools:layout="@layout/fragment_edit_profile" />
 
     <fragment
+        android:id="@+id/navigation_change_password"
+        android:name="com.example.test.fragments.ChangePasswordFragment"
+        android:label="@string/title_user"
+        tools:layout="@layout/fragment_change_password" />
+
+    <fragment
         android:id="@+id/navigation_admin"
         android:name="com.example.test.fragments.AdminFragment"
         android:label="@string/title_article"

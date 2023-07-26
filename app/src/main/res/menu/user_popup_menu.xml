@@ -3,8 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/edit_profile_menu"
-        android:title="Edit Profile" />
+        android:title="@string/update_profile" />
+
+    <item android:id="@+id/change_password"
+        android:title="@string/change_password"/>
 
     <item android:id="@+id/logout_menu"
-        android:title="Logout"/>
+        android:title="@string/logout"/>
 </menu>

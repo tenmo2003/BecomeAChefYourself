@@ -75,17 +75,15 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupWithNavController(navView, navController);
-
         // Auto login if user logged before
         if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {
             DatabaseHelper dbHelper = new DatabaseHelper(MainActivity.this);
             MainActivity.loggedInUser = dbHelper.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
         }
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupWithNavController(navView, navController);
 
         navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
