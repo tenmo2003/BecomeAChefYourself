@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +45,8 @@ public class LoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button loginBtn = view.findViewById(R.id.login_button);
-        Button toSignUpBtn = view.findViewById(R.id.to_sign_up_button);
+        ImageView loginBtn = view.findViewById(R.id.login_button);
+        ImageView toSignUpBtn = view.findViewById(R.id.to_sign_up_button);
         TextView forgotPasswordBtn = view.findViewById(R.id.forgot_password_btn);
 
         EditText usernameTv = view.findViewById(R.id.login_username_input);
@@ -56,7 +57,15 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-                int result = dbHelper.userAuthentication(usernameTv.getText().toString(), passwordTv.getText().toString());
+                String username = usernameTv.getText().toString();
+                String password = passwordTv.getText().toString();
+
+                if (username.equals("") || password.equals("")) {
+                    Toast.makeText(getActivity(), "Hãy nhập đủ thông tin đăng nhập", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int result = dbHelper.userAuthentication(username , password);
 
                 if (result == 1) {
                     Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();

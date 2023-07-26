@@ -27,11 +27,11 @@
         android:id="@+id/sign_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="526dp"
+        android:layout_marginTop="560dp"
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/rectangle_7"
+            android:id="@+id/to_sign_up_button"
             android:layout_width="198dp"
             android:layout_height="50dp"
             android:contentDescription="rectangle_7"
@@ -47,23 +47,13 @@
             android:textColor="@color/sign_up_ek1_color"
             android:textSize="18sp"
             android:textStyle="bold" />
-
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/to_sign_up_button"
-        android:layout_width="198dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="526dp"
-        android:alpha="0"
-        android:layout_centerHorizontal="true" />
-
 
     <RelativeLayout
         android:id="@+id/or"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="440dp"
+        android:layout_marginTop="475dp"
         >
 
         <LinearLayout
@@ -118,11 +108,11 @@
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="369dp"
+        android:layout_marginTop="410dp"
         android:gravity="center">
 
         <ImageView
-            android:id="@+id/rectangle_6"
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:layout_centerHorizontal="true"
@@ -141,19 +131,13 @@
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/login_button"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="369dp"
-        android:layout_centerHorizontal="true"
-        android:alpha="0"/>
+
 
     <RelativeLayout
         android:id="@+id/username_and_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="241dp"
+        android:layout_marginTop="261dp"
         android:gravity="center"
         >
 

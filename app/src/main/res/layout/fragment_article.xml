@@ -17,14 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            android:id="@+id/dish_name_text"
-            app:title="Title"
-            app:contentScrim="@color/whiteLowOpa"
-            app:expandedTitleTextAppearance="@style/expanded_title"
-            app:collapsedTitleTextAppearance="@style/collapsed_title"
-            app:expandedTitleMarginBottom="30dp"
-            app:expandedTitleGravity="right|bottom"
-            app:collapsedTitleGravity="right">
+            app:contentScrim="@color/whiteLowOpa">
 
             <ProgressBar
                 android:id="@+id/progressbar"
@@ -52,14 +45,52 @@
                     android:layout_height="40dp"
                     android:id="@+id/back_button"
                     android:background="@drawable/back_btn"
-                    android:layout_gravity="top">
+                    android:layout_gravity="start">
                 </Button>
+
+                <LinearLayout
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+                    <TextView
+                        android:id="@+id/edit_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sửa"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:padding="5dp"
+                        android:layout_marginHorizontal="10dp"
+                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/report_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Báo cáo"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorAccent"
+                        android:padding="5dp"
+                        android:layout_marginHorizontal="10dp" />
+                    <TextView
+                        android:id="@+id/remove_btn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xoá"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:textColor="@color/red"
+                        android:padding="5dp"
+                        android:visibility="gone" />
+                </LinearLayout>
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="32dp"
                     android:id="@+id/bookmark_in_article"
-                    android:background="@drawable/bookmark"
+                    android:background="@drawable/bookmark_in_article"
                     android:layout_marginHorizontal="15dp"
                     android:layout_gravity="end">
                 </ImageView>
@@ -80,48 +111,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="right">
-                <TextView
-                    android:id="@+id/edit_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sửa"
-                    android:textSize="20sp"
-                    android:textColor="@color/mainTheme"
-                    android:gravity="right|center_vertical"
-                    android:layout_gravity="right"
-                    android:padding="5dp"
-                    android:layout_marginHorizontal="10dp"
-                    android:visibility="gone"
-                    />
-                <TextView
-                    android:id="@+id/report_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Báo cáo"
-                    android:textSize="20sp"
-                    android:textColor="@color/red"
-                    android:gravity="right|center_vertical"
-                    android:layout_gravity="right"
-                    android:padding="5dp"
-                    android:layout_marginHorizontal="10dp"
-                    />
-                <TextView
-                    android:id="@+id/remove_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Xoá"
-                    android:textSize="20sp"
-                    android:textColor="@color/red"
-                    android:gravity="center_vertical"
-                    android:padding="5dp"
-                    android:visibility="gone"
-                    />
-            </LinearLayout>
+                android:id="@+id/title_in_article"
+                android:text="Title"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"
+                android:padding="10dp">
+            </TextView>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -39,6 +39,7 @@ public class SignUpFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        EditText emailInput = view.findViewById(R.id.sign_up_email_input);
         EditText usernameInput = view.findViewById(R.id.sign_up_username_input);
         EditText passwordInput = view.findViewById(R.id.sign_up_password_input);
         EditText reenterInput = view.findViewById(R.id.sign_up_re_enter_password);
@@ -49,20 +50,30 @@ public class SignUpFragment extends Fragment {
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!reenterInput.getText().toString().equals(passwordInput.getText().toString())) {
-                    Toast.makeText(getActivity(), "Passwords don't match", Toast.LENGTH_SHORT).show();
+                String email = emailInput.getText().toString();
+                String username = usernameInput.getText().toString();
+                String password = passwordInput.getText().toString();
+                String reenter = reenterInput.getText().toString();
+
+                if (email.equals("") || username.equals("") || password.equals("") || reenter.equals("")) {
+                    Toast.makeText(getActivity(), "Hãy nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!reenter.equals(password)) {
+                    Toast.makeText(getActivity(), "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-                boolean signUpResult = dbHelper.signUpUser(usernameInput.getText().toString(), passwordInput.getText().toString(), usernameInput.getText().toString());
+                boolean signUpResult = dbHelper.signUpUser(email, username, password, reenter);
 
                 if (signUpResult) {
-                    Toast.makeText(getActivity(), "Signed up successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(view).navigate(R.id.navigation_login);
                 } else {
-                    Toast.makeText(getActivity(), "Username is taken! Please choose another one", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Tên đăng nhập đã tồn tại, vui lòng chọn một tên khác", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -70,7 +70,7 @@ public class ArticleFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getActivity());
 
-        CollapsingToolbarLayout collapsingToolbarLayout = view.findViewById(R.id.dish_name_text);
+        TextView title = view.findViewById(R.id.title_in_article);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
         TextView ingredientsTextView = view.findViewById(R.id.ingredients_text);
         TextView publisherTextView = view.findViewById(R.id.publisher_text);
@@ -231,7 +231,7 @@ public class ArticleFragment extends Fragment {
             }).into(dishImg);
         }
 
-        collapsingToolbarLayout.setTitle(article.getDishName());
+        title.setText(article.getDishName());
         recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
         ingredientsTextView.setText(formatIngredients(article.getIngredients()));
         publishedDateTextView.setText(postedTime(article.getPublishedTime()));
