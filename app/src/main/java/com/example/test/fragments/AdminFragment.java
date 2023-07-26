@@ -104,7 +104,7 @@ public class AdminFragment extends Fragment {
         }
 
         for (User user : dbHelper.getAllUser()) {
-            users.add((users.size() + 1) + ". " + user.getUsername());
+            users.add((users.size() + 1) + ". " + user.getUsername() + ". Mức độ cảnh cáo: " + user.getReportLevel());
         }
 
         collection.put(parentItems.get(0), reportedComments);

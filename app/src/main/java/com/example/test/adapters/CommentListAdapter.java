@@ -87,7 +87,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                 public boolean onLongClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     AlertDialog alertDialog = builder.setTitle("Xác nhận")
-                            .setMessage("Bạn có chắc chắn muốn xoá comment này")
+                            .setMessage("Bạn có chắc chắn muốn xoá comment '" + comments.get(curPos).getContent() + "'")
                             .setPositiveButton("Có", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -95,6 +95,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                                     boolean result = dbHelper.removeComment(comments.get(curPos).getId());
                                     if (result) {
                                         comments.remove(curPos);
+                                        dbHelper.increaseReportLevelForUser(comments.get(curPos).getCommenter());
                                         notifyDataSetChanged();
                                     } else {
                                         Toast.makeText(context, "Xoá thất bại", Toast.LENGTH_SHORT).show();
@@ -108,10 +109,13 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                                 }
                             })
                             .create();
+                    alertDialog.show();
+
 
                     // Get the positive and negative buttons
                     Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
                     Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
 
                     // Set the text color of the positive button
                     positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
@@ -119,7 +123,6 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                     // Set the text color of the negative button
                     negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
 
-                    alertDialog.show();
 
                     return false;
                 }

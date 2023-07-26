@@ -108,9 +108,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-                Log.i("Child string", child);
 
                 builder.setMessage("Bạn chắc chắn muốn xoá không?");
+                if (groupList.get(i).equals("Danh sách các người dùng")) {
+                    builder.setMessage("Bạn chắc chắn muốn cấm người dùng này?");
+                }
                 builder.setCancelable(true);
                 builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                     @Override
@@ -141,7 +143,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
                             dbHelper.removeArticle(id);
                         } else {
-                            builder.setMessage("Bạn chắc chắn muốn cấm người dùng này?");
+                            String[] parts = child.split("\\.");
+
+                            String username = parts[1].trim(); // Remove any leading/trailing whitespaces
+
+                            dbHelper.banUser(username);
                         }
                         notifyDataSetChanged();
                     }

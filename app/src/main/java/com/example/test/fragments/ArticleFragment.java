@@ -163,11 +163,14 @@ public class ArticleFragment extends Fragment {
                 public void onClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Xoá bài");
-                    builder.setMessage("Bạn chắc chắn muốn xoá bài viết chứ?");
+                    builder.setMessage("Bạn chắc chắn muốn xoá bài viết '" + article.getDishName() + "' chứ?");
                     builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dbHelper.removeArticle(finalArticleID);
+                            if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+                                dbHelper.increaseReportLevelForUser(article.getPublisher());
+                            }
                             Navigation.findNavController(view).navigateUp();
                         }
                     });
