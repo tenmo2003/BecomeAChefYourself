@@ -2,10 +2,6 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent" >
 
-
-
-
-
 	<ImageView
 		android:id="@+id/vector_1"
 		android:layout_width="wrap_content"
@@ -58,52 +54,60 @@
 
 	</RelativeLayout>
 
-
 	<RelativeLayout
-		android:id="@+id/login"
-		android:layout_width="match_parent"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="450dp"
-		android:gravity="center">
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="107dp">
+
+		<View
+			android:layout_width="320dp"
+			android:layout_height="50dp"
+			android:layout_marginTop="130dp"
+			android:background="@drawable/rectangle_1_shape" />
+
+		<View
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_marginTop="130dp"
+			android:background="@drawable/rectangle_4_shape" />
+
+
+		<EditText
+			android:id="@+id/sign_up_email_input"
+			android:textSize="16sp"
+			android:textColor="@color/re_enter_password_color"
+			android:layout_marginStart="50dp"
+			android:paddingStart="20dp"
+			android:ems="14"
+			android:inputType="textEmailAddress"
+			android:layout_marginTop="136dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:hint="@string/email"
+			android:background="@drawable/no_underline_edittext"
+			/>
 
 		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
-			<Button
-				android:id="@+id/sign_up_button"
-				android:layout_width="195dp"
-				android:layout_height="37dp"
-				android:layout_centerHorizontal="true"
-				android:alpha="0"
-				/>
+			android:layout_width="50dp"
+			android:layout_height="50dp"
+			android:layout_marginTop="128dp">
 
 			<ImageView
-				android:id="@+id/rectangle_6"
-				android:layout_width="match_parent"
-				android:layout_height="50dp"
-				android:src="@drawable/rectangle_6" />
-
-			<TextView
-				android:id="@+id/log_in"
 				android:layout_width="wrap_content"
-				android:layout_height="35dp"
+				android:layout_height="wrap_content"
 				android:layout_centerInParent="true"
-				android:text="@string/sign_up_string"
-				android:textColor="@color/log_in_color"
-				android:textSize="18sp"
-				android:textStyle="bold" />
-		</RelativeLayout>
+				android:src="@drawable/email" />
 
+		</RelativeLayout>
 
 	</RelativeLayout>
 
-
 	<RelativeLayout
-		android:id="@+id/username_and_password"
+		android:id="@+id/email_layout"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="241dp"
+		android:layout_marginTop="300dp"
 		android:gravity="center"
 		>
 
@@ -256,11 +260,48 @@
 
 	</RelativeLayout>
 
+	<RelativeLayout
+		android:id="@+id/login"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="515dp"
+		android:gravity="center">
+
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<Button
+				android:id="@+id/sign_up_button"
+				android:layout_width="195dp"
+				android:layout_height="37dp"
+				android:layout_centerHorizontal="true"
+				android:alpha="0"
+				/>
+
+			<ImageView
+				android:id="@+id/rectangle_6"
+				android:layout_width="match_parent"
+				android:layout_height="50dp"
+				android:src="@drawable/rectangle_6" />
+
+			<TextView
+				android:id="@+id/log_in"
+				android:layout_width="wrap_content"
+				android:layout_height="35dp"
+				android:layout_centerInParent="true"
+				android:text="@string/sign_up_string"
+				android:textColor="@color/log_in_color"
+				android:textSize="18sp"
+				android:textStyle="bold" />
+		</RelativeLayout>
+
+	</RelativeLayout>
 
 	<TextView android:id="@+id/already_have_account_"
 		android:textSize="16sp"
 		android:textColor="@color/sign_up_ek5_color"
-		android:layout_marginTop="530dp"
+		android:layout_marginTop="580dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/already_have_account__string"
@@ -271,7 +312,7 @@
 		android:id="@+id/sign_up"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="580dp"
+		android:layout_marginTop="620dp"
 		android:gravity="center">
 
 		<RelativeLayout

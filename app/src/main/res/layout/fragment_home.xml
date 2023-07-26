@@ -14,11 +14,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="@string/recommend_recipe_string"
             android:layout_gravity="center"
             android:textSize="25sp"
             android:textColor="@color/black"
-            android:padding="10dp">
+            android:padding="5dp">
         </TextView>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -43,7 +44,7 @@
             </androidx.appcompat.widget.SearchView>
 
             <Button
-                android:layout_width="50dp"
+                android:layout_width="30dp"
                 android:layout_height="25dp"
                 android:id="@+id/filter_btn"
                 android:background="@drawable/filter"

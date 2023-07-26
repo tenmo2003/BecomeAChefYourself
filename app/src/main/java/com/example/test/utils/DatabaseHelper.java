@@ -158,7 +158,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
-    public boolean signUpUser(String username, String password, String fullname) {
+    public boolean signUpUser(String email, String username, String password, String fullname) {
         SQLiteDatabase db = getWritableDatabase();
 
         // Check if the username already exists in the database
@@ -172,6 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // The username does not exist, so we can add a new user with the given username, password, and fullname
         ContentValues values = new ContentValues();
+        values.put("email", email);
         values.put("username", username);
         values.put("password", password);
         values.put("fullname", fullname);
