@@ -225,6 +225,11 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
             Navigation.findNavController(fragmentView).navigate(R.id.navigation_edit_profile, args);
             return true;
+        } else if (menuItem.getItemId() == R.id.change_password) {
+            Bundle args = new Bundle();
+            args.putString("username", profileUser.getUsername());
+            Navigation.findNavController(fragmentView).navigate(R.id.navigation_change_password, args);
+            return true;
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("Đăng xuất");

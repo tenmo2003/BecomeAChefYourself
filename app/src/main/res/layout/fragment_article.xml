@@ -387,6 +387,7 @@
                     android:id="@+id/comment_edit_text"
                     android:textSize="15sp"
                     android:gravity="bottom"
+                    android:maxLines="1"
                     android:layout_weight="9">
                 </EditText>
 

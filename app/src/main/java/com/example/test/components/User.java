@@ -16,7 +16,11 @@ public class User {
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
-        this.avatarURL = avatarURL;
+        if (avatarURL == null) {
+            this.avatarURL = "";
+        } else {
+            this.avatarURL = avatarURL;
+        }
         this.banned = banned;
         this.reportLevel = reportLevel;
     }
@@ -26,7 +30,11 @@ public class User {
         this.fullname = fullname;
         this.points = points;
         this.bio = bio;
-        this.avatarURL = avatarURL;
+        if (avatarURL == null) {
+            this.avatarURL = "";
+        } else {
+            this.avatarURL = avatarURL;
+        }
         this.banned = banned;
         this.reportLevel = reportLevel;
     }

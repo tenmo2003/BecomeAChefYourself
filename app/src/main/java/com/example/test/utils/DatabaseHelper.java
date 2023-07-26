@@ -1043,48 +1043,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return rowsDeleted > 0;
     }
 
-    public int updateProfile(String username, String fullname, boolean fullnameUpdate,
-                                 String bio, boolean bioUpdate, String oldPassword, String newPassword, String avatarURL) {
+    public boolean updateProfile(String username, String fullname,
+                                 String bio, String avatarURL, boolean imageChanged) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        if (fullnameUpdate) {
-            values.put("fullname", fullname);
+        values.put("fullname", fullname);
+        values.put("bio", bio);
+
+        if (imageChanged) {
+            values.put("avatar", avatarURL);
         }
 
-        if (bioUpdate) {
-            values.put("bio", bio);
-        }
-
-        values.put("avatar", avatarURL);
-
-        if (!Objects.equals(oldPassword, "") && !Objects.equals(newPassword, "")) {
-            Cursor cursor = db.rawQuery("SELECT password FROM user WHERE username=?", new String[] {username});
-            if (cursor.moveToFirst()) {
-                String currentPassword = "";
-                currentPassword = cursor.getString(0);
-                if (oldPassword.equals(currentPassword)) {
-                    values.put("password", newPassword);
-                } else {
-                    return -1;
-                }
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (values.isEmpty()) {
-                return 0;
-            }
-        }
-
-        int intCursor = db.update(
+        int cursor = db.update(
                 "user",
                 values,
                 "username=?",
                 new String[] {username}
         );
 
-        return 1;
+        return cursor > 0;
+    }
+
+    public boolean changePassword(String username, String oldPassword, String newPassword) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        Cursor cursor = db.rawQuery("SELECT password FROM user WHERE username=?", new String[] {username});
+        if (cursor.moveToFirst()) {
+            String currentPassword = "";
+            currentPassword = cursor.getString(0);
+            if (oldPassword.equals(currentPassword)) {
+                values.put("password", newPassword);
+            } else {
+                return false;
+            }
+        }
+
+        int updateRow = db.update(
+                "user",
+                values,
+                "username=?",
+                new String[] {username}
+        );
+
+        return updateRow > 0;
     }
 
     public List<Integer> getUserProfileStats(String username) {

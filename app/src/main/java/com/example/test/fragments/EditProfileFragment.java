@@ -1,12 +1,8 @@
 package com.example.test.fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,29 +13,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class EditProfileFragment extends Fragment {
@@ -59,8 +49,6 @@ public class EditProfileFragment extends Fragment {
                         imageChanged = true;
                         imageURI = uri;
                         userAvatar.setImageURI(uri);
-                    } else {
-                        return;
                     }
                 }
             });
@@ -86,8 +74,6 @@ public class EditProfileFragment extends Fragment {
         TextView usernameTextView = view.findViewById(R.id.username);
         EditText fullnameEditText = view.findViewById(R.id.fullname_edit_text);
         EditText bioEditText = view.findViewById(R.id.bio_edit_text);
-        EditText oldPasswordEditText = view.findViewById(R.id.old_password);
-        EditText newPasswordEditText = view.findViewById(R.id.new_password);
 
         Bundle args = getArguments();
         assert args != null;
@@ -98,7 +84,7 @@ public class EditProfileFragment extends Fragment {
         User user = dbHelper.getUserWithUsername(username);
 
         if (!user.getAvatarURL().equals("")) {
-            Glide.with(getActivity()).load(user.getAvatarURL()).into(userAvatar);
+            Glide.with(requireActivity()).load(user.getAvatarURL()).into(userAvatar);
         }
 
         usernameTextView.setText(username);
@@ -117,66 +103,39 @@ public class EditProfileFragment extends Fragment {
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Hide device keyboard
+                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
                 boolean fullnameUpdate = !fullname.equals(fullnameEditText.getText().toString());
                 boolean bioUpdate = !bio.equals(bioEditText.getText().toString());
-                boolean oldPasswordChange = !oldPasswordEditText.getText().toString().equals("");
-                boolean newPasswordChange = !newPasswordEditText.getText().toString().equals("");
-                String oldPassword = "";
-                String newPassword = "";
 
-                if (oldPasswordChange && newPasswordChange) {
-                    if (oldPasswordEditText.getText().toString().equals(newPasswordEditText.getText().toString())) {
-                        Toast.makeText(getContext(), "Mật khẩu mới không được trùng với mật khẩu cũ", Toast.LENGTH_SHORT).show();
-                        return;
-                    } else {
-                        oldPassword = oldPasswordEditText.getText().toString();
-                        newPassword = newPasswordEditText.getText().toString();
-                    }
-                } else if (oldPasswordChange ^ newPasswordChange) {
-                    if (!oldPasswordChange) {
-                        Toast.makeText(getContext(), "Hãy nhập mật khẩu hiện tại", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Hãy nhập mật khẩu mới", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                if (fullnameUpdate || bioUpdate || imageChanged) {
+                    String imageURL = "";
 
-                String imageURL = "";
-                if (imageChanged) {
-                    imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + "_" + new Random().nextInt() + ".jpg";
-                }
-
-                int updateSuccess = dbHelper.updateProfile(username, fullnameEditText.getText().toString(), fullnameUpdate,
-                        bioEditText.getText().toString(), bioUpdate, oldPassword, newPassword, imageURL);
-
-
-
-                if (updateSuccess == 1) {
                     fullname = fullnameEditText.getText().toString();
                     bio = bioEditText.getText().toString();
 
-                    int startIndex = imageURL.indexOf("user");
-                    String finalImageURL = imageURL.substring(startIndex);
-                    MainActivity.runTask(() -> {
-                        ImageController.uploadImage(imageURI, finalImageURL, getContext());
-                    }, () -> {
-                        Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
-                    }, MainActivity.progressDialog);
+                    boolean updateSuccess = dbHelper.updateProfile(username, fullname,
+                            bio, imageURL, imageChanged);
 
-                    MainActivity.loggedInUser.setAvatarURL(imageURL);
-                } else if (updateSuccess == -1) {
-                    Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
+                    if (updateSuccess) {
+                        if (imageChanged) {
+                            imageURL = "https://tenmo2003.000webhostapp.com/user_" + MainActivity.loggedInUser.getUsername() + "_" + new Random().nextInt() + ".jpg";
+                            int startIndex = imageURL.indexOf("user");
+                            String finalImageURL = imageURL.substring(startIndex);
+                            MainActivity.runTask(() -> {
+                                ImageController.uploadImage(imageURI, finalImageURL, getContext());
+                            }, () -> {
+                                Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                            }, MainActivity.progressDialog);
+
+                            MainActivity.loggedInUser.setAvatarURL(imageURL);
+                        } else {
+                            Toast.makeText(getContext(), "Cập nhật trang cá nhân thành công", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
-
-                //clear focus and hide device keyboard
-                View v = getActivity().getCurrentFocus();
-                if (v instanceof EditText) {
-                    v.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-
-                oldPasswordEditText.setText("");
-                newPasswordEditText.setText("");
             }
         });
 
