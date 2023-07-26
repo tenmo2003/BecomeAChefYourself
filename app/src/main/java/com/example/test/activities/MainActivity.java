@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -36,6 +37,9 @@ import com.google.android.material.navigation.NavigationBarView;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import me.ibrahimsn.lib.OnItemSelectedListener;
+import me.ibrahimsn.lib.SmoothBottomBar;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
@@ -45,6 +49,23 @@ public class MainActivity extends AppCompatActivity {
     public static ProgressDialog progressDialog;
 
     public static User loggedInUser = null;
+    SmoothBottomBar navView;
+    NavController navController;
+
+    private void setupSmoothBottomMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, null);
+        popupMenu.inflate(R.menu.bottom_nav_menu);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+
+        navView = findViewById(R.id.nav_view);
+        navView.setupWithNavController(popupMenu.getMenu(), navController);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return navController.navigateUp() || super.onSupportNavigateUp();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Set up bottom bar
+        setupSmoothBottomMenu();
+
+        //BottomNavigationView navView = findViewById(R.id.nav_view);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
@@ -81,33 +107,31 @@ public class MainActivity extends AppCompatActivity {
             MainActivity.loggedInUser = dbHelper.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
         }
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupWithNavController(navView, navController);
-
-        navView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+        navView.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-
+            public boolean onItemSelect(int id) {
                 NavDestination currentDestination = navController.getCurrentDestination();
                 if (currentDestination != null && currentDestination.getId() == id) {
                     // If the user is already on the selected navigation item, do nothing
                     return true;
                 }
 
-                if (id == R.id.navigation_home) {
+                int navigation_home = 0;
+                int navigation_share = 1;
+                int navigation_user =2;
+
+                if (id == navigation_home) {
                     navController.navigate(R.id.navigation_home);
-                } else if (id == R.id.navigation_share) {
+                } else if (id == navigation_share) {
                     if (loggedInUser == null) {
                         Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
                         navController.navigate(R.id.navigation_login);
-                        navView.getMenu().findItem(R.id.navigation_user).setChecked(true);
+                        navView.setItemActiveIndex(navigation_user);
                         return false;
                     } else {
                         navController.navigate(R.id.navigation_share);
                     }
-                } else if (id == R.id.navigation_user) {
+                } else if (id == navigation_user) {
                     if (loggedInUser != null) {
                         if (loggedInUser.getUsername().equals("admin")) {
                             navController.navigate(R.id.navigation_admin);
@@ -118,10 +142,11 @@ public class MainActivity extends AppCompatActivity {
                         navController.navigate(R.id.navigation_login);
                     }
                 }
-                item.setChecked(true);
                 return false;
             }
         });
+
+
     }
 
     public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {

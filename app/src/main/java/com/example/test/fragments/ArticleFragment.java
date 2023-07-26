@@ -24,8 +24,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -44,7 +42,6 @@ import com.example.test.components.Article;
 import com.example.test.components.Comment;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
-import com.example.test.utils.SaveSharedPreference;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.time.LocalDateTime;
