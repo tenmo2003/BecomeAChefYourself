@@ -14,10 +14,14 @@ import androidx.annotation.Nullable;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
+import com.example.test.components.Notification;
 import com.example.test.components.Report;
 import com.example.test.components.User;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -95,6 +99,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                                                             "  FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
                                                             "  FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
                                                             ");";
+
+    public static final String SQL_CREATE_ENTRIES_NOTIFICATIONS = "CREATE TABLE notifications (\n" +
+                                                                    "  id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                                                                    "  user TEXT NOT NULL,\n" +
+                                                                    "  type TEXT NOT NULL,\n" +
+                                                                    "  action_by TEXT,\n" +
+                                                                    "  article_id INTEGER,\n" +
+                                                                    "  comment_id INTEGER,\n" +
+                                                                    "  created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,\n" +
+                                                                    "  FOREIGN KEY(user) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                                    "  FOREIGN KEY(action_by) REFERENCES user(username) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                                    "  FOREIGN KEY(article_id) REFERENCES articles(id) ON DELETE CASCADE ON UPDATE CASCADE,\n" +
+                                                                    "  FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE ON UPDATE CASCADE\n" +
+                                                                    ");";
     public static final int DB_VERSION = 9;
 
     public DatabaseHelper(@Nullable Context context) {
@@ -116,6 +134,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_ENTRIES_FOLLOWS);
 
         db.execSQL(SQL_CREATE_ENTRIES_REPORTS);
+
+        db.execSQL(SQL_CREATE_ENTRIES_NOTIFICATIONS);
     }
 
     @Override
@@ -1153,5 +1173,157 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return userProfileStats;
+    }
+
+    public List<Notification> getNotificationsForUser(String username) {
+        List<Notification> notificationList = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] projection = {
+                "id",
+                "user",
+                "type",
+                "action_by",
+                "article_id",
+                "comment_id",
+                "created_time"
+        };
+
+        String selection = "user=?";
+        String[] selectionArgs = {username};
+
+        Cursor cursor = db.query(
+                "notifications", // Table name
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                "created_time DESC" // Order by created_time in descending order
+        );
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                String user = cursor.getString(cursor.getColumnIndexOrThrow("user"));
+                String type = cursor.getString(cursor.getColumnIndexOrThrow("type"));
+                String actionBy = cursor.getString(cursor.getColumnIndexOrThrow("action_by"));
+                int articleId = cursor.getInt(cursor.getColumnIndexOrThrow("article_id"));
+                int commentId = cursor.getInt(cursor.getColumnIndexOrThrow("comment_id"));
+                String createdTimeString = cursor.getString(cursor.getColumnIndexOrThrow("created_time"));
+
+                String commentContent = null;
+                String articleName = null;
+                if (type.equals("LIKE")) {
+                    Article article = getArticleWithId(articleId);
+                    articleName = article.getDishName();
+                } else if (type.equals("COMMENT")) {
+                    Comment comment = getCommentWithID(commentId);
+                    commentContent = comment.getContent();
+                }
+
+                Notification notification = new Notification(id, user, type, actionBy, articleId, commentId, postedTime(createdTimeString), commentContent, articleName);
+                notificationList.add(notification);
+            }
+            cursor.close();
+        }
+
+        return notificationList;
+    }
+
+    public Comment getCommentWithID(int commentId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] projection = {
+                "id",
+                "article_id",
+                "commenter",
+                "content"
+                // Add other columns as needed
+        };
+
+        String selection = "id=?";
+        String[] selectionArgs = {String.valueOf(commentId)};
+
+        Cursor cursor = db.query(
+                "comments", // Table name
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        Comment comment = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+            int articleId = cursor.getInt(cursor.getColumnIndexOrThrow("article_id"));
+            String commenter = cursor.getString(cursor.getColumnIndexOrThrow("commenter"));
+            String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+            // Add other fields if needed
+
+            comment = new Comment(id, commenter, content, articleId);
+            // Set other fields of the comment if added
+            cursor.close();
+        }
+
+        return comment;
+    }
+
+    private String postedTime(String publishedTime) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime now = LocalDateTime.now();
+
+            int periodAsSecond = subTime(publishedTime, dateTimeFormatter.format(now));
+
+            int days = periodAsSecond / 3600 / 24;
+            if (days >= 365) {
+                return days / 365 + " năm trước";
+            }
+            if (days >= 30) {
+                return days / 30 + " tháng trước";
+            }
+            if (days >= 1) {
+                return days + " ngày trước";
+            }
+
+            if (periodAsSecond >= 3600) {
+                return periodAsSecond / 3600 + " giờ trước";
+            }
+            if (periodAsSecond >= 60) {
+                return periodAsSecond / 60 + " phút trước";
+            }
+            return "Vừa xong";
+        }
+        return "Đã từ rất lâu";
+    }
+
+    private int subTime(String past, String now) {
+        //DateTime format yyyy-MM-dd HH:mm:ss
+
+        //Convert DateTime to array
+        List<String> pastDate = Arrays.asList(past.split(" ")[0].split("-"));
+        List<String> pastTime = Arrays.asList(past.split(" ")[1].split(":"));
+        List<String> pastList = new ArrayList<>();
+        pastList.addAll(pastDate);
+        pastList.addAll(pastTime);
+
+        List<String> nowDate = Arrays.asList(now.split(" ")[0].split("-"));
+        List<String> nowTime = Arrays.asList(now.split(" ")[1].split(":"));
+        List<String> nowList = new ArrayList<>();
+        nowList.addAll(nowDate);
+        nowList.addAll(nowTime);
+
+        //Change time from GMT+0 to GMT+7
+        //pastList.set(3, String.valueOf(Integer.parseInt(pastList.get(4)) + 7));
+        //Sub year for year, month for month,...
+        int[] period = new int[6];
+        for (int i = 0; i < 6; i++) {
+            period[i] = Integer.parseInt(nowList.get(i)) - Integer.parseInt(pastList.get(i));
+        }
+
+        return (period[0] * 365 + period[1] * 30 + period[2]) * 24 * 3600
+                + (period[3] * 3600 + period[4] * 60 + period[5]);
     }
 }

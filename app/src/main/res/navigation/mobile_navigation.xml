@@ -71,4 +71,10 @@
         android:name="com.example.test.fragments.ForgetPasswordFragment"
         android:label="@string/title_article"
         tools:layout="@layout/fragment_forget_password" />
+
+    <fragment
+        android:id="@+id/navigation_notification"
+        android:name="com.example.test.fragments.NotificationFragment"
+        android:label="@string/title_article"
+        tools:layout="@layout/fragment_notification" />
 </navigation>

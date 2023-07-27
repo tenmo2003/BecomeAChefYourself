@@ -57,44 +57,56 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     }
 
     public void sortByFollow(DatabaseHelper dbHelper) {
-        articleList.sort(new Comparator<Article>() {
-            @Override
-            public int compare(Article article1, Article article2) {
-                int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
-                int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
-                return Integer.compare(follow2, follow1);
-            }
-        });
-        notifyDataSetChanged();
+        MainActivity.runTask(() -> {
+            articleList.sort(new Comparator<Article>() {
+                @Override
+                public int compare(Article article1, Article article2) {
+                    int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
+                    int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
+                    return Integer.compare(follow2, follow1);
+                }
+            });
+        }, () -> {
+            notifyDataSetChanged();
+        }, MainActivity.progressDialog);
     }
 
     public void sortByReact() {
-        articleList.sort(new Comparator<Article>() {
-            @Override
-            public int compare(Article article1, Article article2) {
-                return Integer.compare(article2.getLikes(), article1.getLikes());
-            }
-        });
-        notifyDataSetChanged();
+        MainActivity.runTask(() -> {
+            articleList.sort(new Comparator<Article>() {
+                @Override
+                public int compare(Article article1, Article article2) {
+                    return Integer.compare(article2.getLikes(), article1.getLikes());
+                }
+            });
+
+        }, () -> {
+            notifyDataSetChanged();
+        }, MainActivity.progressDialog);
     }
 
     public void sortByPublishedTime() {
-        articleList.sort(new Comparator<Article>() {
-            @Override
-            public int compare(Article article1, Article article2) {
-                String[] a1 = article1.getPublishedTime().split(" ");
-                String[] a2 = article2.getPublishedTime().split(" ");
-                String date1 = a1[0], time1 = a1[1], date2 = a2[0], time2 = a2[0];
-                if (date1.compareTo(date2) < 0) {
-                    return 1;
-                } else if (date1.compareTo(date2) > 0) {
-                    return -1;
-                } else {
-                    return Integer.compare(0, time1.compareTo(time2));
+        MainActivity.runTask(() -> {
+            articleList.sort(new Comparator<Article>() {
+                @Override
+                public int compare(Article article1, Article article2) {
+                    String[] a1 = article1.getPublishedTime().split(" ");
+                    String[] a2 = article2.getPublishedTime().split(" ");
+                    String date1 = a1[0], time1 = a1[1], date2 = a2[0], time2 = a2[1];
+                    if (date1.compareTo(date2) < 0) {
+                        return 1;
+                    } else if (date1.compareTo(date2) > 0) {
+                        return -1;
+                    } else {
+                        return Integer.compare(0, time1.compareTo(time2));
+                    }
                 }
-            }
-        });
-        notifyDataSetChanged();
+            });
+        }, () -> {
+            notifyDataSetChanged();
+
+        }, MainActivity.progressDialog);
+
     }
 
     @NonNull

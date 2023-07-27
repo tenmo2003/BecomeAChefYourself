@@ -15,14 +15,15 @@
     <string name="recommend_recipe_string">Đề xuất hôm nay</string>
 
     <string name="app_name">Let\'s cook together</string>
-    <string name="title_home">Home</string>
-    <string name="title_search">Search</string>
-    <string name="title_share">Share</string>
-    <string name="title_user">User</string>
-    <string name="title_sign_up">Sign up</string>
-    <string name="title_login">Login</string>
-    <string name="title_bookmark">Saved</string>
-    <string name="title_article">Article</string>
+    <string name="title_home">Nhà</string>
+    <string name="title_search">Tìm kiếm</string>
+    <string name="title_share">Chia sẻ</string>
+    <string name="title_noti">Thông báo</string>
+    <string name="title_user">Hồ sơ</string>
+    <string name="title_sign_up">Đăng ký</string>
+    <string name="title_login">Đăng nhập</string>
+    <string name="title_bookmark">Đã lưu</string>
+    <string name="title_article">Bài đăng</string>
 
     <!-- user strings -->
 
@@ -79,7 +80,7 @@
     <string name="upload_string">Đăng bài</string>
 
     <!-- article strings -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification_string">Thông báo</string>
     <string name="ingredients">Nguyên liệu</string>
     <string name="recipe">Chế biến</string>
     <string name="comment">Bình luận</string>
