@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -51,8 +52,8 @@ public class HomeFragment extends Fragment {
     SearchView searchView;
     HashMap<String, TextView> sortButtons = new HashMap<>();
 
-    static RecipeListAdapter recipeListAdapter;
-    static RecommendRecipeAdapter recommendRecipeAdapter;
+    RecipeListAdapter recipeListAdapter;
+    RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
     LinearLayoutManager rcmLLayoutManager;
     Timer timer;
@@ -88,6 +89,10 @@ public class HomeFragment extends Fragment {
         //Recycler display recommend recipe
         recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
         recommendRecipeView.setHasFixedSize(true);
+
+        //Make recyclerview faster
+        recommendRecipeView.setItemViewCacheSize(10);
+
         rcmLLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         recommendRecipeView.setLayoutManager(rcmLLayoutManager);
         recommendRecipeView.setAdapter(recommendRecipeAdapter);
@@ -100,6 +105,10 @@ public class HomeFragment extends Fragment {
         //Recycler display grid recipe
         recipeListView = view.findViewById(R.id.recipe_list);
         recipeListView.setHasFixedSize(true);
+
+        //Make recyclerview faster
+        recipeListView.setItemViewCacheSize(10);
+
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         recipeListView.setLayoutManager(gridLayoutManager);
 

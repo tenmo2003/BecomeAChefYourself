@@ -174,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("email", email);
         values.put("username", username);
-        values.put("password", password);
+        values.put("password", Sha256Encryption.getSHA256Hash(password));
         values.put("fullname", fullname);
         db.insert("user", null, values);
 
@@ -187,7 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         // Check if the given username and password combination exists in the database
-        Cursor cursor = db.rawQuery("SELECT * FROM user WHERE username=? AND password=?", new String[]{username, password});
+        Cursor cursor = db.rawQuery("SELECT * FROM user WHERE username=? AND password=?", new String[]{username, Sha256Encryption.getSHA256Hash(password)});
 
         if (cursor.moveToFirst()) {
             // If the user exists in the database, create a User object and return it
@@ -1078,8 +1078,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             String currentPassword = "";
             currentPassword = cursor.getString(0);
-            if (oldPassword.equals(currentPassword)) {
-                values.put("password", newPassword);
+            if (Sha256Encryption.getSHA256Hash(oldPassword).equals(currentPassword)) {
+                values.put("password", Sha256Encryption.getSHA256Hash(newPassword));
             } else {
                 return false;
             }
@@ -1099,7 +1099,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("password", newPassword);
+        values.put("password", Sha256Encryption.getSHA256Hash(newPassword));
 
         int updateRow = db.update(
                 "user",

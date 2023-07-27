@@ -44,7 +44,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     }
 
     public void addToArticleList(List<Article> list) {
-        this.articleList.addAll(list);
+        articleList.addAll(list);
         notifyDataSetChanged();
     }
 
