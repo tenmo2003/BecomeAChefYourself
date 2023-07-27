@@ -34,20 +34,20 @@ public class IngredientListAdapter extends ArrayAdapter<String> {
         if (convertView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.list_row, null);
-
-            TextView name = convertView.findViewById(R.id.name);
-
-            name.setText(list.get(position));
-
-            ImageView remove = convertView.findViewById(R.id.remove);
-
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    CreateStep3Fragment.removeItem(position);
-                }
-            });
         }
+
+        TextView name = convertView.findViewById(R.id.name);
+
+        name.setText(list.get(position));
+
+        ImageView remove = convertView.findViewById(R.id.remove);
+
+        remove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateStep3Fragment.removeItem(position);
+            }
+        });
 
         return convertView;
     }

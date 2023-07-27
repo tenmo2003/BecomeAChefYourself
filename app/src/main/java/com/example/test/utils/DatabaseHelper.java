@@ -18,10 +18,13 @@ import com.example.test.components.Notification;
 import com.example.test.components.Report;
 import com.example.test.components.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -1231,6 +1234,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return notificationList;
     }
 
+    public boolean removeNotification(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = "id=?";
+        String[] selectionArgs = {String.valueOf(id)};
+
+        // Execute the DELETE query and check the result
+        int rowsDeleted = db.delete("notifications", selection, selectionArgs);
+
+        // Return true if the row was deleted successfully, otherwise return false
+        return rowsDeleted > 0;
+    }
+
     public Comment getCommentWithID(int commentId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String[] projection = {
@@ -1278,12 +1293,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             int periodAsSecond = subTime(publishedTime, dateTimeFormatter.format(now));
 
             int days = periodAsSecond / 3600 / 24;
-            if (days >= 365) {
-                return days / 365 + " năm trước";
+            if (days >= 3) {
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM");
+
+                Date date = null;
+                try {
+                    date = inputFormat.parse(publishedTime);
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+
+                // Format the Date object to the desired output format
+                assert date != null;
+                return outputFormat.format(date);
             }
-            if (days >= 30) {
-                return days / 30 + " tháng trước";
-            }
+
             if (days >= 1) {
                 return days + " ngày trước";
             }

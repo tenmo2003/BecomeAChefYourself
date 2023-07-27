@@ -14,6 +14,7 @@ import android.widget.ListView;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
+import com.example.test.adapters.NotificationListAdapter;
 import com.example.test.components.Notification;
 import com.example.test.utils.DatabaseHelper;
 
@@ -38,7 +39,7 @@ public class NotificationFragment extends Fragment {
 
         List<Notification> notificationList = dbHelper.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
 
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, notificationList);
+        NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList);
 
         listView.setAdapter(adapter);
     }
