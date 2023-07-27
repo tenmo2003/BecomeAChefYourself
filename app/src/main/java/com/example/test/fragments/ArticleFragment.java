@@ -105,7 +105,7 @@ public class ArticleFragment extends Fragment {
         if (isBookmark[0]) {
             bookmark.setImageResource(R.drawable.bookmarked);
         } else {
-            bookmark.setImageResource(R.drawable.bookmark);
+            bookmark.setImageResource(R.drawable.bookmark_in_article);
         }
 
         bookmark.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +123,7 @@ public class ArticleFragment extends Fragment {
                 } else {
                     isBookmark[0] = false;
                     dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
-                    bookmark.setImageResource(R.drawable.bookmark);
+                    bookmark.setImageResource(R.drawable.bookmark_in_article);
                 }
             }
         });

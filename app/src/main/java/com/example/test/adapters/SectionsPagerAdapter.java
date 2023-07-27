@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SectionsPagerAdapter extends FragmentStateAdapter {
-
     private List<Fragment> fragmentList= new ArrayList<>();
+
     public SectionsPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
