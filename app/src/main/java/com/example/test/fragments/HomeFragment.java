@@ -40,6 +40,7 @@ import com.example.test.databinding.FragmentHomeBinding;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +78,7 @@ public class HomeFragment extends Fragment {
             dbHelper = new DatabaseHelper(getActivity());
 //            articlesList = dbHelper.getNArticlesFromIndex(0, 10);
             articlesList = dbHelper.getAllArticles();
+            Collections.shuffle(articlesList);
             recommendRecipeList = articlesList.subList(0, 5);
 
             recommendRecipeAdapter = new RecommendRecipeAdapter();

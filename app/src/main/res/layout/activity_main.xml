@@ -23,7 +23,7 @@
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        app:backgroundColor="#992F6C6D"
+        app:backgroundColor="#328788"
         app:sideMargins="15dp"
         app:textSize="13sp"
         app:iconSize="24dp"

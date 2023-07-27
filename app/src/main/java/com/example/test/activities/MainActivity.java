@@ -118,7 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
                 int navigation_home = 0;
                 int navigation_share = 1;
-                int navigation_user =2;
+                int navigation_notification = 2;
+                int navigation_user = 3;
 
                 if (id == navigation_home) {
                     navController.navigate(R.id.navigation_home);
@@ -140,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } else {
                         navController.navigate(R.id.navigation_login);
+                    }
+                } else if (id == navigation_notification){
+                    if (loggedInUser == null) {
+                        Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
+                        navController.navigate(R.id.navigation_login);
+                        navView.setItemActiveIndex(navigation_user);
+                        return false;
+                    } else {
+                        navController.navigate(R.id.navigation_notification);
                     }
                 }
                 return false;
