@@ -174,7 +174,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/followers_in_article"
+                            android:id="@+id/author_followers"
                             android:text="2 followers"
                             android:textSize="11sp"
                             android:layout_marginLeft="5dp">
@@ -183,7 +183,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/recipes_in_article"
+                            android:id="@+id/author_recipes"
                             android:textSize="11sp"
                             android:text="2 recipes"
                             android:gravity="center"
@@ -298,6 +298,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/ingredients_count"
                     android:text="6 thành phần"
                     android:textColor="@color/colorAccent"
                     android:gravity="end"

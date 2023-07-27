@@ -91,6 +91,9 @@ public class ArticleFragment extends Fragment {
         TextView reportBtn = view.findViewById(R.id.report_btn);
         TextView removeBtn = view.findViewById(R.id.remove_btn);
         TextView editBtn = view.findViewById(R.id.edit_btn);
+        TextView ingredientsCount = view.findViewById(R.id.ingredients_count);
+        TextView authorRecipes = view.findViewById(R.id.author_recipes);
+        TextView authorFollowers = view.findViewById(R.id.author_followers);
 
         Bundle args = getArguments();
         assert args != null;
@@ -236,9 +239,12 @@ public class ArticleFragment extends Fragment {
 
         title.setText(article.getDishName());
         recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
-        ingredientsTextView.setText(formatIngredients(article.getIngredients()));
+        ingredientsTextView.setText(formatIngredients(article.getIngredients(), view));
+        ingredientsCount.setText(article.getIngredients().split(";\\s*").length + " thành phần");
         publishedDateTextView.setText(postedTime(article.getPublishedTime()));
         publisherTextView.setText(article.getPublisher());
+        authorFollowers.setText(dbHelper.getTotalFollowCount(author.getUsername()) + " followers");
+        authorRecipes.setText(dbHelper.getTotalArticleCount(author.getUsername()) + " recipes");
         timeToMakeTextView.setText(article.getTimeToMake());
         reactTextView.setText(article.getLikes() + " lượt thích");
         commentTextView.setText(article.getComments() + " bình luận");
@@ -439,7 +445,7 @@ public class ArticleFragment extends Fragment {
         super.onDestroyView();
     }
 
-    private String formatIngredients(String input) {
+    private String formatIngredients(String input, View view) {
 
         // Split the input string into an array of individual ingredients
         String[] ingredients = input.split(";\\s*");
