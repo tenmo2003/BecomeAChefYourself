@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -25,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.test.R;
 import com.example.test.adapters.IngredientListAdapter;
 import com.example.test.utils.ExpandedListView;
@@ -57,6 +60,11 @@ public class CreateStep3Fragment extends Fragment {
                     // Callback is invoked after the user selects a media item or closes the
                     // photo picker.
                     if (uri != null) {
+                        ViewGroup.LayoutParams params = imgInput.getLayoutParams();
+                        params.width = 700;
+                        params.height = 500;
+                        imgInput.setLayoutParams(params);
+                        imgInput.requestLayout();
                         imgInput.setImageURI(uri);
                         ShareFragment.imageURI = uri;
                         ShareFragment.imageChanged = true;
@@ -100,13 +108,13 @@ public class CreateStep3Fragment extends Fragment {
         EditText recipeInput = view.findViewById(R.id.recipe_input);
         EditText timeToMakeInput = view.findViewById(R.id.time_to_make_input);
 
-        FrameLayout nextStepBtn = view.findViewById(R.id.next_steps_btn);
+        TextView nextStepBtn = view.findViewById(R.id.next_steps_btn);
 
         ImageView backBtn = view.findViewById(R.id.back_button);
 
         imgInput = view.findViewById(R.id.img_input);
 
-        ImageButton addIngredientBtn = view.findViewById(R.id.add_btn);
+        Button addIngredientBtn = view.findViewById(R.id.add_btn);
         EditText ingredientInput = view.findViewById(R.id.ingredients_input);
         ingredientString = new StringBuilder();
 
@@ -123,8 +131,10 @@ public class CreateStep3Fragment extends Fragment {
             }
 
             timeToMakeInput.setText(ShareFragment.timeToMake);
-            if (!ShareFragment.imageURL.equals(""))
+
+            if (!ShareFragment.imageURL.equals("")) {
                 Glide.with(getActivity()).load(ShareFragment.imageURL).into(imgInput);
+            }
         }
 
         addIngredientBtn.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +169,6 @@ public class CreateStep3Fragment extends Fragment {
         nextStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
 
                 if (typeChoice.getSelectedItem() != null &&
                         dishNameInput.getText() != null && !dishNameInput.getText().toString().isEmpty() &&
@@ -196,8 +205,8 @@ public class CreateStep3Fragment extends Fragment {
 
     public void addItem(String ingredient) {
         ingredientsList.add(ingredient);
-
-        ingredientsAdapter.notifyDataSetChanged();
+        ingredientsAdapter.setIngredientList(ingredientsList);
+        ingredientsListView.setAdapter(ingredientsAdapter);
 
         LinearLayout.LayoutParams mParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (ingredientsList.size() + 1) * 100);
         ingredientsListView.setLayoutParams(mParam);
@@ -218,6 +227,7 @@ public class CreateStep3Fragment extends Fragment {
         ingredientString = updatedIngredientString;
 
         ingredientsList.remove(position);
-        ingredientsAdapter.notifyDataSetChanged();
+        ingredientsAdapter.setIngredientList(ingredientsList);
+        ingredientsListView.setAdapter(ingredientsAdapter);
     }
 }

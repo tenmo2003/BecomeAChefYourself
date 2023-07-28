@@ -67,14 +67,14 @@
     <!-- create_post_3 strings -->
 
     <string name="done_string">Xem trước</string>
-    <string name="type_string">Loại món ăn:</string>
-    <string name="dish_name_string">Tên món ăn:</string>
-    <string name="image_string">Ảnh món ăn:</string>
+    <string name="type_string">Loại món ăn</string>
+    <string name="dish_name_string">Tên món ăn</string>
+    <string name="image_string">Ảnh món ăn</string>
     <string name="ingredients_string">Nguyên liệu</string>
     <string name="ingredients_hint">Nguyên liệu</string>
-    <string name="recipe_string">Công thức:</string>
-    <string name="recipe_hint">Bước 1:…</string>
-    <string name="time_to_make_string">Thời gian làm ước tính:</string>
+    <string name="recipe_string">Công thức</string>
+    <string name="recipe_hint">Bước 1: …</string>
+    <string name="time_to_make_string">Thời gian làm ước tính</string>
 
     <!-- create_post_4 strings -->
     <string name="upload_string">Đăng bài</string>

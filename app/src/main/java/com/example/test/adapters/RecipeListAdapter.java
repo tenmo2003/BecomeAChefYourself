@@ -38,6 +38,13 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     private Context context;
 
     public void setArticleList(List<Article> articleList) {
+//        MainActivity.runTask(() -> {
+//            this.articleList = new ArrayList<>();
+//            this.articleList.addAll(articleList);
+//            notifyDataSetChanged();
+//        }, () -> {
+//            notifyDataSetChanged();
+//        }, MainActivity.progressDialog);
         this.articleList = new ArrayList<>();
         this.articleList.addAll(articleList);
         notifyDataSetChanged();

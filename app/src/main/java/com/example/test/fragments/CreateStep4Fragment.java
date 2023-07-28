@@ -1,5 +1,6 @@
 package com.example.test.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
@@ -22,6 +23,8 @@ import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
+import org.w3c.dom.Text;
+
 import java.time.LocalDate;
 import java.util.Random;
 
@@ -41,7 +44,7 @@ public class CreateStep4Fragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        FrameLayout nextStepBtn = view.findViewById(R.id.next_steps_btn);
+        TextView nextStepBtn = view.findViewById(R.id.next_steps_btn);
 
         ImageView backBtn = view.findViewById(R.id.back_button);
 
@@ -114,18 +117,17 @@ public class CreateStep4Fragment extends Fragment {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onResume() {
         super.onResume();
 
-        TextView dishNameTextView = fView.findViewById(R.id.dish_name_text);
+        TextView dishNameTextView = fView.findViewById(R.id.preview_title);
         TextView recipeContentTextView = fView.findViewById(R.id.recipe_text);
         TextView ingredientsTextView = fView.findViewById(R.id.ingredients_text);
-        TextView publisherTextView = fView.findViewById(R.id.publisher_text);
-        TextView publishedDateTextView = fView.findViewById(R.id.published_date_text);
+        TextView ingredientCountsTextView = fView.findViewById(R.id.ingredients_count);
         TextView timeToMakeTextView = fView.findViewById(R.id.time_to_make_text);
-        TextView ratingTextView = fView.findViewById(R.id.ratings_text);
-        ImageView dishImg = fView.findViewById(R.id.image);
+        ImageView dishImg = fView.findViewById(R.id.preview_image);
 
         if (ShareFragment.imageURI != null) {
             dishImg.setImageURI(ShareFragment.imageURI);
@@ -136,12 +138,8 @@ public class CreateStep4Fragment extends Fragment {
         dishNameTextView.setText(ShareFragment.dishName);
         recipeContentTextView.setText(Html.fromHtml(ShareFragment.recipe, Html.FROM_HTML_MODE_COMPACT));
         ingredientsTextView.setText(formatIngredients(ShareFragment.ingredients));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            publishedDateTextView.setText(LocalDate.now().toString());
-        }
-        publisherTextView.setText(MainActivity.loggedInUser.getUsername());
+        ingredientCountsTextView.setText(ShareFragment.ingredients.split(";\\s*").length + " thành phần");
         timeToMakeTextView.setText(ShareFragment.timeToMake);
-        ratingTextView.setText("0");
     }
 
     private String formatIngredients(String input) {

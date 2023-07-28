@@ -18,14 +18,18 @@ import com.example.test.fragments.CreateStep3Fragment;
 import java.util.ArrayList;
 
 public class IngredientListAdapter extends ArrayAdapter<String> {
-
     ArrayList<String> list;
     Context context;
 
-    public IngredientListAdapter(Context context, ArrayList<String> items) {
-        super(context, R.layout.list_row, items);
+    public IngredientListAdapter(Context context, ArrayList<String> list) {
+        super(context, R.layout.list_row, list);
         this.context = context;
-        list = items;
+    }
+
+    public void setIngredientList(ArrayList<String> list) {
+        this.list = new ArrayList<>();
+        this.list.addAll(list);
+        notifyDataSetChanged();
     }
 
     @NonNull
