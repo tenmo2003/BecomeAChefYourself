@@ -49,36 +49,7 @@ public class AdminFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ImageView logoutBtn = view.findViewById(R.id.logout_btn);
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Đăng xuất");
-                builder.setMessage("Bạn chắc chắn muốn đăng xuất chứ?");
-                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Perform logout action here
-                        MainActivity.loggedInUser = null;
-                        Navigation.findNavController(view).navigate(R.id.navigation_login);
-                    }
-                });
-                builder.setNegativeButton("Huỷ", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-
-                // Get the positive and negative buttons
-                Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                // Set the text color of the positive button
-                positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-
-                // Set the text color of the negative button
-                negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-            }
-        });
+        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         List<String> parentItems = new ArrayList<>(Arrays.asList("Báo cáo về bình luận", "Báo cáo về bài đăng", "Danh sách các bài đăng", "Danh sách các người dùng"));
 
@@ -89,33 +60,65 @@ public class AdminFragment extends Fragment {
 
         Map<String, List<String>> collection = new HashMap<>();
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
-        for (Article article : dbHelper.getAllArticles()) {
-            postItems.add(article.getId() + ". \"" + article.getDishName() + "\" viết bởi '" + article.getPublisher() + "'");
-        }
+        MainActivity.runTask(() -> {
 
-        for (Report report : dbHelper.getAllCommentReports()) {
-            reportedComments.add(report.getId() + ". \"" + report.getCommentContent() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
-        }
+            for (Article article : dbHelper.getAllArticles()) {
+                postItems.add(article.getId() + ". \"" + article.getDishName() + "\" viết bởi '" + article.getPublisher() + "'");
+            }
 
-        for (Report report : dbHelper.getAllArticleReports()) {
-            reportedArticles.add(report.getId() + ". \"" + report.getArticleName() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
-        }
+            for (Report report : dbHelper.getAllCommentReports()) {
+                reportedComments.add(report.getId() + ". \"" + report.getCommentContent() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
+            }
 
-        for (User user : dbHelper.getAllUser()) {
-            users.add((users.size() + 1) + ". " + user.getUsername() + ". Mức độ cảnh cáo: " + user.getReportLevel());
-        }
+            for (Report report : dbHelper.getAllArticleReports()) {
+                reportedArticles.add(report.getId() + ". \"" + report.getArticleName() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
+            }
 
-        collection.put(parentItems.get(0), reportedComments);
-        collection.put(parentItems.get(1), reportedArticles);
-        collection.put(parentItems.get(2), postItems);
-        collection.put(parentItems.get(3), users);
+            for (User user : dbHelper.getAllUser()) {
+                users.add((users.size() + 1) + ". " + user.getUsername() + ". Mức độ cảnh cáo: " + user.getReportLevel());
+            }
 
-        listView = view.findViewById(R.id.parent_list);
-        adapter = new MyExpandableListAdapter(getActivity(), parentItems, collection);
+            collection.put(parentItems.get(0), reportedComments);
+            collection.put(parentItems.get(1), reportedArticles);
+            collection.put(parentItems.get(2), postItems);
+            collection.put(parentItems.get(3), users);
+        }, () -> {
+            ImageView logoutBtn = view.findViewById(R.id.logout_btn);
+            logoutBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Đăng xuất");
+                    builder.setMessage("Bạn chắc chắn muốn đăng xuất chứ?");
+                    builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Perform logout action here
+                            MainActivity.loggedInUser = null;
+                            Navigation.findNavController(view).navigate(R.id.navigation_login);
+                        }
+                    });
+                    builder.setNegativeButton("Huỷ", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
 
-        listView.setAdapter(adapter);
+                    // Get the positive and negative buttons
+                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                    // Set the text color of the positive button
+                    positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+                    // Set the text color of the negative button
+                    negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+                }
+            });
+
+            listView = view.findViewById(R.id.parent_list);
+            adapter = new MyExpandableListAdapter(getActivity(), parentItems, collection);
+
+            listView.setAdapter(adapter);
 
 //        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
 //            int lastExpandedPos = -1;
@@ -128,13 +131,13 @@ public class AdminFragment extends Fragment {
 //            }
 //        });
 
-        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                String selected = adapter.getChild(i, i1).toString();
-                return true;
-            }
-        });
-
+            listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+                @Override
+                public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+                    String selected = adapter.getChild(i, i1).toString();
+                    return true;
+                }
+            });
+        }, MainActivity.progressDialog);
     }
 }

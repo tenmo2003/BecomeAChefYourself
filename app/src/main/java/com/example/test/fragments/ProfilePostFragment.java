@@ -11,18 +11,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.test.R;
 import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
-public class UserSavedFragment extends Fragment {
-    RecyclerView userSavedList;
+public class ProfilePostFragment extends Fragment {
+    RecyclerView userRecipeList;
     DatabaseHelper dbHelper;
     private final User profileUser;
 
-    public UserSavedFragment(User profileUser) {
+    public ProfilePostFragment(User profileUser) {
         this.profileUser = profileUser;
     }
 
@@ -30,7 +29,7 @@ public class UserSavedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_saved, container, false);
+        return inflater.inflate(R.layout.fragment_user_post, container, false);
     }
 
     @Override
@@ -39,14 +38,14 @@ public class UserSavedFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getActivity());
 
-        userSavedList = view.findViewById(R.id.user_saved_list);
-        userSavedList.setHasFixedSize(true);
-        userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        userRecipeList = view.findViewById(R.id.user_recipe_list);
+        userRecipeList.setHasFixedSize(true);
+        userRecipeList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
-        adapter.setArticleList(dbHelper.getUserSavedArticles(profileUser.getUsername()));
+        adapter.setArticleList(dbHelper.getArticlesFromUser(profileUser.getUsername()));
         adapter.setContext(getActivity());
 
-        userSavedList.setAdapter(adapter);
+        userRecipeList.setAdapter(adapter);
     }
 }

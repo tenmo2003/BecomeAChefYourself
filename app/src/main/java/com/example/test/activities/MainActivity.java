@@ -2,12 +2,10 @@ package com.example.test.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -18,22 +16,25 @@ import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.components.User;
+import com.example.test.fragments.AdminFragment;
+import com.example.test.fragments.HomeFragment;
+import com.example.test.fragments.LoginFragment;
+import com.example.test.fragments.NotificationFragment;
+import com.example.test.fragments.ShareFragment;
+import com.example.test.fragments.ProfileFragment;
 import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.SQLConnection;
 import com.example.test.databinding.ActivityMainBinding;
 import com.example.test.utils.SaveSharedPreference;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 
-import com.google.android.material.navigation.NavigationBarView;
-
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -88,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
 //                e.printStackTrace();
 //            }
 //        }, null, this);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -155,8 +155,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
     }
 
     public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {
@@ -165,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
+        final CountDownLatch latch = new CountDownLatch(1);
 
         executor.execute(new Runnable() {
             @Override
@@ -176,10 +175,18 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if (result != null)
                             result.run();
-                        if (progressDialog != null)
-                            progressDialog.dismiss();
+                        latch.countDown();
+
                     }
                 });
+
+                try {
+                    latch.await();
+                    if (progressDialog != null)
+                        progressDialog.dismiss();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

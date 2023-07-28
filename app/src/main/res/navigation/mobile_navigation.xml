@@ -9,7 +9,12 @@
         android:id="@+id/navigation_home"
         android:name="com.example.test.fragments.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_article"
+            app:destination="@id/navigation_article"
+            app:launchSingleTop="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_share"
@@ -18,11 +23,6 @@
         tools:layout="@layout/fragment_share" >
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_bookmarks"
-        android:name="com.example.test.fragments.BookmarksFragment"
-        android:label="@string/title_bookmark"
-        tools:layout="@layout/fragment_bookmarks" />
 
     <fragment
         android:id="@+id/navigation_login"
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.example.test.fragments.UserFragment"
+        android:name="com.example.test.fragments.ProfileFragment"
         android:label="@string/title_user"
         tools:layout="@layout/fragment_user" />
 

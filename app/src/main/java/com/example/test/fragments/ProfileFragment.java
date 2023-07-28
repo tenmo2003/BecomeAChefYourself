@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,7 +42,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
 
-public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
+public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
     private View fragmentView;
 
@@ -264,9 +263,9 @@ public class UserFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     private void setupViewPager(ViewPager2 viewPager2) {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
-        adapter.addFragment(new UserPostFragment(profileUser));
+        adapter.addFragment(new ProfilePostFragment(profileUser));
         if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
-            adapter.addFragment(new UserSavedFragment(profileUser));
+            adapter.addFragment(new ProfileSavedFragment(profileUser));
         }
         viewPager2.setAdapter(adapter);
     }
