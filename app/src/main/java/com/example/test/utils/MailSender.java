@@ -55,8 +55,24 @@ public class MailSender {
     public static int sendResetPasswordMail(String emailReceiver) {
         int securityCode = (int) (Math.random() * 999999 + 100000);
         String title = "Đổi mật khẩu";
-        String verifyMailContent = "Mã xác thực của bạn để đổi mật khẩu là: " + securityCode;
+        String verifyMailContent = "Mã xác thực để đổi mật khẩu của bạn là: " + securityCode;
         sendMail(emailReceiver, title, verifyMailContent);
+        return securityCode;
+    }
+
+    public static int sendVerificationMail(String emailReceiver) {
+        int securityCode = (int) (Math.random() * 999999 + 100000);
+        String title = "Xác thực tài khoản";
+        String emailContent = "Chào bạn,\n\n"
+                + "Chúc mừng bạn đã tạo thành công tài khoản trên ứng dụng Let's Cook Together. Chúng tôi rất vui mừng được chào đón bạn vào cộng đồng của chúng tôi.\n\n"
+                + "Để bắt đầu trải nghiệm những tính năng tuyệt vời của ứng dụng, vui lòng xác thực tài khoản bằng cách sử dụng mã xác thực sau đây:\n\n"
+                + "Mã xác thực: " + securityCode + "\n\n"
+                + "Hãy nhập mã xác thực này trong trang xác thực của ứng dụng để hoàn tất quá trình xác thực tài khoản.\n\n"
+                + "Nếu bạn không thực hiện yêu cầu tạo tài khoản trên ứng dụng Let's Cook Together, xin vui lòng bỏ qua email này hoặc liên hệ với chúng tôi ngay qua địa chỉ email dưới đây để chúng tôi có thể hỗ trợ bạn.\n\n"
+                + "Chúng tôi rất mong được hỗ trợ và phục vụ bạn tốt nhất. Cảm ơn bạn đã lựa chọn ứng dụng của chúng tôi.\n\n"
+                + "Trân trọng,\n"
+                + "Đội ngũ hỗ trợ nhóm 8";
+        sendMail(emailReceiver, title, emailContent);
         return securityCode;
     }
 }

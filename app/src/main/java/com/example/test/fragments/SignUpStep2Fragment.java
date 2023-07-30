@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -21,7 +22,7 @@ import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.MailSender;
 
 
-public class ForgetStep2Fragment extends Fragment {
+public class SignUpStep2Fragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +37,7 @@ public class ForgetStep2Fragment extends Fragment {
 
         TextView notifyTv = view.findViewById(R.id.email_sent_text);
 
-        notifyTv.setText("Một mã xác thực đã được gửi về email " + formatEmail(ForgetPasswordFragment.forgotten.getEmail()));
+        notifyTv.setText("Một mã xác thực đã được gửi về email " + SignUpFragment.email);
 
         Button nextBtn = view.findViewById(R.id.next_btn);
         EditText codeInput = view.findViewById(R.id.code_input);
@@ -54,7 +55,7 @@ public class ForgetStep2Fragment extends Fragment {
 
                 // Gửi lại email xác thực và nhận mã mới
                 MainActivity.runTask(() -> {
-                    ForgetPasswordFragment.code = MailSender.sendResetPasswordMail(ForgetPasswordFragment.forgotten.getEmail());
+                    SignUpFragment.code = MailSender.sendVerificationMail(SignUpFragment.email);
                 }, null, null);
             }
 
@@ -62,7 +63,7 @@ public class ForgetStep2Fragment extends Fragment {
                 countDownTimer[0] = new CountDownTimer(timeInSeconds * 1000, 1000) {
                     public void onTick(long millisUntilFinished) {
                         long secondsLeft = millisUntilFinished / 1000;
-                        resendBtn.setText("Gửi lại (" + secondsLeft + ")");
+                        resendBtn.setText("Gửi lại\n(" + secondsLeft + ")");
                     }
 
                     public void onFinish() {
@@ -74,39 +75,24 @@ public class ForgetStep2Fragment extends Fragment {
             }
         });
 
+        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Integer.parseInt(codeInput.getText().toString()) == ForgetPasswordFragment.code) {
-                    ForgetPasswordFragment.viewPager.setCurrentItem(ForgetPasswordFragment.viewPager.getCurrentItem() + 1, false);
+                if (Integer.parseInt(codeInput.getText().toString()) == SignUpFragment.code) {
+                    boolean signUpResult = dbHelper.signUpUser(SignUpFragment.email, SignUpFragment.username, SignUpFragment.password, SignUpFragment.reenter);
+
+                    if (signUpResult) {
+                        Toast.makeText(getActivity(), "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(view).navigate(R.id.navigation_login);
+                    } else {
+                        Toast.makeText(getActivity(), "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getActivity(), "Mã xác thực sai! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    public String formatEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            return "";
-        }
-
-        int atIndex = email.indexOf("@");
-        int dotIndex = email.lastIndexOf(".");
-        if (atIndex == -1 || dotIndex == -1 || dotIndex < atIndex) {
-            return email;
-        }
-
-        String username = email.substring(0, atIndex);
-        String domain = email.substring(atIndex + 1, dotIndex);
-        String extension = email.substring(dotIndex);
-
-        StringBuilder formattedEmail = new StringBuilder();
-        formattedEmail.append(username.substring(0, Math.min(3, username.length()))); // Take the first 3 characters of username
-        formattedEmail.append("***@***"); // Append the asterisks and "@" symbol followed by "***"
-        formattedEmail.append(extension); // Append the extension
-
-        return formattedEmail.toString();
     }
 }

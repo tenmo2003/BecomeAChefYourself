@@ -14,7 +14,7 @@
     <string name="new_password_string">Mật khẩu mới</string>
     <string name="recommend_recipe_string">Đề xuất hôm nay</string>
 
-    <string name="app_name">Let\'s cook together</string>
+    <string name="app_name">Let\'s Cook Together</string>
     <string name="empty" />
     <string name="title_home">Nhà</string>
     <string name="title_search">Tìm kiếm</string>
@@ -90,4 +90,6 @@
     <string name="change_password">Đổi mật khẩu</string>
     <string name="logout">Đăng xuất</string>
     <string name="email">Email</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

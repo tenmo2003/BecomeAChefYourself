@@ -181,6 +181,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
+    public boolean checkUsernameAvailability(String username) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Check if the username already exists in the database
+        Cursor cursor = db.rawQuery("SELECT * FROM user WHERE username=?", new String[]{username});
+        if (cursor.getCount() > 0) {
+            // The username already exists, so we cannot add a new user with the same username
+            cursor.close();
+            db.close();
+            return false;
+        }
+
+        return true;
+    }
+
     public boolean signUpUser(String email, String username, String password, String fullname) {
         SQLiteDatabase db = getWritableDatabase();
 

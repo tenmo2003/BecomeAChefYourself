@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".fragments.ForgetStep1Fragment"
     android:orientation="vertical"
     android:gravity="center">
@@ -37,13 +37,27 @@
             android:layout_marginLeft="50dp"
             android:paddingLeft="20dp"
             android:layout_marginTop="5dp"
-            android:ems="14"
+            android:ems="10"
             android:maxLength="6"
             android:hint="Mã xác thực"
             android:textColor="@color/username_color"
             android:textSize="16sp"
             android:inputType="number"
             android:background="@drawable/no_underline_edittext"/>
+
+        <TextView
+            android:id="@+id/resend_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gửi lại"
+            android:paddingVertical="5dp"
+            android:textAlignment="center"
+            android:paddingLeft="4dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/code_input"
+            />
 
         <View
             android:id="@+id/rectangle_3"

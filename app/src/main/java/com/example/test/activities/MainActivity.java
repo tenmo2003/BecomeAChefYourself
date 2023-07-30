@@ -6,6 +6,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -71,24 +72,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Runner.runTask(() -> {
-//            try {
-//                //Background work here
-//                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6631936";
-//                String username = "sql6631936";
-//                String password = "aE8v6qffBv";
-//
-//
-//                sqlConnection = new SQLConnection(url, username, password);
-//
-//                sqlConnection.connectServer();
-//
-//                Log.i("Database", "Connection established");
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }, null, this);
+        runTask(() -> {
+            try {
+                //Background work here
+                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6631936";
+                String username = "sql6631936";
+                String password = "aE8v6qffBv";
+
+                sqlConnection = new SQLConnection(url, username, password);
+
+                sqlConnection.connectServer();
+
+                Log.i("Database", "Connection established");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, null, MainActivity.progressDialog);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

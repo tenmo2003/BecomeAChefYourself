@@ -101,6 +101,8 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                     return false;
                 }
             }).into(userAvatar);
+        } else {
+            userAvatar.setImageResource(R.drawable.baseline_person_black_24);
         }
 
         List<Integer> stats = dbHelper.getUserProfileStats(profileUser.getUsername());

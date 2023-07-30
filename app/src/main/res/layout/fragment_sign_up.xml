@@ -54,254 +54,22 @@
 
 	</RelativeLayout>
 
-	<RelativeLayout
-		android:layout_width="wrap_content"
+
+	<androidx.viewpager2.widget.ViewPager2
+		android:id="@+id/view_pager"
+		android:layout_width="300dp"
 		android:layout_height="wrap_content"
+		android:minHeight="270dp"
+		android:layout_marginTop="240dp"
 		android:layout_centerHorizontal="true"
-		android:layout_marginTop="107dp">
-
-		<View
-			android:layout_width="320dp"
-			android:layout_height="50dp"
-			android:layout_marginTop="130dp"
-			android:background="@drawable/rectangle_1_shape" />
-
-		<View
-			android:layout_width="50dp"
-			android:layout_height="50dp"
-			android:layout_marginTop="130dp"
-			android:background="@drawable/rectangle_4_shape" />
+		/>
 
 
-		<EditText
-			android:id="@+id/sign_up_email_input"
-			android:textSize="16sp"
-			android:textColor="@color/re_enter_password_color"
-			android:layout_marginStart="50dp"
-			android:paddingStart="20dp"
-			android:ems="14"
-			android:inputType="textEmailAddress"
-			android:layout_marginTop="136dp"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:hint="@string/email"
-			android:background="@drawable/no_underline_edittext"
-			/>
-
-		<RelativeLayout
-			android:layout_width="50dp"
-			android:layout_height="50dp"
-			android:layout_marginTop="128dp">
-
-			<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_centerInParent="true"
-				android:src="@drawable/email" />
-
-		</RelativeLayout>
-
-	</RelativeLayout>
-
-	<RelativeLayout
-		android:id="@+id/email_layout"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="300dp"
-		android:gravity="center"
-		>
-
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
-			<View
-				android:id="@+id/rectangle_1"
-				android:layout_width="320dp"
-				android:layout_height="50dp"
-				android:background="@drawable/rectangle_1_shape" />
-
-			<View
-				android:id="@+id/rectangle_3"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:background="@drawable/rectangle_3_shape" />
-
-			<RelativeLayout
-				android:id="@+id/usericon"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				>
-
-				<ImageView
-					android:id="@+id/vector_ek1"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_centerInParent="true"
-					android:src="@drawable/human" />
-
-			</RelativeLayout>
-
-
-			<EditText
-				android:id="@+id/sign_up_username_input"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="50dp"
-				android:paddingLeft="20dp"
-				android:layout_marginTop="5dp"
-				android:ems="14"
-				android:hint="@string/username_string"
-				android:textColor="@color/username_color"
-				android:textSize="16sp"
-				android:background="@drawable/no_underline_edittext"/>
-		</RelativeLayout>
-
-
-
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
-			<ImageView
-				android:id="@+id/rectangle_2"
-				android:layout_width="320dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="64dp"
-				android:src="@drawable/rectangle_1_shape" />
-
-			<View
-				android:id="@+id/rectangle_4"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="64dp"
-				android:background="@drawable/rectangle_4_shape" />
-
-			<RelativeLayout
-				android:id="@+id/passwordicon"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="64dp">
-
-				<ImageView
-					android:id="@+id/vector"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_centerInParent="true"
-					android:src="@drawable/lock" />
-
-			</RelativeLayout>
-
-			<EditText
-				android:id="@+id/sign_up_password_input"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="50dp"
-				android:paddingLeft="20dp"
-				android:ems="14"
-				android:inputType="textPassword"
-				android:layout_marginTop="70dp"
-				android:hint="@string/password_string"
-				android:textColor="@color/username_color"
-				android:textSize="16sp"
-				android:background="@drawable/no_underline_edittext"/>
-		</RelativeLayout>
-
-
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
-			<View
-				android:id="@+id/rectangle_11"
-				android:layout_width="320dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="130dp"
-				android:background="@drawable/rectangle_1_shape" />
-
-			<View
-				android:id="@+id/rectangle_44"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="130dp"
-				android:background="@drawable/rectangle_4_shape" />
-
-
-			<EditText android:id="@+id/sign_up_re_enter_password"
-				android:textSize="16sp"
-				android:textColor="@color/re_enter_password_color"
-				android:layout_marginLeft="50dp"
-				android:paddingLeft="20dp"
-				android:ems="14"
-				android:inputType="textPassword"
-				android:layout_marginTop="136dp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:hint="@string/re_enter_password_string"
-				android:background="@drawable/no_underline_edittext"
-				/>
-
-			<RelativeLayout
-				android:id="@+id/passwordicon1"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_marginTop="128dp">
-
-				<ImageView
-					android:id="@+id/vector1"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_centerInParent="true"
-					android:src="@drawable/lock" />
-
-			</RelativeLayout>
-
-		</RelativeLayout>
-
-	</RelativeLayout>
-
-	<RelativeLayout
-		android:id="@+id/login"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="515dp"
-		android:gravity="center">
-
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
-
-			<Button
-				android:id="@+id/sign_up_button"
-				android:layout_width="195dp"
-				android:layout_height="37dp"
-				android:layout_centerHorizontal="true"
-				android:alpha="0"
-				/>
-
-			<ImageView
-				android:id="@+id/rectangle_6"
-				android:layout_width="match_parent"
-				android:layout_height="50dp"
-				android:src="@drawable/rectangle_6" />
-
-			<TextView
-				android:id="@+id/log_in"
-				android:layout_width="wrap_content"
-				android:layout_height="35dp"
-				android:layout_centerInParent="true"
-				android:text="@string/sign_up_string"
-				android:textColor="@color/log_in_color"
-				android:textSize="18sp"
-				android:textStyle="bold" />
-		</RelativeLayout>
-
-	</RelativeLayout>
 
 	<TextView android:id="@+id/already_have_account_"
 		android:textSize="16sp"
 		android:textColor="@color/sign_up_ek5_color"
-		android:layout_marginTop="580dp"
+		android:layout_marginTop="550dp"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="@string/already_have_account__string"
@@ -312,7 +80,7 @@
 		android:id="@+id/sign_up"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginTop="620dp"
+		android:layout_marginTop="580dp"
 		android:gravity="center">
 
 		<RelativeLayout
