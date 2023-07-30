@@ -7,7 +7,7 @@
 	android:orientation="vertical"
 	tools:context=".activities.MainActivity">
 
-	<LinearLayout
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -18,19 +18,20 @@
 			android:src="@drawable/vector_ek1"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
-			android:padding="10dp" />
+			android:padding="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_alignParentLeft="true"/>
 
 		<TextView android:id="@+id/next_steps_btn"
-			android:layout_width="0dp"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:textSize="20sp"
 			android:textColor="@color/colorAccent"
-			android:layout_weight="1"
-			android:layout_gravity="bottom"
-			android:gravity="end"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
 			android:text="@string/done_string" />
 
-	</LinearLayout>
+	</RelativeLayout>
 
 	<androidx.core.widget.NestedScrollView
 		android:layout_width="match_parent"
@@ -80,8 +81,8 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:textSize="15sp"
-				android:layout_marginTop="-10dp"
-				android:maxLines="1" />
+				android:layout_marginTop="10dp"
+				android:inputType="textMultiLine" />
 
 			<TextView android:id="@+id/image_string"
 				android:textStyle="bold"
@@ -96,11 +97,11 @@
 
 			<ImageView
 				android:id="@+id/img_input"
-				android:layout_width="30dp"
-				android:layout_height="30dp"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
 				android:layout_gravity="center"
 				android:scaleType="centerCrop"
-				android:background="@drawable/baseline_image_24"/>
+				android:background="@drawable/baseline_image_search_24"/>
 
 			<TextView android:id="@+id/time_to_make_string"
 				android:textStyle="bold"
@@ -117,8 +118,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:textSize="15sp"
-				android:layout_marginTop="-10dp"
-				android:maxLines="1" />
+				android:hint="30 phút"
+				android:layout_marginTop="10dp"
+				android:maxLength="20" />
 
 			<TextView android:id="@+id/ingredients_string"
 				android:textStyle="bold"
@@ -134,7 +136,7 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:orientation="horizontal"
-				android:layout_marginTop="-10dp">
+				android:layout_marginTop="10dp">
 				<EditText
 					android:id="@+id/ingredients_input"
 					android:layout_width="wrap_content"
@@ -143,12 +145,14 @@
 					android:textSize="15sp"
 					android:layout_weight="10"/>
 
-				<Button
+				<ImageButton
 					android:id="@+id/add_btn"
-					android:layout_width="30dp"
-					android:layout_height="30dp"
-					android:layout_marginLeft="5dp"
-					android:background="@drawable/add" />
+					android:layout_width="40dp"
+					android:layout_height="33dp"
+					android:backgroundTint="@color/color_bg_spinner"
+					android:background="@drawable/roundcorner"
+					android:src="@drawable/baseline_add_24"
+					android:layout_marginLeft="5dp" />
 
 			</LinearLayout>
 
@@ -176,8 +180,10 @@
 				android:layout_height="wrap_content"
 				android:hint="@string/recipe_hint"
 				android:textSize="15sp"
-				android:layout_marginTop="-10dp"
-				android:inputType="textMultiLine" />
+				android:minLines="5"
+				android:gravity="top|left"
+				android:inputType="textMultiLine"
+				/>
 		</LinearLayout>
 	</androidx.core.widget.NestedScrollView>
 

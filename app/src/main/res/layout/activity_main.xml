@@ -22,7 +22,7 @@
     <me.ibrahimsn.lib.SmoothBottomBar
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="55dp"
         app:backgroundColor="#328788"
         app:sideMargins="15dp"
         app:textSize="13sp"

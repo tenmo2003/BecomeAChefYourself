@@ -11,11 +11,11 @@
 	</style>
 
 	<style name="RobotoTextViewStyle" parent="android:Widget.TextView">
-		<item name="android:fontFamily">@font/rubik_regular</item>
+		<item name="android:fontFamily">sans-serif</item>
 	</style>
 
 	<style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
-		<item name="android:fontFamily">@font/rubik_regular</item>
+		<item name="android:fontFamily">sans-serif</item>
 	</style>
 
 	<style name="expanded_title" parent="@android:style/TextAppearance">

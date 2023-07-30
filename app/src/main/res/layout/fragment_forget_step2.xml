@@ -38,6 +38,7 @@
             android:paddingLeft="20dp"
             android:layout_marginTop="5dp"
             android:ems="14"
+            android:maxLength="6"
             android:hint="Mã xác thực"
             android:textColor="@color/username_color"
             android:textSize="16sp"

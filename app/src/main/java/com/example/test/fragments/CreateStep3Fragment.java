@@ -114,7 +114,7 @@ public class CreateStep3Fragment extends Fragment {
 
         imgInput = view.findViewById(R.id.img_input);
 
-        Button addIngredientBtn = view.findViewById(R.id.add_btn);
+        ImageButton addIngredientBtn = view.findViewById(R.id.add_btn);
         EditText ingredientInput = view.findViewById(R.id.ingredients_input);
         ingredientString = new StringBuilder();
 

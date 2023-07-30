@@ -40,7 +40,7 @@ public class ProfilePostFragment extends Fragment {
 
         userRecipeList = view.findViewById(R.id.user_recipe_list);
         userRecipeList.setHasFixedSize(true);
-        userRecipeList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        userRecipeList.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
         adapter.setArticleList(dbHelper.getArticlesFromUser(profileUser.getUsername()));

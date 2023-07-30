@@ -82,4 +82,12 @@ public class Article {
     public String getImgURL() {
         return imgURL;
     }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public void setComments(int comments) {
+        this.comments = comments;
+    }
 }

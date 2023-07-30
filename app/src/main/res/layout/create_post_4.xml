@@ -4,7 +4,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical">
 
-	<LinearLayout
+	<RelativeLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal"
@@ -15,19 +15,20 @@
 			android:src="@drawable/vector_ek1"
 			android:layout_width="40dp"
 			android:layout_height="40dp"
-			android:padding="10dp" />
+			android:padding="10dp"
+			android:layout_marginTop="10dp"
+			android:layout_alignParentLeft="true"/>
 
-		<TextView
-			android:layout_width="0dp"
+		<TextView android:id="@+id/next_steps_btn"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/next_steps_btn"
-			android:textSize="25sp"
+			android:textSize="20sp"
 			android:textColor="@color/colorAccent"
-			android:layout_weight="1"
-			android:layout_gravity="bottom"
-			android:gravity="end"
+			android:layout_alignParentRight="true"
+			android:layout_centerVertical="true"
 			android:text="@string/upload_string" />
-	</LinearLayout>
+
+	</RelativeLayout>
 
 
 	<androidx.core.widget.NestedScrollView

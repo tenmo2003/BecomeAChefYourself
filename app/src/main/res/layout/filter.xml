@@ -1,179 +1,299 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/filter_field"
     android:orientation="vertical"
+    android:id="@+id/filter_field"
     android:padding="10dp">
 
+    <!-- Group 1 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="5dp">
-        <LinearLayout
+        android:orientation="vertical">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Trong ngày">
-            </TextView>
+            android:text="Trong ngày">
+        </TextView>
 
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/meal_filter">
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/breakfast_item"
-                    android:text="Bữa sáng">
-
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/lunch_item"
-                    android:text="Bữa trưa">
-
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dinner_item"
-                    android:text="Bữa tối">
-
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/flexible_item"
-                    android:text="Linh hoạt">
-
-                </RadioButton>
-            </RadioGroup>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/meal_filter"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <TextView
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/breakfast_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trong bữa">
-            </TextView>
+                android:text="Bữa sáng"
+                android:textSize="13sp"
+                android:layout_weight="1">
 
-            <RadioGroup
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/serve_order_class_filter">
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/appetizer_item"
-                    android:text="Món khai vị">
+            </RadioButton>
 
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/main_item"
-                    android:text="Món chính">
-                </RadioButton>
-
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dessert_item"
-                    android:text="Món tráng miệng">
-                </RadioButton>
-            </RadioGroup>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="1">
-            <TextView
+            <RadioButton
+                android:id="@+id/lunch_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Loại món ăn">
-            </TextView>
+                android:text="Bữa trưa"
+                android:textSize="13sp"
 
-            <RadioGroup
-                android:layout_width="match_parent"
+                android:layout_weight="1">
+
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/dinner_item"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/type_filter">
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/meat_item"
-                    android:text="Món thịt">
-                </RadioButton>
+                android:text="Bữa tối"
+                android:textSize="13sp"
 
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/seafood"
-                    android:text="Món hải sản">
-                </RadioButton>
+                android:layout_weight="1">
 
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/vegetarian"
-                    android:text="Món chay">
-                </RadioButton>
+            </RadioButton>
 
-                <RadioButton
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/soup"
-                    android:text="Món canh">
-                </RadioButton>
-            </RadioGroup>
+            <RadioButton
+                android:id="@+id/flexible_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Linh hoạt"
+                android:textSize="13sp"
 
-        </LinearLayout>
+                android:layout_weight="1">
 
+            </RadioButton>
+        </RadioGroup>
     </LinearLayout>
 
+    <!-- Group 2 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Trong bữa">
+        </TextView>
+
+        <RadioGroup
+            android:id="@+id/serve_order_class_filter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/appetizer_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Món khai vị"
+                android:layout_weight="1">
+
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/main_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Món chính"
+                android:layout_weight="1">
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/dessert_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Món tráng miệng"
+                android:layout_weight="1">
+            </RadioButton>
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- Group 3 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Loại món ăn">
+        </TextView>
+
+        <Spinner
+            android:id="@+id/typeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+<!--        <RadioGroup-->
+<!--            android:id="@+id/type_filter"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+
+<!--            &lt;!&ndash; First Row &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/meat_item"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món thịt">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/seafood"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món hải sản">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/vegetarian"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món chay">-->
+<!--                </RadioButton>-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Second Row &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/soup"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món canh">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/vegetable"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món rau">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/noodle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Mì">-->
+<!--                </RadioButton>-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Third Row &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/rice_noodle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Bún">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/roll"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món cuốn">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/sticky_rice"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món xôi">-->
+<!--                </RadioButton>-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Fourth Row &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal">-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/rice_dish"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món cơm">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/savory_cake"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món bánh mặn">-->
+<!--                </RadioButton>-->
+
+<!--                <RadioButton-->
+<!--                    android:id="@+id/sweet_cake"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:text="Món bánh ngọt">-->
+<!--                </RadioButton>-->
+<!--            </LinearLayout>-->
+<!--        </RadioGroup>-->
+    </LinearLayout>
+
+    <!-- Action Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
+            android:id="@+id/apply_filter"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:id="@+id/apply_filter"
-            android:gravity="center"
             android:layout_margin="10dp"
+            android:background="@color/navi"
+            android:gravity="center"
             android:padding="5dp"
             android:text="Lọc"
             android:textColor="@color/colorPrimaryDark"
-            android:background="@color/navi"
             android:layout_weight="1">
         </TextView>
 
         <TextView
+            android:id="@+id/clear_filter"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:id="@+id/clear_filter"
-            android:gravity="center"
             android:layout_margin="10dp"
+            android:background="@color/redLowOpa"
+            android:gravity="center"
             android:padding="5dp"
             android:text="Xóa lọc"
             android:textColor="@color/red"
-            android:background="@color/redLowOpa"
             android:layout_weight="1">
         </TextView>
     </LinearLayout>

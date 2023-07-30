@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/user_saved_list"
-        android:nestedScrollingEnabled="false"
-        android:layout_marginVertical="5dp">
+        android:nestedScrollingEnabled="false">
     </androidx.recyclerview.widget.RecyclerView>
 
 </FrameLayout>

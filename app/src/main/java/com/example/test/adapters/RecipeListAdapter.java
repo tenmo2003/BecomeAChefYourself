@@ -22,11 +22,11 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.components.User;
+import com.example.test.fragments.HomeFragment;
 import com.example.test.utils.DatabaseHelper;
 
 import java.util.ArrayList;
@@ -53,6 +53,13 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     public void addToArticleList(List<Article> list) {
         articleList.addAll(list);
         notifyDataSetChanged();
+    }
+
+    public void updateViewHolder(int position, int commentAdded, int likeAdded, boolean bookmarked) {
+        Article article = articleList.get(position);
+        article.setLikes(article.getLikes() + likeAdded);
+        article.setComments(article.getComments() + commentAdded);
+        notifyItemChanged(position);
     }
 
     public List<Article> getArticleList() {
@@ -127,24 +134,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.article = articleList.get(position);
         holder.user_name.setText(articleList.get(position).getPublisher());
         holder.dish_name.setText(articleList.get(position).getDishName());
-//        final Bitmap[] mIcon_val = new Bitmap[1]; // declare as final array to make it modifiable inside Runnable
-//
-//        MainActivity.runTask(() -> {
-//            URL newurl = null;
-//            try {
-//                newurl = new URL(articleList.get(position).getImgURL());
-//            } catch (MalformedURLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            try {
-//                mIcon_val[0] = BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }, () -> {
-//            holder.progressBar.setVisibility(View.GONE);
-//            holder.dish_img.setImageBitmap(mIcon_val[0]);
-//        }, null);
+
         if (articleList.get(position).getImgURL().equals("")) {
             holder.dish_img.setImageResource(R.drawable.no_preview);
 
@@ -237,6 +227,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
         recipe_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                HomeFragment.adapterPos = getAdapterPosition();
                 Bundle args = new Bundle();
                 args.putInt("articleID", article.getId());
 
@@ -264,4 +255,22 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             }
         });
     }
+
+    public void plusComment(int number) {
+        cmt_count.setText(String.valueOf(Integer.parseInt(cmt_count.getText().toString()) + number));
+    }
+
+    public void plusLike(int number) {
+        react_count.setText(String.valueOf(Integer.parseInt(react_count.getText().toString()) + number));
+    }
+
+    public void setBookmark(boolean value) {
+        isBookmark = value;
+        if (value) {
+            bookmark.setImageResource(R.drawable.bookmarked);
+        } else {
+            bookmark.setImageResource(R.drawable.bookmark);
+        }
+    }
 }
+

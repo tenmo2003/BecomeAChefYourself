@@ -40,60 +40,71 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 app:layout_collapseMode="pin">
-                <Button
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:id="@+id/back_button"
-                    android:background="@drawable/back_btn"
-                    android:layout_gravity="start">
-                </Button>
 
                 <LinearLayout
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="end">
-                    <TextView
-                        android:id="@+id/edit_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sửa"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:padding="5dp"
-                        android:layout_marginHorizontal="10dp"
-                        android:visibility="gone" />
-                    <TextView
-                        android:id="@+id/report_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Báo cáo"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/colorAccent"
-                        android:padding="5dp"
-                        android:layout_marginHorizontal="10dp" />
-                    <TextView
-                        android:id="@+id/remove_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Xoá"
-                        android:textStyle="bold"
-                        android:textSize="15sp"
-                        android:textColor="@color/red"
-                        android:padding="5dp"
-                        android:visibility="gone" />
-                </LinearLayout>
+                    android:orientation="horizontal">
+                    <Button
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:id="@+id/back_button"
+                        android:background="@drawable/back_btn"
+                        android:layout_gravity="start">
+                    </Button>
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="32dp"
-                    android:id="@+id/bookmark_in_article"
-                    android:background="@drawable/bookmark_in_article"
-                    android:layout_marginHorizontal="15dp"
-                    android:layout_gravity="end">
-                </ImageView>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end"
+                        android:layout_weight="1"
+                        >
+                        <TextView
+                            android:id="@+id/edit_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Sửa"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:fontFamily="@font/rubik_regular"
+                            android:padding="5dp"
+                            android:layout_marginHorizontal="10dp"
+                            android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/report_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Báo cáo"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/red"
+                            android:fontFamily="@font/rubik_regular"
+                            android:padding="5dp"
+                            android:layout_marginHorizontal="10dp" />
+                        <TextView
+                            android:id="@+id/remove_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/rubik_regular"
+                            android:text="Xoá"
+                            android:textStyle="bold"
+                            android:textSize="15sp"
+                            android:textColor="@color/red"
+                            android:padding="5dp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="32dp"
+                        android:id="@+id/bookmark_in_article"
+                        android:background="@drawable/bookmark_in_article"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_gravity="end">
+                    </ImageView>
+                </LinearLayout>
             </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -109,15 +120,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="5dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/title_in_article"
-                android:text="Title"
-                android:textSize="24sp"
+                android:text="Món ăn"
+                android:textSize="25sp"
                 android:textStyle="bold"
+                android:fontFamily="@font/roboto_slab_regular"
                 android:textColor="@color/colorPrimaryDark"
                 android:padding="10dp">
             </TextView>
@@ -169,15 +182,14 @@
                     </TextView>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/author_followers"
                             android:text="2 followers"
-                            android:textSize="11sp"
-                            android:layout_marginLeft="5dp">
+                            android:textSize="11sp">
                         </TextView>
 
                         <TextView
@@ -186,6 +198,7 @@
                             android:id="@+id/author_recipes"
                             android:textSize="11sp"
                             android:text="2 recipes"
+                            android:layout_marginLeft="10dp"
                             android:gravity="center"
                             android:layout_weight="1">
                         </TextView>
@@ -194,7 +207,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:gravity="end">
@@ -217,12 +230,12 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
+                    android:layout_weight="0.6"
                     android:gravity="center"
                     android:orientation="vertical">
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:id="@+id/react_btn"
                         android:background="@drawable/react">
                     </ImageView>
@@ -243,8 +256,8 @@
                     android:gravity="center"
                     android:layout_weight="1">
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/cmt" />
 
                     <TextView
@@ -262,8 +275,8 @@
                     android:gravity="center"
                     android:layout_weight="1">
                     <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:src="@drawable/clock" />
                     <TextView
                         android:layout_width="wrap_content"
@@ -277,8 +290,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/gray"
-                android:layout_marginTop="20dp">
+                android:background="@color/gray">
             </View>
 
             <LinearLayout
@@ -315,6 +327,7 @@
                 android:text="ingredients here"
                 android:textColor="@color/black"
                 android:fontFamily="sans-serif"
+                android:paddingHorizontal="10dp"
                 android:lineSpacingMultiplier="1.2"/>
 
             <LinearLayout
@@ -351,8 +364,15 @@
                 android:text="recipe here"
                 android:textColor="@color/black"
                 android:fontFamily="sans-serif"
+                android:paddingHorizontal="10dp"
                 android:lineSpacingMultiplier="1.2">
             </TextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/gray">
+            </View>
 
             <TextView
                 android:layout_width="match_parent"
@@ -366,6 +386,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:paddingHorizontal="10dp"
                 android:orientation="horizontal">
                 <androidx.cardview.widget.CardView
                     android:layout_width="35dp"

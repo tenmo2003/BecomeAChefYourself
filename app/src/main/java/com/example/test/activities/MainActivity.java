@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public static ProgressDialog progressDialog;
 
     public static User loggedInUser = null;
-    SmoothBottomBar navView;
+    public static SmoothBottomBar navView;
     NavController navController;
 
     private void setupSmoothBottomMenu() {
@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
                 int navigation_user = 3;
 
                 if (id == navigation_home) {
-                    navController.navigate(R.id.navigation_home);
+                    navController.popBackStack(R.id.navigation_home, false);
+//                    navController.navigate(R.id.navigation_home);
                 } else if (id == navigation_share) {
                     if (loggedInUser == null) {
                         Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
                         navController.navigate(R.id.navigation_notification);
                     }
                 }
+
                 return false;
             }
         });

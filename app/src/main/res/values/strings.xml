@@ -15,6 +15,7 @@
     <string name="recommend_recipe_string">Đề xuất hôm nay</string>
 
     <string name="app_name">Let\'s cook together</string>
+    <string name="empty" />
     <string name="title_home">Nhà</string>
     <string name="title_search">Tìm kiếm</string>
     <string name="title_share">Chia sẻ</string>

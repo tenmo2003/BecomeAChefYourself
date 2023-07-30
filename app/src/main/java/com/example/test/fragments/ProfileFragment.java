@@ -73,6 +73,10 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
             profileUser = dbHelper.getUserWithUsername(MainActivity.loggedInUser.getUsername());
         }
 
+        if (profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
+            MainActivity.navView.setItemActiveIndex(3);
+        }
+
         TextView usernameTv = view.findViewById(R.id.user_username);
         TextView fullnameTv = view.findViewById(R.id.user_fullname);
         TextView bioTv = view.findViewById(R.id.user_bio);
@@ -268,5 +272,13 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
             adapter.addFragment(new ProfileSavedFragment(profileUser));
         }
         viewPager2.setAdapter(adapter);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
+            MainActivity.navView.setItemActiveIndex(3);
+        }
     }
 }

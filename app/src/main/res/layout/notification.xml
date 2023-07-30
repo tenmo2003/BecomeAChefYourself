@@ -14,7 +14,8 @@
         android:layout_height="60dp"
         app:cardCornerRadius="50dp"
         app:cardElevation="0dp"
-        android:backgroundTint="@color/darkGray">
+        android:backgroundTint="@color/darkGray"
+        android:layout_marginLeft="5dp">
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,14 +42,14 @@
             android:layout_height="wrap_content"
             android:text="test1"
             android:clickable="false"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textColor="@color/black"
             />
 
         <TextView
             android:id="@+id/created_time"
             android:text="test2"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:clickable="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

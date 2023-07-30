@@ -113,6 +113,7 @@ public class ArticleFragment extends Fragment {
         } else {
             bookmark.setImageResource(R.drawable.bookmark_in_article);
         }
+        HomeFragment.bookmarked = isBookmark[0];
 
         bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,10 +127,12 @@ public class ArticleFragment extends Fragment {
                     isBookmark[0] = true;
                     dbHelper.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
                     bookmark.setImageResource(R.drawable.bookmarked);
+                    HomeFragment.bookmarked = true;
                 } else {
                     isBookmark[0] = false;
                     dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
                     bookmark.setImageResource(R.drawable.bookmark_in_article);
+                    HomeFragment.bookmarked = false;
                 }
             }
         });
@@ -174,6 +177,7 @@ public class ArticleFragment extends Fragment {
                             if (MainActivity.loggedInUser.getUsername().equals("admin")) {
                                 dbHelper.increaseReportLevelForUser(article.getPublisher());
                             }
+                            HomeFragment.deleted = true;
                             Navigation.findNavController(view).navigateUp();
                         }
                     });
@@ -295,11 +299,13 @@ public class ArticleFragment extends Fragment {
                     dbHelper.removeLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
                     reactBtn.setImageResource(R.drawable.react);
                     reactTextView.setText((react_count - 1) + " lượt thích");
+                    HomeFragment.likeAdded--;
                 } else {
                     isLike[0] = true;
                     dbHelper.addLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
                     reactBtn.setImageResource(R.drawable.reacted);
                     reactTextView.setText((react_count + 1) + " lượt thích");
+                    HomeFragment.likeAdded++;
                 }
 
             }
@@ -329,6 +335,8 @@ public class ArticleFragment extends Fragment {
 
                 commentListAdapter.addNewComment(new Comment(dbHelper.getLastCommentID(), commenter, content, finalArticleID));
                 commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
+
+                HomeFragment.commentAdded++;
             }
         });
 
