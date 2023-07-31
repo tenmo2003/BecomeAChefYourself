@@ -7,14 +7,13 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 
 import androidx.annotation.Nullable;
 
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
-import com.example.test.components.Notification;
+import com.example.test.components.InAppNotification;
 import com.example.test.components.Report;
 import com.example.test.components.User;
 
@@ -26,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -369,6 +367,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("meal", meal);
         values.put("serve_order_class", serve_order_class);
         values.put("type", type);
+        String formattedDateTime = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+            // Define the desired date-time format
+            String pattern = "yyyy-MM-dd HH:mm:ss";
+
+            // Create a DateTimeFormatter with the pattern
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+
+            // Format the LocalDateTime to a string
+            formattedDateTime = currentDateTime.format(formatter);
+        }
+        values.put("published_time", formattedDateTime);
         values.put("time_to_make", timeToMake);
         values.put("image", imgURL);
 
@@ -1193,8 +1205,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return userProfileStats;
     }
 
-    public List<Notification> getNotificationsForUser(String username) {
-        List<Notification> notificationList = new ArrayList<>();
+    public List<InAppNotification> getNotificationsForUser(String username) {
+        List<InAppNotification> notificationList = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         String[] projection = {
@@ -1240,7 +1252,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     commentContent = comment.getContent();
                 }
 
-                Notification notification = new Notification(id, user, type, actionBy, articleId, commentId, postedTime(createdTimeString), commentContent, articleName);
+                InAppNotification notification = new InAppNotification(id, user, type, actionBy, articleId, commentId, postedTime(createdTimeString), commentContent, articleName);
                 notificationList.add(notification);
             }
             cursor.close();

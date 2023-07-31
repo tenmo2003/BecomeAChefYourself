@@ -192,6 +192,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                     int id = Integer.parseInt(idString);
 
                     args.putInt("reportID", id);
+                    if (group.equals("Báo cáo về bình luận")) {
+                        args.putBoolean("toComment", true);
+                    }
                     Navigation.findNavController(view).navigate(R.id.navigation_article, args);
                 } else if (group.equals("Danh sách các bài đăng")){
                     Bundle args = new Bundle();

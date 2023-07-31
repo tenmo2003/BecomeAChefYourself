@@ -35,6 +35,8 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static User loggedInUser = null;
     public static SmoothBottomBar navView;
     NavController navController;
+    public static DatabaseHelper dbHelper;
 
     private void setupSmoothBottomMenu() {
         PopupMenu popupMenu = new PopupMenu(this, null);
@@ -72,12 +75,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading");
+        progressDialog.setCancelable(false);
+
         runTask(() -> {
             try {
                 //Background work here
-                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6631936";
-                String username = "sql6631936";
-                String password = "aE8v6qffBv";
+                String url = "jdbc:mysql://byyrm3ewrta8hnhxsoxm-mysql.services.clever-cloud.com:3306/byyrm3ewrta8hnhxsoxm";
+                String username = "urv00k6u73pbdhlv";
+                String password = "YsXWXThVUsLfNbaKL1aP";
 
                 sqlConnection = new SQLConnection(url, username, password);
 
@@ -92,14 +100,12 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        dbHelper = new DatabaseHelper(this);
+
         // Set up bottom bar
         setupSmoothBottomMenu();
 
         //BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading");
-        progressDialog.setCancelable(false);
 
         // Auto login if user logged before
         if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {

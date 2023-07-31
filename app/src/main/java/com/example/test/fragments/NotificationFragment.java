@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.NotificationListAdapter;
-import com.example.test.components.Notification;
+import com.example.test.components.InAppNotification;
 import com.example.test.utils.DatabaseHelper;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class NotificationFragment extends Fragment {
 
         ListView listView = view.findViewById(R.id.list_view);
 
-        List<Notification> notificationList = dbHelper.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
+        List<InAppNotification> notificationList = dbHelper.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
 
         NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList);
 

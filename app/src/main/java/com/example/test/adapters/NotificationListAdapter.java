@@ -32,20 +32,19 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.components.Notification;
+import com.example.test.components.InAppNotification;
 import com.example.test.components.User;
-import com.example.test.fragments.CreateStep3Fragment;
 import com.example.test.utils.DatabaseHelper;
 
 import java.util.List;
 
-public class NotificationListAdapter extends ArrayAdapter<Notification> {
+public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
 
-    List<Notification> notificationList;
+    List<InAppNotification> notificationList;
 
     Context context;
 
-    public NotificationListAdapter(@NonNull Context context, List<Notification> notificationList) {
+    public NotificationListAdapter(@NonNull Context context, List<InAppNotification> notificationList) {
         super(context, R.layout.notification, notificationList);
         this.notificationList = notificationList;
 
@@ -59,7 +58,7 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.notification, null);
         }
-        Notification notification = notificationList.get(position);
+        InAppNotification notification = notificationList.get(position);
 
         TextView contentTv = convertView.findViewById(R.id.content);
         TextView createdTv = convertView.findViewById(R.id.created_time);
@@ -68,27 +67,34 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
 
         DatabaseHelper dbHelper = new DatabaseHelper(context);
 
-        User actionUser = dbHelper.getUserWithUsername(notification.getActionBy());
+//        User actionUser = dbHelper.getUserWithUsername(notification.getActionBy());
+        final User[] actionUser = new User[1];
+//        View finalConvertView = convertView;
+//        MainActivity.runTask(() -> {
+//            actionUser[0] = MainActivity.sqlConnection.getUserWithUsername(notification.getActionBy());
+//        }, () -> {
+//            if (actionUser[0].getAvatarURL().equals("")) {
+//                avatar.setImageResource(R.drawable.baseline_person_black_24);
+//            } else {
+//                ProgressBar progress = finalConvertView.findViewById(R.id.progressbar);
+//                progress.setVisibility(View.VISIBLE);
+//                Glide.with(context).load(actionUser[0].getAvatarURL()).listener(new RequestListener<Drawable>() {
+//                    @Override
+//                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+//                        progress.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+//                        progress.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//                }).into(avatar);
+//            }
+//        }, MainActivity.progressDialog);
 
-        if (actionUser.getAvatarURL().equals("")) {
-            avatar.setImageResource(R.drawable.baseline_person_black_24);
-        } else {
-            ProgressBar progress = convertView.findViewById(R.id.progressbar);
-            progress.setVisibility(View.VISIBLE);
-            Glide.with(context).load(actionUser.getAvatarURL()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    progress.setVisibility(View.GONE);
-                    return false;
-                }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    progress.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(avatar);
-        }
 
 
         String type = notification.getType();
@@ -125,7 +131,7 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
             public void onClick(View view) {
                 Bundle args = new Bundle();
 
-                args.putString("username", actionUser.getUsername());
+                args.putString("username", actionUser[0].getUsername());
 
                 Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
             }
@@ -137,8 +143,12 @@ public class NotificationListAdapter extends ArrayAdapter<Notification> {
                 String type = notification.getType();
                 Bundle args = new Bundle();
 
-                if (type.equals("LIKE") || type.equals("COMMENT")) {
+                if (type.equals("LIKE")) {
                     args.putInt("articleID", notification.getArticleId());
+                    Navigation.findNavController(view).navigate(R.id.navigation_article, args);
+                } else if (type.equals("COMMENT")) {
+                    args.putInt("articleID", notification.getArticleId());
+                    args.putBoolean("toComment", true);
                     Navigation.findNavController(view).navigate(R.id.navigation_article, args);
                 } else {
                     args.putString("username", notification.getActionBy());

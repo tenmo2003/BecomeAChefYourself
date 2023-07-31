@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -25,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,8 +45,11 @@ import com.example.test.components.Article;
 import com.example.test.components.Comment;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -198,6 +204,18 @@ public class ArticleFragment extends Fragment {
                 }
             });
         }
+
+        MainActivity.runTask(() -> {
+            ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT CURRENT_TIMESTAMP;");
+            try {
+                if (rs.next()) {
+                    String test = rs.getString(1);
+                    Log.i("Database TEST", test);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }, null, null);
 
         final boolean[] isLike = {false};
 
@@ -407,6 +425,25 @@ public class ArticleFragment extends Fragment {
                 }
             });
         }
+
+        LinearLayout cmtSection = view.findViewById(R.id.cmt_section);
+        NestedScrollView nestedScrollView = view.findViewById(R.id.scrollview);
+        TextView cmtTv = view.findViewById(R.id.comment_text);
+        AppBarLayout appbar = view.findViewById(R.id.appbar);
+        if (args.containsKey("toComment")) {
+            if (args.getBoolean("toComment")) {
+                appbar.setExpanded(false, true);
+                nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
+            }
+        }
+
+        cmtSection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                appbar.setExpanded(false, true);
+                nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
+            }
+        });
     }
 
     private View createCustomActionBar() {

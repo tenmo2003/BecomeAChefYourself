@@ -1,6 +1,6 @@
 package com.example.test.components;
 
-public class Notification {
+public class InAppNotification {
     private int id;
     private String user;
     private String type;
@@ -12,7 +12,7 @@ public class Notification {
     private String articleName;
 
     // Constructor
-    public Notification(int id, String user, String type, String actionBy, int articleId, int commentId, String createdTime, String commentContent, String articleName) {
+    public InAppNotification(int id, String user, String type, String actionBy, int articleId, int commentId, String createdTime, String commentContent, String articleName) {
         this.id = id;
         this.user = user;
         this.type = type;
