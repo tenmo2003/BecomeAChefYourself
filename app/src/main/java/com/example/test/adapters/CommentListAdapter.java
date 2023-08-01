@@ -22,24 +22,21 @@ import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Comment;
-import com.example.test.utils.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> {
     private List<Comment> comments;
 
     Context context;
 
-    DatabaseHelper dbHelper;
     public void setContext(Context c) {
         context = c;
     }
 
-    public void setDbHelper(DatabaseHelper dbHelper) {
-        this.dbHelper = dbHelper;
-    }
 
     public void setComments(List<Comment> comments) {
         this.comments = new ArrayList<>();
@@ -64,13 +61,19 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         holder.commenter.setText(comments.get(position).getCommenter());
         holder.comment_content.setText(comments.get(position).getContent());
         holder.context = context;
-        holder.dbHelper = dbHelper;
 
-        if (dbHelper.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL().equals("")) {
-            holder.comment_avatar.setImageResource(R.drawable.baseline_person_24);
-        } else {
-            Glide.with(context).load(dbHelper.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL()).into(holder.comment_avatar);
-        }
+        AtomicBoolean checkAvatar = new AtomicBoolean(false);
+        AtomicReference<String> url = new AtomicReference<>();
+        MainActivity.runTask(() -> {
+            checkAvatar.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL().equals(""));
+            url.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL());
+        }, () -> {
+            if (checkAvatar.get()) {
+                holder.comment_avatar.setImageResource(R.drawable.baseline_person_24);
+            } else {
+                Glide.with(context).load(url.get()).into(holder.comment_avatar);
+            }
+        }, null);
 
 
         int curPos = position;
@@ -85,14 +88,14 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // User clicked the "Yes" button, proceed with removal
-                                    boolean result = dbHelper.removeComment(comments.get(curPos).getId());
-                                    if (result) {
+                                    MainActivity.runTask(() -> {
+                                        MainActivity.sqlConnection.removeComment(comments.get(curPos).getId());
+                                        MainActivity.sqlConnection.increaseReportLevelForUser(comments.get(curPos).getCommenter());
+                                    }, () -> {
                                         comments.remove(curPos);
-                                        dbHelper.increaseReportLevelForUser(comments.get(curPos).getCommenter());
                                         notifyDataSetChanged();
-                                    } else {
-                                        Toast.makeText(context, "Xoá thất bại", Toast.LENGTH_SHORT).show();
-                                    }
+                                    }, MainActivity.progressDialog);
+
                                 }
                             })
                             .setNegativeButton("Huỷ", new DialogInterface.OnClickListener() {
@@ -138,7 +141,6 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
     View commentView;
 
     Context context;
-    DatabaseHelper dbHelper;
 
     public CommentViewHolder(@NonNull View itemView) {
         super(itemView);

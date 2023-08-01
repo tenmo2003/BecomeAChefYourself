@@ -2,6 +2,7 @@ package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -35,12 +36,12 @@ import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.SectionsPagerAdapter;
 import com.example.test.components.User;
-import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.SaveSharedPreference;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
@@ -50,6 +51,7 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     TabLayout tabLayout;
     SectionsPagerAdapter sectionsPagerAdapter;
     public User profileUser;
+    private List<Integer> stats;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -62,145 +64,166 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         Bundle args = getArguments();
-        if (args != null) {
-            String username = args.getString("username");
-            profileUser = dbHelper.getUserWithUsername(username);
-        } else {
-            //reload profile if change
-            profileUser = dbHelper.getUserWithUsername(MainActivity.loggedInUser.getUsername());
-        }
-
-        if (profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
-            MainActivity.navView.setItemActiveIndex(3);
-        }
-
-        TextView usernameTv = view.findViewById(R.id.user_username);
-        TextView fullnameTv = view.findViewById(R.id.user_fullname);
-        TextView bioTv = view.findViewById(R.id.user_bio);
-        RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
-        ImageView popupMenu = view.findViewById(R.id.user_menu);
-        ImageView userAvatar = view.findViewById(R.id.user_avatar);
-
-        ProgressBar progressBar = view.findViewById(R.id.progressbar);
-
-        if (!profileUser.getAvatarURL().equals("")) {
-            progressBar.setVisibility(View.VISIBLE);
-            Glide.with(getActivity()).load(profileUser.getAvatarURL()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    progressBar.setVisibility(View.GONE);
-                    return false;
-                }
-
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    progressBar.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(userAvatar);
-        } else {
-            userAvatar.setImageResource(R.drawable.baseline_person_black_24);
-        }
-
-        List<Integer> stats = dbHelper.getUserProfileStats(profileUser.getUsername());
-        TextView postCountTv = view.findViewById(R.id.post_count);
-        TextView followerCountTv = view.findViewById(R.id.follower_count);
-        TextView likeCountTv = view.findViewById(R.id.likes_count);
-        postCountTv.setText(String.valueOf(stats.get(0)));
-        followerCountTv.setText(String.valueOf(stats.get(1)));
-        likeCountTv.setText(String.valueOf(stats.get(2)));
-
-        usernameTv.setText(profileUser.getUsername());
-        fullnameTv.setText(profileUser.getFullname());
-        bioTv.setText(profileUser.getBio());
-
-        if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
-            popupMenu(popupMenu);
-            followBtn.setVisibility(View.INVISIBLE);
-        } else {
-            popupMenu.setVisibility(View.INVISIBLE);
-            followBtn.setVisibility(View.VISIBLE);
-            DatabaseHelper databaseHelper = new DatabaseHelper(getActivity());
-            if (MainActivity.loggedInUser == null || !databaseHelper.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername())) {
-                View follow_frame = view.findViewById(R.id.follow_frame);
-                follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
-                TextView follow_text = view.findViewById(R.id.follow_text);
-                follow_text.setText("Theo dõi");
+        MainActivity.runTask(() -> {
+            if (args != null) {
+                String username = args.getString("username");
+                profileUser = MainActivity.sqlConnection.getUserWithUsername(username);
             } else {
-                View follow_frame = view.findViewById(R.id.follow_frame);
-                follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
-                TextView follow_text = view.findViewById(R.id.follow_text);
-                follow_text.setText("Đang theo dõi");
+                //reload profile if change
+                profileUser = MainActivity.sqlConnection.getUserWithUsername(MainActivity.loggedInUser.getUsername());
+            }
+        }, () -> {
+            if (profileUser != null && MainActivity.loggedInUser != null && profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
+                MainActivity.navView.setItemActiveIndex(3);
             }
 
-            followBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (MainActivity.loggedInUser == null) {
-                        Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(view).navigate(R.id.navigation_login);
-                        return;
+            TextView usernameTv = view.findViewById(R.id.user_username);
+            TextView fullnameTv = view.findViewById(R.id.user_fullname);
+            TextView bioTv = view.findViewById(R.id.user_bio);
+            RelativeLayout followBtn = view.findViewById(R.id.follow_btn);
+            ImageView popupMenu = view.findViewById(R.id.user_menu);
+            ImageView userAvatar = view.findViewById(R.id.user_avatar);
+
+            ProgressBar progressBar = view.findViewById(R.id.progressbar);
+
+            if (!profileUser.getAvatarURL().equals("")) {
+                progressBar.setVisibility(View.VISIBLE);
+                Glide.with(getActivity()).load(profileUser.getAvatarURL()).listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
                     }
 
-                    if (!databaseHelper.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername())) {
-                        boolean result = databaseHelper.addFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername());
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(userAvatar);
+            } else {
+                userAvatar.setImageResource(R.drawable.baseline_person_black_24);
+            }
 
-                        if (result) {
-                            View follow_frame = view.findViewById(R.id.follow_frame);
-                            follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
-                            TextView follow_text = view.findViewById(R.id.follow_text);
-                            follow_text.setText("Following");
-                            followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) + 1));
-                        }
+            TextView postCountTv = view.findViewById(R.id.post_count);
+            TextView followerCountTv = view.findViewById(R.id.follower_count);
+            TextView likeCountTv = view.findViewById(R.id.likes_count);
+
+            MainActivity.runTask(() -> {
+                stats = MainActivity.sqlConnection.getUserProfileStats(profileUser.getUsername());
+            }, () -> {
+                postCountTv.setText(String.valueOf(stats.get(0)));
+                followerCountTv.setText(String.valueOf(stats.get(1)));
+                likeCountTv.setText(String.valueOf(stats.get(2)));
+            }, null);
+
+
+
+            usernameTv.setText(profileUser.getUsername());
+            fullnameTv.setText(profileUser.getFullname());
+            bioTv.setText(profileUser.getBio());
+
+            if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
+                popupMenu(popupMenu);
+                followBtn.setVisibility(View.INVISIBLE);
+            } else {
+                popupMenu.setVisibility(View.INVISIBLE);
+                followBtn.setVisibility(View.VISIBLE);
+                AtomicBoolean notFollowing = new AtomicBoolean(false);
+                MainActivity.runTask(() -> {
+                    notFollowing.set(MainActivity.loggedInUser == null || !MainActivity.sqlConnection.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+                }, () -> {
+                    if (notFollowing.get()) {
+                        View follow_frame = view.findViewById(R.id.follow_frame);
+                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
+                        TextView follow_text = view.findViewById(R.id.follow_text);
+                        follow_text.setText("Theo dõi");
                     } else {
-                        boolean result = databaseHelper.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername());
-
-                        if (result) {
-                            View follow_frame = view.findViewById(R.id.follow_frame);
-                            follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
-                            TextView follow_text = view.findViewById(R.id.follow_text);
-                            follow_text.setText("Follow");
-                            followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) - 1));
-                        }
+                        View follow_frame = view.findViewById(R.id.follow_frame);
+                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
+                        TextView follow_text = view.findViewById(R.id.follow_text);
+                        follow_text.setText("Đang theo dõi");
                     }
+
+                    followBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (MainActivity.loggedInUser == null) {
+                                Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(view).navigate(R.id.navigation_login);
+                                return;
+                            }
+
+                            if (notFollowing.get()) {
+                                AtomicBoolean result = new AtomicBoolean(false);
+                                MainActivity.runTask(() -> {
+                                    result.set(MainActivity.sqlConnection.addFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+                                }, () -> {
+                                    if (result.get()) {
+                                        View follow_frame = view.findViewById(R.id.follow_frame);
+                                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
+                                        TextView follow_text = view.findViewById(R.id.follow_text);
+                                        follow_text.setText("Đang theo dõi");
+                                        followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) + 1));
+                                        notFollowing.set(!notFollowing.get());
+                                    }
+                                }, MainActivity.progressDialog);
+
+                            } else {
+                                AtomicBoolean result = new AtomicBoolean(false);
+                                MainActivity.runTask(() -> {
+                                    result.set(MainActivity.sqlConnection.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+                                }, () -> {
+                                    if (result.get()) {
+                                        View follow_frame = view.findViewById(R.id.follow_frame);
+                                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
+                                        TextView follow_text = view.findViewById(R.id.follow_text);
+                                        follow_text.setText("Theo dõi");
+                                        followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) - 1));
+                                        notFollowing.set(!notFollowing.get());
+                                    }
+                                }, MainActivity.progressDialog);
+                            }
+                        }
+                    });
+                }, null);
+
+            }
+            viewPager2 = fragmentView.findViewById(R.id.view_pager);
+            tabLayout = fragmentView.findViewById(R.id.tabLayout);
+            tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getActivity(), R.color.black));
+
+            tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    int tabIconColor = ContextCompat.getColor(getActivity(), R.color.black);
+                    tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                    int tabIconColor = ContextCompat.getColor(getActivity(), R.color.darkGray);
+                    tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
                 }
             });
-        }
-        viewPager2 = fragmentView.findViewById(R.id.view_pager);
-        tabLayout = fragmentView.findViewById(R.id.tabLayout);
-        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(getActivity(), R.color.black));
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int tabIconColor = ContextCompat.getColor(getActivity(), R.color.black);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-            }
+            setupViewPager(viewPager2);
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                int tabIconColor = ContextCompat.getColor(getActivity(), R.color.darkGray);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        setupViewPager(viewPager2);
-
-        new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
-            if (position == 0) {
-                tab.setIcon(R.drawable.gray_your_posts_24);
-            } else {
-                tab.setIcon(R.drawable.gray_bookmark_border_24);
-            }
-        }).attach();
+            new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> {
+                if (position == 0) {
+                    tab.setIcon(R.drawable.gray_your_posts_24);
+                } else {
+                    tab.setIcon(R.drawable.gray_bookmark_border_24);
+                }
+            }).attach();
+        }, new ProgressDialog(getActivity()));
     }
 
     public void popupMenu(ImageView popupMenu) {
@@ -279,8 +302,5 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     @Override
     public void onResume() {
         super.onResume();
-        if (profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
-            MainActivity.navView.setItemActiveIndex(3);
-        }
     }
 }

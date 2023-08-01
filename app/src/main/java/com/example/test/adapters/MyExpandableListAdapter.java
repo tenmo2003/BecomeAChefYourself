@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.utils.DatabaseHelper;
 
 import java.util.List;
@@ -29,13 +30,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     private Map<String, List<String>> collection;
     private List<String> groupList;
 
-    private DatabaseHelper dbHelper;
 
     public MyExpandableListAdapter(Context context, List<String> groupList, Map<String, List<String>> collection) {
         this.context = context;
         this.collection = collection;
         this.groupList = groupList;
-        dbHelper = new DatabaseHelper(context);
     }
 
     @Override
@@ -130,7 +129,9 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                             // Parse the ID string to an integer
                             int id = Integer.parseInt(idString);
 
-                            dbHelper.removeReport(id);
+                            MainActivity.runTask(() -> {
+                                MainActivity.sqlConnection.removeReport(id);
+                            }, null, null);
                         } else if (group.equals("Danh sách các bài đăng")){
                             // Split the string by the dot (.)
                             String[] parts = child.split("\\.");
@@ -141,13 +142,17 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                             // Parse the ID string to an integer
                             int id = Integer.parseInt(idString);
 
-                            dbHelper.removeArticle(id);
+                            MainActivity.runTask(() -> {
+                                MainActivity.sqlConnection.removeArticle(id);
+                            }, null, null);
                         } else {
                             String[] parts = child.split("\\.");
 
                             String username = parts[1].trim(); // Remove any leading/trailing whitespaces
 
-                            dbHelper.banUser(username);
+                            MainActivity.runTask(() -> {
+                                MainActivity.sqlConnection.banUser(username);
+                            }, null, null);
                         }
                         notifyDataSetChanged();
                     }

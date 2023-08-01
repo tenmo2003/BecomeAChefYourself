@@ -13,13 +13,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.adapters.RecipeListAdapter;
+import com.example.test.components.Article;
 import com.example.test.components.User;
-import com.example.test.utils.DatabaseHelper;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ProfileSavedFragment extends Fragment {
     RecyclerView userSavedList;
-    DatabaseHelper dbHelper;
     private final User profileUser;
 
     public ProfileSavedFragment(User profileUser) {
@@ -37,16 +40,19 @@ public class ProfileSavedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        dbHelper = new DatabaseHelper(getActivity());
 
         userSavedList = view.findViewById(R.id.user_saved_list);
         userSavedList.setHasFixedSize(true);
         userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
-        adapter.setArticleList(dbHelper.getUserSavedArticles(profileUser.getUsername()));
-        adapter.setContext(getActivity());
-
-        userSavedList.setAdapter(adapter);
+        AtomicReference<List<Article>> articleList = new AtomicReference<>();
+        MainActivity.runTask(() -> {
+            articleList.set(MainActivity.sqlConnection.getUserSavedArticles(profileUser.getUsername()));
+        }, () -> {
+            adapter.setArticleList(articleList.get());
+            adapter.setContext(getActivity());
+            userSavedList.setAdapter(adapter);
+        }, MainActivity.progressDialog);
     }
 }

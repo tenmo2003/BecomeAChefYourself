@@ -44,9 +44,7 @@ import com.example.test.adapters.CommentListAdapter;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
 import com.example.test.components.User;
-import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -58,12 +56,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ArticleFragment extends Fragment {
     List<Comment> commentList;
     CommentListAdapter commentListAdapter;
     RecyclerView commentListView;
-    DatabaseHelper dbHelper;
+    Article article;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +78,6 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        dbHelper = new DatabaseHelper(getActivity());
 
         TextView title = view.findViewById(R.id.title_in_article);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
@@ -103,347 +103,381 @@ public class ArticleFragment extends Fragment {
 
         Bundle args = getArguments();
         assert args != null;
-        int articleID = 0;
-        if (args.containsKey("articleID")) {
-             articleID = args.getInt("articleID");
-        } else if (args.containsKey("reportID")) {
-            articleID = dbHelper.getArticleIDWithReportID(args.getInt("reportID"));
-        }
-        int finalArticleID = articleID;
-
-        Article article = dbHelper.getArticleWithId(articleID);
-
-        final boolean[] isBookmark = {MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleID)};
-        if (isBookmark[0]) {
-            bookmark.setImageResource(R.drawable.bookmarked);
-        } else {
-            bookmark.setImageResource(R.drawable.bookmark_in_article);
-        }
-        HomeFragment.bookmarked = isBookmark[0];
-
-        bookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!isBookmark[0]) {
-                    isBookmark[0] = true;
-                    dbHelper.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
-                    bookmark.setImageResource(R.drawable.bookmarked);
-                    HomeFragment.bookmarked = true;
-                } else {
-                    isBookmark[0] = false;
-                    dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
-                    bookmark.setImageResource(R.drawable.bookmark_in_article);
-                    HomeFragment.bookmarked = false;
-                }
+        AtomicInteger articleID = new AtomicInteger();
+        AtomicBoolean checkBookmarked = new AtomicBoolean(false);
+        MainActivity.runTask(() -> {
+            if (args.containsKey("articleID")) {
+                articleID.set(args.getInt("articleID"));
+            } else if (args.containsKey("reportID")) {
+                articleID.set(MainActivity.sqlConnection.getArticleIDWithReportID(args.getInt("reportID")));
             }
-        });
+            checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleID.get()));
 
-        ImageView dishImg = view.findViewById(R.id.dish_img);
+            article = MainActivity.sqlConnection.getArticleWithId(articleID.get());
+        }, () -> {
 
-        //test data
-        User author = dbHelper.getUserWithUsername(article.getPublisher());
-        if (author.getAvatarURL().equals("")) {
-            authorAvatar.setImageResource(R.drawable.baseline_person_24);
-        } else {
-            ProgressBar progress = view.findViewById(R.id.avatar_progressbar);
-            progress.setVisibility(View.VISIBLE);
-            Glide.with(getActivity()).load(author.getAvatarURL()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    progress.setVisibility(View.GONE);
-                    return false;
-                }
+            final boolean[] isBookmark = {checkBookmarked.get()};
+            if (isBookmark[0]) {
+                bookmark.setImageResource(R.drawable.bookmarked);
+            } else {
+                bookmark.setImageResource(R.drawable.bookmark_in_article);
+            }
+            HomeFragment.bookmarked = isBookmark[0];
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    progress.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(authorAvatar);
-
-        }
-
-        if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(author.getUsername()))) {
-            removeBtn.setVisibility(View.VISIBLE);
-            removeBtn.setOnClickListener(new View.OnClickListener() {
+            bookmark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Xoá bài");
-                    builder.setMessage("Bạn chắc chắn muốn xoá bài viết '" + article.getDishName() + "' chứ?");
-                    builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    if (MainActivity.loggedInUser == null) {
+                        Toast.makeText(getContext(), "Please login first", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (!isBookmark[0]) {
+                        isBookmark[0] = true;
+                        MainActivity.runTask(() -> {
+                            MainActivity.sqlConnection.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                        });
+                        bookmark.setImageResource(R.drawable.bookmarked);
+                        HomeFragment.bookmarked = true;
+                    } else {
+                        isBookmark[0] = false;
+                        MainActivity.runTask(() -> {
+                            MainActivity.sqlConnection.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                        });
+                        bookmark.setImageResource(R.drawable.bookmark_in_article);
+                        HomeFragment.bookmarked = false;
+                    }
+                }
+            });
+
+            ImageView dishImg = view.findViewById(R.id.dish_img);
+
+            //test data
+            AtomicReference<User> author = new AtomicReference<>();
+            MainActivity.runTask(() -> {
+                author.set(MainActivity.sqlConnection.getUserWithUsername(article.getPublisher()));
+            }, () -> {
+                if (author.get().getAvatarURL().equals("")) {
+                    authorAvatar.setImageResource(R.drawable.baseline_person_24);
+                } else {
+                    ProgressBar progress = view.findViewById(R.id.avatar_progressbar);
+                    progress.setVisibility(View.VISIBLE);
+                    Glide.with(getActivity()).load(author.get().getAvatarURL()).listener(new RequestListener<Drawable>() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dbHelper.removeArticle(finalArticleID);
-                            if (MainActivity.loggedInUser.getUsername().equals("admin")) {
-                                dbHelper.increaseReportLevelForUser(article.getPublisher());
-                            }
-                            HomeFragment.deleted = true;
-                            Navigation.findNavController(view).navigateUp();
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progress.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progress.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(authorAvatar);
+
+                }
+
+                if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(author.get().getUsername()))) {
+                    removeBtn.setVisibility(View.VISIBLE);
+                    removeBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle("Xoá bài");
+                            builder.setMessage("Bạn chắc chắn muốn xoá bài viết '" + article.getDishName() + "' chứ?");
+                            builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MainActivity.runTask(() -> {
+                                        MainActivity.sqlConnection.removeArticle(articleID.get());
+                                        if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+                                            MainActivity.sqlConnection.increaseReportLevelForUser(article.getPublisher());
+                                        }
+                                    }, () -> {
+                                        HomeFragment.deleted = true;
+                                        Navigation.findNavController(view).navigateUp();
+                                    }, null);
+
+                                }
+                            });
+                            builder.setNegativeButton("Huỷ", null);
+                            AlertDialog dialog = builder.create();
+
+                            dialog.show();
+
+                            // Get the positive and negative buttons
+                            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                            // Set the text color of the positive button
+                            positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+                            // Set the text color of the negative button
+                            negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
                         }
                     });
-                    builder.setNegativeButton("Huỷ", null);
-                    AlertDialog dialog = builder.create();
-
-                    dialog.show();
-
-                    // Get the positive and negative buttons
-                    Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                    // Set the text color of the positive button
-                    positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-
-                    // Set the text color of the negative button
-                    negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-                }
-            });
-        }
-
-        MainActivity.runTask(() -> {
-            ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT CURRENT_TIMESTAMP;");
-            try {
-                if (rs.next()) {
-                    String test = rs.getString(1);
-                    Log.i("Database TEST", test);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }, null, null);
-
-        final boolean[] isLike = {false};
-
-
-        if (MainActivity.loggedInUser != null) {
-            if (!MainActivity.loggedInUser.getAvatarURL().equals("")) {
-                Glide.with(getActivity()).load(MainActivity.loggedInUser.getAvatarURL()).into(userAvatar);
-            } else {
-                userAvatar.setImageResource(R.drawable.baseline_person_24);
-            }
-
-            isLike[0] = dbHelper.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID));
-            if (isLike[0]) {
-                reactBtn.setImageResource(R.drawable.reacted);
-            } else {
-                reactBtn.setImageResource(R.drawable.react);
-            }
-        } else {
-            userAvatar.setImageResource(R.drawable.ban);
-            reactBtn.setImageResource(R.drawable.react);
-        }
-
-        ProgressBar progressBar = view.findViewById(R.id.progressbar);
-        if (article.getImgURL().equals("")) {
-            dishImg.setImageResource(R.drawable.no_preview);
-
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-            Glide.with(getActivity()).load(article.getImgURL()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    progressBar.setVisibility(View.GONE);
-                    return false;
                 }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    progressBar.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(dishImg);
-        }
+                final boolean[] isLike = {false};
 
-        title.setText(article.getDishName());
-        recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
-        ingredientsTextView.setText(formatIngredients(article.getIngredients(), view));
-        ingredientsCount.setText(article.getIngredients().split(";\\s*").length + " thành phần");
-        publishedDateTextView.setText(postedTime(article.getPublishedTime()));
-        publisherTextView.setText(article.getPublisher());
-        authorFollowers.setText(dbHelper.getTotalFollowCount(author.getUsername()) + " followers");
-        authorRecipes.setText(dbHelper.getTotalArticleCount(author.getUsername()) + " recipes");
-        timeToMakeTextView.setText(article.getTimeToMake());
-        reactTextView.setText(article.getLikes() + " lượt thích");
-        commentTextView.setText(article.getComments() + " bình luận");
 
-        commentListAdapter = new CommentListAdapter();
-        commentList = dbHelper.getCommentWithArticleID(String.valueOf(articleID));
-        commentListAdapter.setComments(commentList);
-        commentListAdapter.setContext(getActivity());
-        commentListAdapter.setDbHelper(dbHelper);
+                if (MainActivity.loggedInUser != null) {
+                    if (!MainActivity.loggedInUser.getAvatarURL().equals("")) {
+                        Glide.with(getActivity()).load(MainActivity.loggedInUser.getAvatarURL()).into(userAvatar);
+                    } else {
+                        userAvatar.setImageResource(R.drawable.baseline_person_24);
+                    }
 
-        commentListView = view.findViewById(R.id.comment_list);
-        commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        commentListView.setHasFixedSize(true);
-        commentListView.setAdapter(commentListAdapter);
-
-        viewAuthorProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle args = new Bundle();
-
-                args.putString("username", publisherTextView.getText().toString());
-
-                Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
-            }
-        });
-
-        Button backButton = view.findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigateUp();
-            }
-        });
-
-        reactBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                //get react count number
-                int react_count = Integer.parseInt(reactTextView.getText().toString().split(" ")[0]);
-
-                if (isLike[0]) {
-                    isLike[0] = false;
-                    dbHelper.removeLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
-                    reactBtn.setImageResource(R.drawable.react);
-                    reactTextView.setText((react_count - 1) + " lượt thích");
-                    HomeFragment.likeAdded--;
+                    MainActivity.runTask(() -> {
+                        isLike[0] = MainActivity.sqlConnection.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID.get()));
+                    }, () -> {
+                        if (isLike[0]) {
+                            reactBtn.setImageResource(R.drawable.reacted);
+                        } else {
+                            reactBtn.setImageResource(R.drawable.react);
+                        }
+                    }, null);
                 } else {
-                    isLike[0] = true;
-                    dbHelper.addLike(MainActivity.loggedInUser.getUsername(), finalArticleID);
-                    reactBtn.setImageResource(R.drawable.reacted);
-                    reactTextView.setText((react_count + 1) + " lượt thích");
-                    HomeFragment.likeAdded++;
+                    userAvatar.setImageResource(R.drawable.ban);
+                    reactBtn.setImageResource(R.drawable.react);
                 }
 
-            }
-        });
+                ProgressBar progressBar = view.findViewById(R.id.progressbar);
+                if (article.getImgURL().equals("")) {
+                    dishImg.setImageResource(R.drawable.no_preview);
 
-        sendCommentBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(getActivity(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
-                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    return;
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    Glide.with(getActivity()).load(article.getImgURL()).listener(new RequestListener<Drawable>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            return false;
+                        }
+                    }).into(dishImg);
                 }
 
-                String commenter = MainActivity.loggedInUser.getUsername();
-                String content = commentEditText.getText().toString();
+                title.setText(article.getDishName());
+                recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
+                ingredientsTextView.setText(formatIngredients(article.getIngredients(), view));
+                ingredientsCount.setText(article.getIngredients().split(";\\s*").length + " thành phần");
+                publishedDateTextView.setText(postedTime(article.getPublishedTime()));
+                publisherTextView.setText(article.getPublisher());
+                AtomicReference<String> followCount = new AtomicReference<>();
+                AtomicReference<String> articleCount = new AtomicReference<>();
+                MainActivity.runTask(() -> {
+                    followCount.set(MainActivity.sqlConnection.getTotalFollowCount(author.get().getUsername()) + " followers");
+                    articleCount.set(MainActivity.sqlConnection.getTotalArticleCount(author.get().getUsername()) + " recipes");
+                    commentList = MainActivity.sqlConnection.getCommentWithArticleID(String.valueOf(articleID.get()));
+                }, () -> {
+                    authorFollowers.setText(followCount.get());
+                    authorRecipes.setText(articleCount.get());
 
-                dbHelper.addComment(String.valueOf(finalArticleID), commenter, content);
+                    commentListAdapter = new CommentListAdapter();
+                    commentListAdapter.setComments(commentList);
+                    commentListAdapter.setContext(getActivity());
 
-                commentEditText.setText("");
-                commentEditText.clearFocus();
+                    commentListView = view.findViewById(R.id.comment_list);
+                    commentListView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    commentListView.setHasFixedSize(true);
+                    commentListView.setAdapter(commentListAdapter);
+                }, null);
 
-                //Hide device keyboard
-                InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                timeToMakeTextView.setText(article.getTimeToMake());
+                reactTextView.setText(article.getLikes() + " lượt thích");
+                commentTextView.setText(article.getComments() + " bình luận");
 
-                commentListAdapter.addNewComment(new Comment(dbHelper.getLastCommentID(), commenter, content, finalArticleID));
-                commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
 
-                HomeFragment.commentAdded++;
-            }
-        });
+                viewAuthorProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Bundle args = new Bundle();
 
-        reportBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(getActivity(), "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.navigation_login);
-                    return;
+                        args.putString("username", publisherTextView.getText().toString());
+
+                        Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
+                    }
+                });
+
+                Button backButton = view.findViewById(R.id.back_button);
+                backButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Navigation.findNavController(v).navigateUp();
+                    }
+                });
+
+                reactBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (MainActivity.loggedInUser == null) {
+                            Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        //get react count number
+                        int react_count = Integer.parseInt(reactTextView.getText().toString().split(" ")[0]);
+
+                        if (isLike[0]) {
+                            isLike[0] = false;
+                            MainActivity.runTask(() -> {
+                                MainActivity.sqlConnection.removeLike(MainActivity.loggedInUser.getUsername(), articleID.get());
+                            }, () -> {
+                                reactBtn.setImageResource(R.drawable.react);
+                                reactTextView.setText((react_count - 1) + " lượt thích");
+                                HomeFragment.likeAdded--;
+                            }, MainActivity.progressDialog);
+                        } else {
+                            isLike[0] = true;
+                            MainActivity.runTask(() -> {
+                                MainActivity.sqlConnection.addLike(MainActivity.loggedInUser.getUsername(), articleID.get());
+                            }, () -> {
+                                reactBtn.setImageResource(R.drawable.reacted);
+                                reactTextView.setText((react_count + 1) + " lượt thích");
+                                HomeFragment.likeAdded++;
+                            }, MainActivity.progressDialog);
+
+                        }
+
+                    }
+                });
+
+                sendCommentBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (MainActivity.loggedInUser == null) {
+                            Toast.makeText(getActivity(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                            return;
+                        }
+
+                        String commenter = MainActivity.loggedInUser.getUsername();
+                        String content = commentEditText.getText().toString();
+
+                        AtomicReference<Comment> cmt = new AtomicReference<>();
+
+                        MainActivity.runTask(() -> {
+                            MainActivity.sqlConnection.addComment(String.valueOf(articleID.get()), commenter, content);
+                            cmt.set(new Comment(MainActivity.sqlConnection.getLastCommentID(), commenter, content, articleID.get()));
+                        }, () -> {
+                            commentListAdapter.addNewComment(cmt.get());
+                            commentTextView.setText(commentListAdapter.getItemCount() + " bình luận");
+                            HomeFragment.commentAdded++;
+
+                            commentEditText.setText("");
+                            commentEditText.clearFocus();
+
+                            //Hide device keyboard
+                            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+                        }, MainActivity.progressDialog);
+
+                    }
+                });
+
+                reportBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (MainActivity.loggedInUser == null) {
+                            Toast.makeText(getActivity(), "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(view).navigate(R.id.navigation_login);
+                            return;
+                        }
+
+                        final EditText reasonEditText = new EditText(getActivity());
+                        reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                        reasonEditText.setHint("Lí do");
+
+                        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                                .setTitle("Báo cáo bài viết")
+                                .setMessage("Vấn đề của bài viết này:")
+                                .setView(reasonEditText)
+                                .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String reporter = MainActivity.loggedInUser.getUsername(); // replace with actual user who reported the comment
+                                        String reason = reasonEditText.getText().toString();
+                                        AtomicBoolean success = new AtomicBoolean(false);
+
+                                        MainActivity.runTask(() -> {
+                                            success.set(MainActivity.sqlConnection.reportArticle(articleID.get(), reporter, reason));
+                                        }, () -> {
+                                            if (success.get()) {
+                                                Toast.makeText(getActivity(), "Báo cáo của bạn đã được gửi để xem xét", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(getActivity(), "Gửi báo cáo thất bại", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }, MainActivity.progressDialog);
+                                    }
+                                })
+                                .setNegativeButton("Huỷ", null)
+                                .show();
+
+                        // Get the positive and negative buttons
+                        Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                        // Set the text color of the positive button
+                        positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+
+                        // Set the text color of the negative button
+                        negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
+                    }
+                });
+
+                if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals(author.get().getUsername()))) {
+                    editBtn.setVisibility(View.VISIBLE);
+                    editBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Bundle args = new Bundle();
+                            args.putInt("articleID", articleID.get());
+                            args.putString("mealChoice", article.getMeal());
+                            args.putString("typeChoice", article.getType());
+                            args.putString("serveOrderChoice", article.getServeOrderClass());
+                            args.putString("dishName", article.getDishName());
+                            args.putString("ingredients", article.getIngredients());
+                            args.putString("recipe", article.getRecipe());
+                            args.putString("timeToMake", article.getTimeToMake());
+                            args.putString("imageURL", article.getImgURL());
+                            args.putBoolean("editing", true);
+
+                            Navigation.findNavController(view).navigate(R.id.navigation_share, args);
+                        }
+                    });
                 }
 
-                final EditText reasonEditText = new EditText(getActivity());
-                reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                reasonEditText.setHint("Lí do");
-
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle("Báo cáo bài viết")
-                        .setMessage("Vấn đề của bài viết này:")
-                        .setView(reasonEditText)
-                        .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String reporter = MainActivity.loggedInUser.getUsername(); // replace with actual user who reported the comment
-                                String reason = reasonEditText.getText().toString();
-                                boolean success = dbHelper.reportArticle(finalArticleID, reporter, reason);
-
-                                if (success) {
-                                    Toast.makeText(getActivity(), "Báo cáo của bạn đã được gửi để xem xét", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getActivity(), "Gửi báo cáo thất bại", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        })
-                        .setNegativeButton("Huỷ", null)
-                        .show();
-
-                // Get the positive and negative buttons
-                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                // Set the text color of the positive button
-                positiveButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-
-                // Set the text color of the negative button
-                negativeButton.setTextColor(ContextCompat.getColor(getActivity(), R.color.mainTheme));
-            }
-        });
-
-        if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals(author.getUsername()))) {
-            editBtn.setVisibility(View.VISIBLE);
-            editBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Bundle args = new Bundle();
-                    args.putInt("articleID", finalArticleID);
-                    args.putString("mealChoice", article.getMeal());
-                    args.putString("typeChoice", article.getType());
-                    args.putString("serveOrderChoice", article.getServeOrderClass());
-                    args.putString("dishName", article.getDishName());
-                    args.putString("ingredients", article.getIngredients());
-                    args.putString("recipe", article.getRecipe());
-                    args.putString("timeToMake", article.getTimeToMake());
-                    args.putString("imageURL", article.getImgURL());
-                    args.putBoolean("editing", true);
-
-                    Navigation.findNavController(view).navigate(R.id.navigation_share, args);
+                LinearLayout cmtSection = view.findViewById(R.id.cmt_section);
+                NestedScrollView nestedScrollView = view.findViewById(R.id.scrollview);
+                TextView cmtTv = view.findViewById(R.id.comment_text);
+                AppBarLayout appbar = view.findViewById(R.id.appbar);
+                if (args.containsKey("toComment")) {
+                    if (args.getBoolean("toComment")) {
+                        appbar.setExpanded(false, true);
+                        nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
+                    }
                 }
-            });
-        }
 
-        LinearLayout cmtSection = view.findViewById(R.id.cmt_section);
-        NestedScrollView nestedScrollView = view.findViewById(R.id.scrollview);
-        TextView cmtTv = view.findViewById(R.id.comment_text);
-        AppBarLayout appbar = view.findViewById(R.id.appbar);
-        if (args.containsKey("toComment")) {
-            if (args.getBoolean("toComment")) {
-                appbar.setExpanded(false, true);
-                nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
-            }
-        }
+                cmtSection.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        appbar.setExpanded(false, true);
+                        nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
+                    }
+                });
+            }, null);
+            }, MainActivity.progressDialog);
 
-        cmtSection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                appbar.setExpanded(false, true);
-                nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
-            }
-        });
+
     }
 
     private View createCustomActionBar() {

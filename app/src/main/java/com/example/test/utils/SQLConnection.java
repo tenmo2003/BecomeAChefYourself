@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SQLConnection {
     private Connection connection;
@@ -124,12 +125,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return isUsernameAvailable;
@@ -173,12 +168,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return authenticationResult;
@@ -195,12 +184,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         // Increment the reportLevel by 1
@@ -238,12 +221,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         // Return the list of users
@@ -268,12 +245,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return user;
@@ -290,12 +261,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return maxID;
@@ -312,12 +277,12 @@ public class SQLConnection {
             List<String> followers = getFollowersForUser(publisher);
             if (!followers.isEmpty()) {
 
-                StringBuilder notificationQuery = new StringBuilder("INSERT INTO notifications (user, type, action_by, article_id) VALUES ");
+                StringBuilder notificationQuery = new StringBuilder("INSERT INTO notifications (user, type, action_by, article_id, articleName) VALUES ");
                 for (String follower : followers) {
-                    notificationQuery.append("('").append(follower).append("', 'FOLLOWING_POST', '").append(publisher).append("', LAST_INSERT_ID()").append("), ");
+                    notificationQuery.append("('").append(follower).append("', 'FOLLOWING_POST', '").append(publisher).append("', LAST_INSERT_ID(), '").append(dishName).append("'), ");
                 }
                 notificationQuery.deleteCharAt(notificationQuery.length() - 2); // Remove the trailing comma and space
-
+                System.out.println(notificationQuery.toString());
                 updateQuery(notificationQuery.toString());
             }
         }
@@ -336,12 +301,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return followers;
@@ -355,13 +314,15 @@ public class SQLConnection {
     }
 
     public boolean removeArticle(int articleID) {
-        String publisherQuery = "SELECT publisher FROM articles WHERE id=" + articleID;
+        String publisherQuery = "SELECT publisher, dish_name FROM articles WHERE id=" + articleID;
 
         try {
             ResultSet resultSet = getDataQuery(publisherQuery);
             String publisher = "";
+            String dishName = "";
             if (resultSet.next()) {
                 publisher = resultSet.getString("publisher");
+                dishName = resultSet.getString("dish_name");
             }
             resultSet.close();
 
@@ -369,9 +330,9 @@ public class SQLConnection {
                 String deleteQuery = "DELETE FROM articles WHERE id=" + articleID;
                 int rowsAffected = updateQuery(deleteQuery);
 
-                if (rowsAffected > 0) {
-                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id) VALUES ('" +
-                            publisher + "', 'REPORT', 'admin', " + articleID + ")";
+                if (rowsAffected > 0 && MainActivity.loggedInUser.getUsername().equals("admin")) {
+                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, articleName) VALUES ('" +
+                            publisher + "', 'REPORT_ARTICLE', 'admin', " + articleID + ", '" + dishName + "')";
                     updateQuery(notificationQuery);
 
                     return true;
@@ -405,6 +366,7 @@ public class SQLConnection {
                 int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = resultSet.getString("published_time");
+                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
                 String timeToMake = resultSet.getString("time_to_make");
                 String imgURL = resultSet.getString("image");
                 Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
@@ -412,12 +374,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return articles;
@@ -441,6 +397,7 @@ public class SQLConnection {
                 int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = resultSet.getString("published_time");
+                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
                 String timeToMake = resultSet.getString("time_to_make");
                 String imgURL = resultSet.getString("image");
                 Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
@@ -448,12 +405,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return articles;
@@ -476,18 +427,13 @@ public class SQLConnection {
                 int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = resultSet.getString("published_time");
+                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
                 String timeToMake = resultSet.getString("time_to_make");
                 String imgURL = resultSet.getString("image");
                 article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return article;
@@ -511,6 +457,7 @@ public class SQLConnection {
                 int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = resultSet.getString("published_time");
+                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
                 String timeToMake = resultSet.getString("time_to_make");
                 String imgURL = resultSet.getString("image");
                 Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
@@ -518,12 +465,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return articles;
@@ -547,6 +488,7 @@ public class SQLConnection {
                 int likes = getTotalLikeCount(id);
                 int comments = getTotalCommentCount(id);
                 String publishedTime = resultSet.getString("published_time");
+                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
                 String timeToMake = resultSet.getString("time_to_make");
                 String imgURL = resultSet.getString("image");
                 Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
@@ -554,12 +496,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return savedArticles;
@@ -597,12 +533,6 @@ public class SQLConnection {
             isFollowing = resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return isFollowing;
@@ -619,12 +549,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return count;
@@ -641,12 +565,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return count;
@@ -663,12 +581,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return count;
@@ -685,12 +597,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return count;
@@ -731,12 +637,6 @@ public class SQLConnection {
             bookmarked = resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return bookmarked;
@@ -758,12 +658,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return commentList;
@@ -788,8 +682,8 @@ public class SQLConnection {
 
                 if (!publisher.isEmpty()) {
                     // Insert a notification for the publisher
-                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id) VALUES ('" +
-                            publisher + "', 'COMMENT', '" + commenter + "', " + articleID + ")";
+                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, comment_id, commentContent) VALUES ('" +
+                            publisher + "', 'COMMENT', '" + commenter + "', " + articleID + ", LAST_INSERT_ID(), '" + content + "')";
                     updateQuery(notificationQuery);
                 }
             } catch (SQLException e) {
@@ -806,9 +700,32 @@ public class SQLConnection {
 
 
     public boolean removeComment(int id) {
-        String query = "DELETE FROM comments WHERE id=" + id;
-        int rows = updateQuery(query);
-        return rows > 0;
+        String commenterQuery = "SELECT commenter, content, article_id FROM comments WHERE id = " + id;
+        ResultSet rs = getDataQuery(commenterQuery);
+        String commenter, commentContent;
+        int articleID;
+
+        try {
+            if (rs.next()) {
+                commenter = rs.getString(1);
+                commentContent = rs.getString(2);
+                articleID = rs.getInt(3);
+                String query = "DELETE FROM comments WHERE id=" + id;
+                int rows = updateQuery(query);
+                if (rows > 0 && MainActivity.loggedInUser.getUsername().equals("admin")) {
+                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, commentContent) VALUES ('" +
+                            commenter + "', 'REPORT_COMMENT', 'admin', " + articleID + ", '" + commentContent + "')";
+                    updateQuery(notificationQuery);
+
+                    return true;
+                }
+                return rows > 0;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return false;
     }
 
     public boolean checkLiked(String user, String articleID) {
@@ -820,12 +737,6 @@ public class SQLConnection {
             liked = resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return liked;
@@ -837,12 +748,14 @@ public class SQLConnection {
 
         if (rows > 0) {
             // Get the publisher of the article
-            String publisherQuery = "SELECT publisher FROM articles WHERE id = " + articleID;
+            String publisherQuery = "SELECT publisher, dish_name FROM articles WHERE id = " + articleID;
             ResultSet resultSet = getDataQuery(publisherQuery);
             String publisher = null;
+            String dishName = null;
             try {
                 if (resultSet.next()) {
                     publisher = resultSet.getString(1);
+                    dishName = resultSet.getString(2);
                 }
                 resultSet.close();
             } catch (SQLException e) {
@@ -851,8 +764,8 @@ public class SQLConnection {
 
             if (publisher != null) {
                 // Insert a notification for the publisher of the article
-                String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id) VALUES ('" +
-                        publisher + "', 'LIKE', '" + user + "', " + articleID + ")";
+                String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, articleName) VALUES ('" +
+                        publisher + "', 'LIKE', '" + user + "', " + articleID + ", '" + dishName + "')";
                 updateQuery(notificationQuery);
             }
 
@@ -892,12 +805,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return reportList;
@@ -927,12 +834,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return reportList;
@@ -954,12 +855,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return articleID;
@@ -999,12 +894,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return false;
@@ -1038,12 +927,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         userProfileStats.add(numRecipes);
 
@@ -1055,12 +938,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         userProfileStats.add(numFollowers);
 
@@ -1072,12 +949,6 @@ public class SQLConnection {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         userProfileStats.add(numLikes);
 
@@ -1087,19 +958,31 @@ public class SQLConnection {
     public List<InAppNotification> getNotificationsForUser(String username) {
         List<InAppNotification> notificationList = new ArrayList<>();
 
-        String query = "SELECT id, user, type, action_by, article_id, comment_id, created_time " +
+        String query = "SELECT id, user, type, action_by, article_id, comment_id, created_time, commentContent, articleName " +
                 "FROM notifications WHERE user='" + username + "' ORDER BY created_time DESC";
-        ResultSet rs = getDataQuery(query);
-
-        try {
+        try (ResultSet rs = getDataQuery(query)) {
             while (rs.next()) {
+                int id = rs.getInt("id");
+                String user = rs.getString("user");
+                String type = rs.getString("type");
+                String actionBy = rs.getString("action_by");
+                int articleID = rs.getInt("article_id");
+                int commentID = rs.getInt("comment_id");
+                String createdTime = rs.getString("created_time");
+                createdTime = createdTime.substring(0, createdTime.length() - 2);
+                String commentContent = rs.getString("commentContent");
+                String articleName = rs.getString("articleName");
 
+                InAppNotification notification = new InAppNotification(id, user, type, actionBy, articleID, commentID, createdTime, commentContent, articleName);
+                notificationList.add(notification);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return notificationList;
     }
+
 
     public boolean removeNotification(int id) {
         String query = "DELETE FROM notifications WHERE id=" + id;

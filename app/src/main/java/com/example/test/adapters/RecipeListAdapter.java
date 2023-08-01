@@ -27,11 +27,13 @@ import com.example.test.activities.MainActivity;
 import com.example.test.components.Article;
 import com.example.test.components.User;
 import com.example.test.fragments.HomeFragment;
-import com.example.test.utils.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     private List<Article> articleList;
@@ -55,10 +57,16 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void updateViewHolder(int position, int commentAdded, int likeAdded, boolean bookmarked) {
+    public void updateViewHolder(int position, int commentAdded, int likeAdded, boolean deleted) {
+        if (deleted) {
+            articleList.remove(position);
+            notifyDataSetChanged();
+            return;
+        }
         Article article = articleList.get(position);
         article.setLikes(article.getLikes() + likeAdded);
         article.setComments(article.getComments() + commentAdded);
+
         notifyItemChanged(position);
     }
 
@@ -70,14 +78,19 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         this.context = context;
     }
 
-    public void sortByFollow(DatabaseHelper dbHelper) {
+    public void sortByFollow() {
         MainActivity.runTask(() -> {
             articleList.sort(new Comparator<Article>() {
                 @Override
                 public int compare(Article article1, Article article2) {
-                    int follow1 = dbHelper.getTotalFollowCount(article1.getPublisher());
-                    int follow2 = dbHelper.getTotalFollowCount(article2.getPublisher());
-                    return Integer.compare(follow2, follow1);
+                    AtomicInteger follow1 = new AtomicInteger();
+                    AtomicInteger follow2 = new AtomicInteger();
+                    MainActivity.runTask(() -> {
+                        follow1.set(MainActivity.sqlConnection.getTotalFollowCount(article1.getPublisher()));
+                        follow2.set(MainActivity.sqlConnection.getTotalFollowCount(article1.getPublisher()));
+                    }, null, null);
+
+                    return Integer.compare(follow2.get(), follow1.get());
                 }
             });
         }, () -> {
@@ -156,36 +169,45 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
             }).into(holder.dish_img);
         }
 
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
-        User user = dbHelper.getUserWithUsername(holder.user_name.getText().toString());
-        if (!user.getAvatarURL().equals("")) {
-            Glide.with(context).load(user.getAvatarURL()).listener(new RequestListener<Drawable>() {
-                @Override
-                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                    holder.progressBar.setVisibility(View.GONE);
-                    return false;
-                }
+        AtomicReference<User> user = new AtomicReference<>();
+        MainActivity.runTask(() -> {
+            user.set(MainActivity.sqlConnection.getUserWithUsername(holder.user_name.getText().toString()));
+        }, () -> {
+            if (!user.get().getAvatarURL().equals("")) {
+                Glide.with(context).load(user.get().getAvatarURL()).listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
 
-                @Override
-                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                    holder.progressBar.setVisibility(View.GONE);
-                    return false;
-                }
-            }).into(holder.user_avatar);
-        } else {
-            holder.user_avatar.setImageResource(R.drawable.baseline_person_24);
-        }
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        holder.progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(holder.user_avatar);
+            } else {
+                holder.user_avatar.setImageResource(R.drawable.baseline_person_24);
+            }
+        }, null);
+
+
 //        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
-        holder.isBookmark = MainActivity.loggedInUser != null && dbHelper.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId());
-        if (holder.isBookmark) {
-            holder.bookmark.setImageResource(R.drawable.bookmarked);
-        } else {
-            holder.bookmark.setImageResource(R.drawable.bookmark);
-        }
+        AtomicBoolean checkBookmarked = new AtomicBoolean(false);
+        MainActivity.runTask(() -> {
+            checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId()));
+        }, () -> {
+            holder.isBookmark = checkBookmarked.get();
+            if (holder.isBookmark) {
+                holder.bookmark.setImageResource(R.drawable.bookmarked);
+            } else {
+                holder.bookmark.setImageResource(R.drawable.bookmark);
+            }
+        }, null);
 
-        holder.dbHelper = dbHelper;
         holder.context = context;
     }
 
@@ -207,7 +229,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
     ImageView dish_img, user_avatar, bookmark;
     boolean isBookmark;
     Context context;
-    DatabaseHelper dbHelper;
     ProgressBar progressBar;
 
     public RecipeViewHolder(View itemView) {
@@ -245,11 +266,15 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
 
                 if (!isBookmark) {
                     isBookmark = true;
-                    dbHelper.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    MainActivity.runTask(() -> {
+                        MainActivity.sqlConnection.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    });
                     bookmark.setImageResource(R.drawable.bookmarked);
                 } else {
                     isBookmark = false;
-                    dbHelper.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    MainActivity.runTask(() -> {
+                        MainActivity.sqlConnection.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
+                    });
                     bookmark.setImageResource(R.drawable.bookmark);
                 }
             }

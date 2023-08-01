@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +15,9 @@ import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.MailSender;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SignUpStep1Fragment extends Fragment {
 
@@ -49,6 +49,7 @@ public class SignUpStep1Fragment extends Fragment {
                 SignUpFragment.username = usernameInput.getText().toString();
                 SignUpFragment.password = passwordInput.getText().toString();
                 SignUpFragment.reenter = reenterInput.getText().toString();
+                SignUpFragment.fullname = usernameInput.getText().toString();
 
                 if (SignUpFragment.email.equals("") || SignUpFragment.username.equals("") || SignUpFragment.password.equals("") || SignUpFragment.reenter.equals("")) {
                     Toast.makeText(getActivity(), "Hãy nhập đủ thông tin", Toast.LENGTH_SHORT).show();
@@ -60,17 +61,19 @@ public class SignUpStep1Fragment extends Fragment {
                     return;
                 }
 
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-
-                if (dbHelper.checkUsernameAvailability(SignUpFragment.username)) {
-                    MainActivity.runTask(() -> {
-                        SignUpFragment.code = MailSender.sendVerificationMail(SignUpFragment.email);
-                    }, null, null);
-                    SignUpFragment.viewPager.setCurrentItem(SignUpFragment.viewPager.getCurrentItem() + 1, false);
-                } else {
-                    Toast.makeText(getActivity(), "Tên đăng nhập đã tồn tại! Vui lòng chọn tên đăng nhập khác", Toast.LENGTH_SHORT).show();
-                }
-
+                AtomicBoolean available = new AtomicBoolean(false);
+                MainActivity.runTask(() -> {
+                    available.set(MainActivity.sqlConnection.checkUsernameAvailability(SignUpFragment.username));
+                }, () -> {
+                    if (available.get()) {
+                        MainActivity.runTask(() -> {
+                            SignUpFragment.code = MailSender.sendVerificationMail(SignUpFragment.email);
+                        }, null, null);
+                        SignUpFragment.viewPager.setCurrentItem(SignUpFragment.viewPager.getCurrentItem() + 1, false);
+                    } else {
+                        Toast.makeText(getActivity(), "Tên đăng nhập đã tồn tại! Vui lòng chọn tên đăng nhập khác", Toast.LENGTH_SHORT).show();
+                    }
+                }, MainActivity.progressDialog);
             }
         });
 

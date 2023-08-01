@@ -18,8 +18,9 @@ import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.MailSender;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class SignUpStep2Fragment extends Fragment {
@@ -75,20 +76,22 @@ public class SignUpStep2Fragment extends Fragment {
             }
         });
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (Integer.parseInt(codeInput.getText().toString()) == SignUpFragment.code) {
-                    boolean signUpResult = dbHelper.signUpUser(SignUpFragment.email, SignUpFragment.username, SignUpFragment.password, SignUpFragment.reenter);
-
-                    if (signUpResult) {
-                        Toast.makeText(getActivity(), "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
-                        Navigation.findNavController(view).navigate(R.id.navigation_login);
-                    } else {
-                        Toast.makeText(getActivity(), "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
-                    }
+                    AtomicBoolean signUpResult = new AtomicBoolean(false);
+                    MainActivity.runTask(() -> {
+                        signUpResult.set(MainActivity.sqlConnection.signUpUser(SignUpFragment.email, SignUpFragment.username, SignUpFragment.password, SignUpFragment.fullname));
+                    }, () -> {
+                        if (signUpResult.get()) {
+                            Toast.makeText(getActivity(), "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(view).navigate(R.id.navigation_login);
+                        } else {
+                            Toast.makeText(getActivity(), "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    }, MainActivity.progressDialog);
                 } else {
                     Toast.makeText(getActivity(), "Mã xác thực sai! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
                 }

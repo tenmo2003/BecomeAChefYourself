@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,9 +16,9 @@ import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
-import com.example.test.utils.MailSender;
 import com.example.test.utils.SaveSharedPreference;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LoginFragment extends Fragment {
 
@@ -55,7 +54,6 @@ public class LoginFragment extends Fragment {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
                 String username = usernameTv.getText().toString();
                 String password = passwordTv.getText().toString();
@@ -65,25 +63,27 @@ public class LoginFragment extends Fragment {
                     return;
                 }
 
-                int result = dbHelper.userAuthentication(username , password);
+                AtomicInteger result = new AtomicInteger();
+                MainActivity.runTask(() -> {
+                    result.set(MainActivity.sqlConnection.userAuthentication(username, password));
+                }, () -> {
+                    if (result.get() == 1) {
+                        Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-                if (result == 1) {
-                    Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                        // Save login status in preference file
+                        SaveSharedPreference.setUserName(getContext(), usernameTv.getText().toString());
 
-                    // Save login status in preference file
-                    SaveSharedPreference.setUserName(getContext(), usernameTv.getText().toString());
-
-                    if (MainActivity.loggedInUser.getUsername().equals("admin")) {
-                        Navigation.findNavController(view).navigate(R.id.navigation_admin);
+                        if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+                            Navigation.findNavController(view).navigate(R.id.navigation_admin);
+                        } else {
+                            Navigation.findNavController(view).navigate(R.id.navigation_profile);
+                        }
+                    } else if (result.get() == 0) {
+                        Toast.makeText(getActivity(), "Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show();
                     } else {
-                        Navigation.findNavController(view).navigate(R.id.navigation_profile);
+                        Toast.makeText(getActivity(), "Đăng nhập thất bại! Người dùng đã bị cấm", Toast.LENGTH_SHORT).show();
                     }
-                } else if (result == 0) {
-                    Toast.makeText(getActivity(), "Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(), "Đăng nhập thất bại! Người dùng đã bị cấm", Toast.LENGTH_SHORT).show();
-
-                }
+                }, MainActivity.progressDialog);
             }
         });
 

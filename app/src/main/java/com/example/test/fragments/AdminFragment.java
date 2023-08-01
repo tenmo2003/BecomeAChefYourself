@@ -49,7 +49,6 @@ public class AdminFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         List<String> parentItems = new ArrayList<>(Arrays.asList("Báo cáo về bình luận", "Báo cáo về bài đăng", "Danh sách các bài đăng", "Danh sách các người dùng"));
 
@@ -63,19 +62,19 @@ public class AdminFragment extends Fragment {
 
         MainActivity.runTask(() -> {
 
-            for (Article article : dbHelper.getAllArticles()) {
+            for (Article article : MainActivity.sqlConnection.getAllArticles()) {
                 postItems.add(article.getId() + ". \"" + article.getDishName() + "\" viết bởi '" + article.getPublisher() + "'");
             }
 
-            for (Report report : dbHelper.getAllCommentReports()) {
+            for (Report report : MainActivity.sqlConnection.getAllCommentReports()) {
                 reportedComments.add(report.getId() + ". \"" + report.getCommentContent() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
             }
 
-            for (Report report : dbHelper.getAllArticleReports()) {
+            for (Report report : MainActivity.sqlConnection.getAllArticleReports()) {
                 reportedArticles.add(report.getId() + ". \"" + report.getArticleName() + "\" báo cáo bởi '" + report.getReporter() + "' với lí do: " + report.getReason());
             }
 
-            for (User user : dbHelper.getAllUser()) {
+            for (User user : MainActivity.sqlConnection.getAllUser()) {
                 users.add((users.size() + 1) + ". " + user.getUsername() + ". Mức độ cảnh cáo: " + user.getReportLevel());
             }
 

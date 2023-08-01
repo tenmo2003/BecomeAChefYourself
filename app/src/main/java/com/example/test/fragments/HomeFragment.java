@@ -68,7 +68,6 @@ public class HomeFragment extends Fragment {
     TimerTask timerTask;
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
-    DatabaseHelper dbHelper;
     List<Article> articlesList, recommendRecipeList;
 
     View view = null;
@@ -89,7 +88,6 @@ public class HomeFragment extends Fragment {
             LinearLayout filterField = view.findViewById(R.id.filter_field);
             filterField.setVisibility(View.GONE);
 
-            dbHelper = new DatabaseHelper(getActivity());
 
             recommendRecipeAdapter = new RecommendRecipeAdapter();
             recipeListAdapter = new RecipeListAdapter();
@@ -171,10 +169,12 @@ public class HomeFragment extends Fragment {
         });
 
         if (adapterPos != -1) {
-            recipeListAdapter.updateViewHolder(adapterPos, commentAdded, likeAdded, bookmarked);
+            if (commentAdded != 0 || likeAdded != 0 || deleted)
+                recipeListAdapter.updateViewHolder(adapterPos, commentAdded, likeAdded, deleted);
             adapterPos = -1;
             commentAdded = 0;
             likeAdded = 0;
+            deleted = false;
         }
 
 
@@ -183,8 +183,9 @@ public class HomeFragment extends Fragment {
 
     private void loadView() {
         MainActivity.runTask(() -> {
-            articlesList = dbHelper.getAllArticles();
+            articlesList = MainActivity.sqlConnection.getAllArticles();
             Collections.shuffle(articlesList);
+            Log.i("LOAD", "DONE LOADING ARTICLES");
         }, () -> {
             recommendRecipeList = articlesList.subList(0, 10);
             recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
@@ -407,7 +408,7 @@ public class HomeFragment extends Fragment {
                                 recipeListAdapter.setArticleList(articlesList);
                             }, MainActivity.progressDialog);
                         } else if (v == sortButtons.get("most_follow")) {
-                            recipeListAdapter.sortByFollow(dbHelper);
+                            recipeListAdapter.sortByFollow();
                         } else if (v == sortButtons.get("most_react")) {
                             recipeListAdapter.sortByReact();
                         } else {

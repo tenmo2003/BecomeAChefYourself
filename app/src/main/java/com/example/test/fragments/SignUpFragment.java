@@ -24,6 +24,7 @@ public class SignUpFragment extends Fragment {
     public static String username;
     public static String password;
     public static String reenter;
+    public static String fullname;
 
     public static int code;
     public static ViewPager2 viewPager;

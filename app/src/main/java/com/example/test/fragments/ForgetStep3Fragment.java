@@ -12,13 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
-import com.example.test.utils.MailSender;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class ForgetStep3Fragment extends Fragment {
@@ -38,19 +37,22 @@ public class ForgetStep3Fragment extends Fragment {
         EditText passwordInput = view.findViewById(R.id.password_input);
         EditText repasswordInput = view.findViewById(R.id.re_password_input);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (passwordInput.getText().toString().equals(repasswordInput.getText().toString())) {
-                    boolean result = dbHelper.changePassword(ForgetPasswordFragment.forgotten.getUsername(), passwordInput.getText().toString());
-                    if (result) {
-                        Toast.makeText(getActivity(), "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getActivity(), "Đổi mật khẩu thất bại!", Toast.LENGTH_SHORT).show();
-                    }
+                    AtomicBoolean result = new AtomicBoolean();
+                    MainActivity.runTask(() -> {
+                        result.set(MainActivity.sqlConnection.changePassword(ForgetPasswordFragment.forgotten.getUsername(), passwordInput.getText().toString()));
+                    }, () -> {
+                        if (result.get()) {
+                            Toast.makeText(getActivity(), "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(), "Đổi mật khẩu thất bại!", Toast.LENGTH_SHORT).show();
+                        }
 
+                    }, MainActivity.progressDialog);
                     Navigation.findNavController(view).navigate(R.id.navigation_login);
                 } else {
                     Toast.makeText(getActivity(), "Mật khẩu không giống nhau! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();

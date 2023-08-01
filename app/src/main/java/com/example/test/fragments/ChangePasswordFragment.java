@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.test.R;
-import com.example.test.utils.DatabaseHelper;
+import com.example.test.activities.MainActivity;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChangePasswordFragment extends Fragment {
     @Nullable
@@ -64,12 +66,17 @@ public class ChangePasswordFragment extends Fragment {
                     } else if (!newPassword.equals(renewPassword)) {
                         Toast.makeText(getContext(), "Nhập lại mật khẩu mới không trùng khớp", Toast.LENGTH_SHORT).show();
                     } else {
-                        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-                        if (dbHelper.changePassword(username, oldPassword, newPassword)) {
-                            Toast.makeText(getContext(), "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
-                        }
+                        AtomicBoolean result = new AtomicBoolean(false);
+
+                        MainActivity.runTask(() -> {
+                            result.set(MainActivity.sqlConnection.changePassword(username, oldPassword, newPassword));
+                        }, () -> {
+                            if (result.get()) {
+                                Toast.makeText(getContext(), "Thay đổi mật khẩu thành công", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getContext(), "Mật khẩu hiện tại không đúng", Toast.LENGTH_SHORT).show();
+                            }
+                        }, MainActivity.progressDialog);
                     }
                 } else {
                     Toast.makeText(getContext(), "Hãy nhập đủ thông tin", Toast.LENGTH_SHORT).show();

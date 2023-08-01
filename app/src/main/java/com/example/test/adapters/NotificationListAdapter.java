@@ -34,9 +34,9 @@ import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.InAppNotification;
 import com.example.test.components.User;
-import com.example.test.utils.DatabaseHelper;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
 
@@ -65,34 +65,32 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
         ImageView avatar = convertView.findViewById(R.id.user_avatar);
         LinearLayout notificationContent = convertView.findViewById(R.id.noti);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
 
-//        User actionUser = dbHelper.getUserWithUsername(notification.getActionBy());
-        final User[] actionUser = new User[1];
-//        View finalConvertView = convertView;
-//        MainActivity.runTask(() -> {
-//            actionUser[0] = MainActivity.sqlConnection.getUserWithUsername(notification.getActionBy());
-//        }, () -> {
-//            if (actionUser[0].getAvatarURL().equals("")) {
-//                avatar.setImageResource(R.drawable.baseline_person_black_24);
-//            } else {
-//                ProgressBar progress = finalConvertView.findViewById(R.id.progressbar);
-//                progress.setVisibility(View.VISIBLE);
-//                Glide.with(context).load(actionUser[0].getAvatarURL()).listener(new RequestListener<Drawable>() {
-//                    @Override
-//                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-//                        progress.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//
-//                    @Override
-//                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-//                        progress.setVisibility(View.GONE);
-//                        return false;
-//                    }
-//                }).into(avatar);
-//            }
-//        }, MainActivity.progressDialog);
+        AtomicReference<User> actionUser = new AtomicReference<>();
+        View finalConvertView = convertView;
+        MainActivity.runTask(() -> {
+            actionUser.set(MainActivity.sqlConnection.getUserWithUsername(notification.getActionBy()));
+        }, () -> {
+            if (actionUser.get().getAvatarURL().equals("")) {
+                avatar.setImageResource(R.drawable.baseline_person_black_24);
+            } else {
+                ProgressBar progress = finalConvertView.findViewById(R.id.progressbar);
+                progress.setVisibility(View.VISIBLE);
+                Glide.with(context).load(actionUser.get().getAvatarURL()).listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        progress.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progress.setVisibility(View.GONE);
+                        return false;
+                    }
+                }).into(avatar);
+            }
+        }, MainActivity.progressDialog);
 
 
 
@@ -110,6 +108,15 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                 content = notification.getActionBy() + " đã theo dõi bạn";
                 break;
             // Add more cases for other types if needed
+            case "FOLLOWING_POST":
+                content = notification.getActionBy() + " đã đăng bài viết mới: '" + notification.getArticleName() + "'";
+                break;
+            case "REPORT_ARTICLE":
+                content = "Bài đăng '" + notification.getArticleName() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiển tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
+                break;
+            case "REPORT_COMMENT":
+                content = "Bình luận '" + notification.getCommentContent() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiển tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
+                break;
             default:
                 content = "Notification type: " + type;
                 break;
@@ -118,9 +125,13 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
         SpannableString spannableString = new SpannableString(content);
         int startIndex = content.indexOf(notification.getActionBy());
         int endIndex = startIndex + notification.getActionBy().length();
-        spannableString.setSpan(new StyleSpan(Typeface.BOLD), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (startIndex != -1 && endIndex != -1) {
+            spannableString.setSpan(new StyleSpan(Typeface.BOLD), startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            contentTv.setText(spannableString);
+        } else {
+            contentTv.setText(content);
+        }
 
-        contentTv.setText(spannableString);
 
         createdTv.setText(notification.getCreatedTime());
 
@@ -131,7 +142,7 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
             public void onClick(View view) {
                 Bundle args = new Bundle();
 
-                args.putString("username", actionUser[0].getUsername());
+                args.putString("username", actionUser.get().getUsername());
 
                 Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
             }
@@ -143,14 +154,14 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                 String type = notification.getType();
                 Bundle args = new Bundle();
 
-                if (type.equals("LIKE")) {
+                if (type.equals("LIKE") || type.equals("FOLLOWING_POST")) {
                     args.putInt("articleID", notification.getArticleId());
                     Navigation.findNavController(view).navigate(R.id.navigation_article, args);
                 } else if (type.equals("COMMENT")) {
                     args.putInt("articleID", notification.getArticleId());
                     args.putBoolean("toComment", true);
                     Navigation.findNavController(view).navigate(R.id.navigation_article, args);
-                } else {
+                } else if (type.equals("FOLLOW")){
                     args.putString("username", notification.getActionBy());
                     Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
                 }
@@ -169,7 +180,9 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                     public void onClick(DialogInterface dialog, int which) {
                         // Perform logout action here
                         notificationList.remove(position);
-                        dbHelper.removeNotification(notification.getId());
+                        MainActivity.runTask(() -> {
+                            MainActivity.sqlConnection.removeNotification(notification.getId());
+                        }, null, null);
                         notifyDataSetChanged();
                     }
                 });

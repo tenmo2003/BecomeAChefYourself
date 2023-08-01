@@ -12,14 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.adapters.RecipeListAdapter;
+import com.example.test.components.Article;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
+import java.util.List;
+
 public class ProfilePostFragment extends Fragment {
     RecyclerView userRecipeList;
-    DatabaseHelper dbHelper;
     private final User profileUser;
+    List<Article> articleList;
 
     public ProfilePostFragment(User profileUser) {
         this.profileUser = profileUser;
@@ -36,16 +40,20 @@ public class ProfilePostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        dbHelper = new DatabaseHelper(getActivity());
 
         userRecipeList = view.findViewById(R.id.user_recipe_list);
         userRecipeList.setHasFixedSize(true);
         userRecipeList.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
-        adapter.setArticleList(dbHelper.getArticlesFromUser(profileUser.getUsername()));
-        adapter.setContext(getActivity());
 
-        userRecipeList.setAdapter(adapter);
+        MainActivity.runTask(() -> {
+            articleList = MainActivity.sqlConnection.getArticlesFromUser(profileUser.getUsername());
+        }, () -> {
+            adapter.setArticleList(articleList);
+            adapter.setContext(getActivity());
+            userRecipeList.setAdapter(adapter);
+        }, MainActivity.progressDialog);
+
     }
 }

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,9 @@ import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.NotificationListAdapter;
 import com.example.test.components.InAppNotification;
-import com.example.test.utils.DatabaseHelper;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NotificationFragment extends Fragment {
 
@@ -32,14 +33,17 @@ public class NotificationFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         ListView listView = view.findViewById(R.id.list_view);
 
-        List<InAppNotification> notificationList = dbHelper.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
+        AtomicReference<List<InAppNotification>> notificationList = new AtomicReference<>();
+        MainActivity.runTask(() -> {
+            notificationList.set(MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername()));
+        }, () -> {
+            Log.i("DETAIL", String.valueOf(notificationList.get().size()));
+            NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList.get());
 
-        NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList);
-
-        listView.setAdapter(adapter);
+            listView.setAdapter(adapter);
+        }, MainActivity.progressDialog);
     }
 }

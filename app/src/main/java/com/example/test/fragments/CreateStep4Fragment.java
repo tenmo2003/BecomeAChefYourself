@@ -1,13 +1,11 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,13 +18,11 @@ import androidx.navigation.Navigation;
 import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
 import com.example.test.utils.ImageController;
 
-import org.w3c.dom.Text;
-
-import java.time.LocalDate;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class CreateStep4Fragment extends Fragment {
 
@@ -58,60 +54,67 @@ public class CreateStep4Fragment extends Fragment {
         nextStepBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
                 if (!ShareFragment.editing) {
-                    String imageURL = "";
-                    if (ShareFragment.imageChanged) {
-                        imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
-                    }
-                    boolean result = dbHelper.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL);
-                    if (ShareFragment.imageChanged) {
-                        String finalImageURL = imageURL;
-                        MainActivity.runTask(() -> {
-                            ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
-                        }, () -> {
-                            if (result) {
+                    AtomicReference<String> imageURL = new AtomicReference<>("");
+                    AtomicBoolean result = new AtomicBoolean(false);
+                    MainActivity.runTask(() -> {
+                        if (ShareFragment.imageChanged) {
+                            imageURL.set("https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (MainActivity.sqlConnection.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg");
+                        }
+                        result.set(MainActivity.sqlConnection.addArticle(ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL.get()));
+                    }, () -> {
+                        if (ShareFragment.imageChanged) {
+                            String finalImageURL = imageURL.get();
+                            MainActivity.runTask(() -> {
+                                ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
+                            }, () -> {
+                                if (result.get()) {
+                                    Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
+                                }
+                            }, MainActivity.progressDialog);
+                        } else {
+                            if (result.get()) {
                                 Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
                                 Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                             }
-                        }, MainActivity.progressDialog);
-                    } else {
-                        if (result) {
-                            Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
-                            Navigation.findNavController(view).navigate(R.id.navigation_home);
-                        } else {
-                            Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                         }
-                    }
+                    }, MainActivity.progressDialog);
+
+                    Navigation.findNavController(view).navigate(R.id.navigation_home);
+
                 } else {
-                    String imageURL = ShareFragment.imageURL;
-                    if (ShareFragment.imageChanged) {
-                        imageURL = "https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (dbHelper.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg";
-                    }
-                    boolean result = dbHelper.editArticle(ShareFragment.articleID, ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL);
+                    AtomicReference<String> imageURL = new AtomicReference<>(ShareFragment.imageURL);
+                    AtomicBoolean result = new AtomicBoolean(false);
+                    MainActivity.runTask(() -> {
+                        if (ShareFragment.imageChanged) {
+                            imageURL.set("https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (MainActivity.sqlConnection.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg");
+                        }
+                         result.set(MainActivity.sqlConnection.editArticle(ShareFragment.articleID, ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL.get()));
+                    });
+
 
                     if (ShareFragment.imageChanged) {
-                        String finalImageURL = imageURL;
+                        String finalImageURL = imageURL.get();
                         MainActivity.runTask(() -> {
                             ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
                         }, () -> {
-                            if (result) {
+                            if (result.get()) {
                                 Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
                                 Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
                             }
                         }, MainActivity.progressDialog);
                     } else {
-                        if (result) {
+                        if (result.get()) {
                             Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
-                            Navigation.findNavController(view).navigate(R.id.navigation_home);
                         } else {
                             Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
                         }
                     }
+                    Navigation.findNavController(view).navigate(R.id.navigation_home);
                 }
             }
         });

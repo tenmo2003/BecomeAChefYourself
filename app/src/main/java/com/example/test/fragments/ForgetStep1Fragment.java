@@ -35,23 +35,24 @@ public class ForgetStep1Fragment extends Fragment {
         Button nextBtn = view.findViewById(R.id.next_btn);
         EditText usernameInput = view.findViewById(R.id.username_input);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ForgetPasswordFragment.forgotten = dbHelper.getUserWithUsername(usernameInput.getText().toString());
-
-                if (ForgetPasswordFragment.forgotten == null) {
-                    Toast.makeText(getActivity(), "Không tồn tại người dùng", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
                 MainActivity.runTask(() -> {
-                    ForgetPasswordFragment.code = MailSender.sendResetPasswordMail(ForgetPasswordFragment.forgotten.getEmail());
-                }, null, null);
+                    ForgetPasswordFragment.forgotten = MainActivity.sqlConnection.getUserWithUsername(usernameInput.getText().toString());
+                }, () -> {
+                    if (ForgetPasswordFragment.forgotten == null) {
+                        Toast.makeText(getActivity(), "Không tồn tại người dùng", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                ForgetPasswordFragment.viewPager.setCurrentItem(ForgetPasswordFragment.viewPager.getCurrentItem() + 1, false);
+                    MainActivity.runTask(() -> {
+                        ForgetPasswordFragment.code = MailSender.sendResetPasswordMail(ForgetPasswordFragment.forgotten.getEmail());
+                    }, null, null);
+
+                    ForgetPasswordFragment.viewPager.setCurrentItem(ForgetPasswordFragment.viewPager.getCurrentItem() + 1, false);
+                }, MainActivity.progressDialog);
             }
         });
     }

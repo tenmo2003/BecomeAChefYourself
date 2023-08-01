@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     public static User loggedInUser = null;
     public static SmoothBottomBar navView;
     NavController navController;
-    public static DatabaseHelper dbHelper;
 
     private void setupSmoothBottomMenu() {
         PopupMenu popupMenu = new PopupMenu(this, null);
@@ -96,73 +95,73 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, null, MainActivity.progressDialog);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
-        dbHelper = new DatabaseHelper(this);
+            // Auto login if user logged before
 
-        // Set up bottom bar
-        setupSmoothBottomMenu();
-
-        //BottomNavigationView navView = findViewById(R.id.nav_view);
-
-        // Auto login if user logged before
-        if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {
-            DatabaseHelper dbHelper = new DatabaseHelper(MainActivity.this);
-            MainActivity.loggedInUser = dbHelper.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
-        }
-
-        navView.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public boolean onItemSelect(int id) {
-                NavDestination currentDestination = navController.getCurrentDestination();
-                if (currentDestination != null && currentDestination.getId() == id) {
-                    // If the user is already on the selected navigation item, do nothing
-                    return true;
-                }
-
-                int navigation_home = 0;
-                int navigation_share = 1;
-                int navigation_notification = 2;
-                int navigation_user = 3;
-
-                if (id == navigation_home) {
-                    navController.popBackStack(R.id.navigation_home, false);
-//                    navController.navigate(R.id.navigation_home);
-                } else if (id == navigation_share) {
-                    if (loggedInUser == null) {
-                        Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
-                        navController.navigate(R.id.navigation_login);
-                        navView.setItemActiveIndex(navigation_user);
-                        return false;
-                    } else {
-                        navController.navigate(R.id.navigation_share);
-                    }
-                } else if (id == navigation_user) {
-                    if (loggedInUser != null) {
-                        if (loggedInUser.getUsername().equals("admin")) {
-                            navController.navigate(R.id.navigation_admin);
-                        } else {
-                            navController.navigate(R.id.navigation_profile);
-                        }
-                    } else {
-                        navController.navigate(R.id.navigation_login);
-                    }
-                } else if (id == navigation_notification){
-                    if (loggedInUser == null) {
-                        Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
-                        navController.navigate(R.id.navigation_login);
-                        navView.setItemActiveIndex(navigation_user);
-                        return false;
-                    } else {
-                        navController.navigate(R.id.navigation_notification);
-                    }
-                }
-
-                return false;
+            if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {
+                MainActivity.loggedInUser = sqlConnection.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
             }
-        });
+        }, () -> {
+            binding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+
+
+            // Set up bottom bar
+            setupSmoothBottomMenu();
+
+            //BottomNavigationView navView = findViewById(R.id.nav_view);
+
+            navView.setOnItemSelectedListener(new OnItemSelectedListener() {
+                @Override
+                public boolean onItemSelect(int id) {
+                    NavDestination currentDestination = navController.getCurrentDestination();
+                    if (currentDestination != null && currentDestination.getId() == id) {
+                        // If the user is already on the selected navigation item, do nothing
+                        return true;
+                    }
+
+                    int navigation_home = 0;
+                    int navigation_share = 1;
+                    int navigation_notification = 2;
+                    int navigation_user = 3;
+
+                    if (id == navigation_home) {
+                        navController.popBackStack(R.id.navigation_home, false);
+//                    navController.navigate(R.id.navigation_home);
+                    } else if (id == navigation_share) {
+                        if (loggedInUser == null) {
+                            Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            navController.navigate(R.id.navigation_login);
+                            navView.setItemActiveIndex(navigation_user);
+                            return false;
+                        } else {
+                            navController.navigate(R.id.navigation_share);
+                        }
+                    } else if (id == navigation_user) {
+                        if (loggedInUser != null) {
+                            if (loggedInUser.getUsername().equals("admin")) {
+                                navController.navigate(R.id.navigation_admin);
+                            } else {
+                                navController.navigate(R.id.navigation_profile);
+                            }
+                        } else {
+                            navController.navigate(R.id.navigation_login);
+                        }
+                    } else if (id == navigation_notification){
+                        if (loggedInUser == null) {
+                            Toast.makeText(getApplicationContext(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            navController.navigate(R.id.navigation_login);
+                            navView.setItemActiveIndex(navigation_user);
+                            return false;
+                        } else {
+                            navController.navigate(R.id.navigation_notification);
+                        }
+                    }
+
+                    return false;
+                }
+            });
+        }, null);
     }
 
     public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {
@@ -195,6 +194,18 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+    }
+
+    public static void runTask(Runnable background) {
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                background.run();
             }
         });
     }
