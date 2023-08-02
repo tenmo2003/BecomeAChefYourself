@@ -62,7 +62,7 @@ public class AdminFragment extends Fragment {
 
         MainActivity.runTask(() -> {
 
-            for (Article article : MainActivity.sqlConnection.getAllArticles()) {
+            for (Article article : MainActivity.articleList) {
                 postItems.add(article.getId() + ". \"" + article.getDishName() + "\" viết bởi '" + article.getPublisher() + "'");
             }
 

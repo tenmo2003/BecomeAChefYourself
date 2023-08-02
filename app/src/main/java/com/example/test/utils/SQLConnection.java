@@ -86,8 +86,9 @@ public class SQLConnection {
      * @since 1.0
      */
     public ResultSet getDataQuery(String query) {
-        Statement statement;
+
         ResultSet resultSet = null;
+        Statement statement;
         try {
             statement = connection.createStatement();
             resultSet = statement.executeQuery(query);
@@ -95,15 +96,14 @@ public class SQLConnection {
             System.out.println(query);
             e.printStackTrace();
         }
+
         return resultSet;
     }
 
 
     public int updateQuery(String query) {
-        Statement statement;
         int rowsAffected = 0;
-        try {
-            statement = connection.createStatement();
+        try (Statement statement = connection.createStatement()) {
             rowsAffected = statement.executeUpdate(query);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -113,22 +113,14 @@ public class SQLConnection {
 
     public boolean checkUsernameAvailability(String username) {
         String query = "SELECT * FROM user WHERE username='" + username + "'";
-        ResultSet resultSet = getDataQuery(query);
-
-        boolean isUsernameAvailable = false;
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             // Check if the username already exists in the database
-            if (resultSet.next()) {
-                isUsernameAvailable = false; // The username already exists
-            } else {
-                isUsernameAvailable = true; // The username is available
-            }
+            return !resultSet.next(); // Return true if the username is available (not found in the database)
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        return isUsernameAvailable;
     }
+
 
     public boolean signUpUser(String email, String username, String password, String fullname) {
         if (!checkUsernameAvailability(username)) {
@@ -144,10 +136,8 @@ public class SQLConnection {
 
     public int userAuthentication(String username, String password) {
         String query = "SELECT * FROM user WHERE username='" + username + "' AND password='" + Sha256Encryption.getSHA256Hash(password) + "'";
-        ResultSet resultSet = getDataQuery(query);
 
-        int authenticationResult = 0;
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
                 // If the user exists in the database, create a User object and return it
                 String fullname = resultSet.getString("fullname");
@@ -160,37 +150,38 @@ public class SQLConnection {
                 User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
 
                 if (banned == 1) {
-                    authenticationResult = -1; // User is banned
+                    return -1; // User is banned
                 } else {
-                    authenticationResult = 1; // Authentication success
                     MainActivity.loggedInUser = user;
+                    return 1; // Authentication success
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return authenticationResult;
+        return 0; // Authentication failed
     }
+
 
     public void increaseReportLevelForUser(String username) {
         String selectQuery = "SELECT reportLevel FROM user WHERE username='" + username + "'";
-        ResultSet resultSet = getDataQuery(selectQuery);
 
-        int currentReportLevel = 0;
-        try {
+        try (ResultSet resultSet = getDataQuery(selectQuery)) {
+            int currentReportLevel = 0;
             if (resultSet.next()) {
                 currentReportLevel = resultSet.getInt("reportLevel");
             }
+
+            // Increment the reportLevel by 1
+            int newReportLevel = currentReportLevel + 1;
+            String updateQuery = "UPDATE user SET reportLevel=" + newReportLevel + " WHERE username='" + username + "'";
+            int rows = updateQuery(updateQuery);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        // Increment the reportLevel by 1
-        int newReportLevel = currentReportLevel + 1;
-        String updateQuery = "UPDATE user SET reportLevel=" + newReportLevel + " WHERE username='" + username + "'";
-        int rows = updateQuery(updateQuery);
     }
+
 
     public void banUser(String username) {
         String updateQuery = "UPDATE user SET banned=1 WHERE username='" + username + "'";
@@ -199,11 +190,10 @@ public class SQLConnection {
 
     public List<User> getAllUser() {
         String query = "SELECT * FROM user";
-        ResultSet resultSet = getDataQuery(query);
 
-        List<User> userList = new ArrayList<>();
+        try (ResultSet resultSet = getDataQuery(query)) {
+            List<User> userList = new ArrayList<>();
 
-        try {
             // Loop through the resultSet to extract each user's information
             while (resultSet.next()) {
                 String username = resultSet.getString("username");
@@ -219,20 +209,21 @@ public class SQLConnection {
                 User user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
                 userList.add(user);
             }
+
+            // Return the list of users
+            return userList;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Return the list of users
-        return userList;
+        return new ArrayList<>(); // Return an empty list in case of an exception
     }
 
     public User getUserWithUsername(String username) {
         String query = "SELECT * FROM user WHERE username='" + username + "'";
-        ResultSet resultSet = getDataQuery(query);
 
-        User user = null;
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
+            User user = null;
             if (resultSet.next()) {
                 String fullname = resultSet.getString("fullname");
                 String email = resultSet.getString("email");
@@ -243,28 +234,31 @@ public class SQLConnection {
                 int reportLevel = resultSet.getInt("reportLevel");
                 user = new User(username, fullname, points, bio, imageURL, banned, reportLevel, email);
             }
+            return user;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return user;
+        return null; // Return null in case of an exception
     }
+
 
     public int getLastCommentID() {
         String query = "SELECT MAX(id) FROM comments";
-        ResultSet resultSet = getDataQuery(query);
 
-        int maxID = -1;
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
+            int maxID = -1;
             if (resultSet.next()) {
                 maxID = resultSet.getInt(1);
             }
+            return maxID;
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return maxID;
+        return -1; // Return -1 in case of an exception
     }
+
 
     public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
         String insertArticleQuery = "INSERT INTO articles (dish_name, publisher, meal, serve_order_class, type, recipe, ingredients, time_to_make, image) VALUES ('" +
@@ -294,8 +288,7 @@ public class SQLConnection {
         List<String> followers = new ArrayList<>();
         String followersQuery = "SELECT follower FROM follows WHERE followed = '" + username + "'";
 
-        ResultSet resultSet = getDataQuery(followersQuery);
-        try {
+        try (ResultSet resultSet = getDataQuery(followersQuery)) {
             while (resultSet.next()) {
                 followers.add(resultSet.getString(1));
             }
@@ -305,6 +298,7 @@ public class SQLConnection {
 
         return followers;
     }
+
 
     public boolean editArticle(int articleId, String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
         String updateQuery = "UPDATE articles SET dish_name='" + dishName + "', publisher='" + publisher + "', recipe='" + recipe + "', ingredients='" + ingredients + "', meal='" + meal + "', serve_order_class='" + serve_order_class + "', type='" + type + "', time_to_make='" + timeToMake + "', image='" + imgURL + "' WHERE id=" + articleId;
@@ -346,30 +340,33 @@ public class SQLConnection {
         return false;
     }
 
+    private Article extractArticleFromResultSet(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        String dishName = resultSet.getString("dish_name");
+        String publisher = resultSet.getString("publisher");
+        String meal = resultSet.getString("meal");
+        String serveOrderClass = resultSet.getString("serve_order_class");
+        String type = resultSet.getString("type");
+        String content = resultSet.getString("recipe");
+        String ingredients = resultSet.getString("ingredients");
+        int likes = getTotalLikeCount(id);
+        int comments = getTotalCommentCount(id);
+        String publishedTime = resultSet.getString("published_time");
+        publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
+        String timeToMake = resultSet.getString("time_to_make");
+        String imgURL = resultSet.getString("image");
+
+        return new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+    }
 
     public List<Article> getAllArticles() {
         List<Article> articles = new ArrayList<>();
-
         String query = "SELECT * FROM articles ORDER BY id DESC";
         ResultSet resultSet = getDataQuery(query);
 
         try {
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String dishName = resultSet.getString("dish_name");
-                String publisher = resultSet.getString("publisher");
-                String meal = resultSet.getString("meal");
-                String serveOrderClass = resultSet.getString("serve_order_class");
-                String type = resultSet.getString("type");
-                String content = resultSet.getString("recipe");
-                String ingredients = resultSet.getString("ingredients");
-                int likes = getTotalLikeCount(id);
-                int comments = getTotalCommentCount(id);
-                String publishedTime = resultSet.getString("published_time");
-                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
-                String timeToMake = resultSet.getString("time_to_make");
-                String imgURL = resultSet.getString("image");
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                Article article = extractArticleFromResultSet(resultSet);
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -386,21 +383,7 @@ public class SQLConnection {
 
         try {
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String dishName = resultSet.getString("dish_name");
-                String publisher = resultSet.getString("publisher");
-                String meal = resultSet.getString("meal");
-                String serveOrderClass = resultSet.getString("serve_order_class");
-                String type = resultSet.getString("type");
-                String content = resultSet.getString("recipe");
-                String ingredients = resultSet.getString("ingredients");
-                int likes = getTotalLikeCount(id);
-                int comments = getTotalCommentCount(id);
-                String publishedTime = resultSet.getString("published_time");
-                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
-                String timeToMake = resultSet.getString("time_to_make");
-                String imgURL = resultSet.getString("image");
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                Article article = extractArticleFromResultSet(resultSet);
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -417,20 +400,7 @@ public class SQLConnection {
 
         try {
             if (resultSet.next()) {
-                String dishName = resultSet.getString("dish_name");
-                String publisher = resultSet.getString("publisher");
-                String meal = resultSet.getString("meal");
-                String serveOrderClass = resultSet.getString("serve_order_class");
-                String type = resultSet.getString("type");
-                String content = resultSet.getString("recipe");
-                String ingredients = resultSet.getString("ingredients");
-                int likes = getTotalLikeCount(id);
-                int comments = getTotalCommentCount(id);
-                String publishedTime = resultSet.getString("published_time");
-                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
-                String timeToMake = resultSet.getString("time_to_make");
-                String imgURL = resultSet.getString("image");
-                article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                article = extractArticleFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -439,6 +409,7 @@ public class SQLConnection {
         return article;
     }
 
+
     public List<Article> getArticlesFromUser(String username) {
         List<Article> articles = new ArrayList<>();
         String query = "SELECT * FROM articles WHERE publisher='" + username + "' ORDER BY published_time DESC";
@@ -446,21 +417,7 @@ public class SQLConnection {
 
         try {
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String dishName = resultSet.getString("dish_name");
-                String publisher = resultSet.getString("publisher");
-                String meal = resultSet.getString("meal");
-                String serveOrderClass = resultSet.getString("serve_order_class");
-                String type = resultSet.getString("type");
-                String content = resultSet.getString("recipe");
-                String ingredients = resultSet.getString("ingredients");
-                int likes = getTotalLikeCount(id);
-                int comments = getTotalCommentCount(id);
-                String publishedTime = resultSet.getString("published_time");
-                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
-                String timeToMake = resultSet.getString("time_to_make");
-                String imgURL = resultSet.getString("image");
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                Article article = extractArticleFromResultSet(resultSet);
                 articles.add(article);
             }
         } catch (SQLException e) {
@@ -477,21 +434,7 @@ public class SQLConnection {
 
         try {
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String dishName = resultSet.getString("dish_name");
-                String publisher = resultSet.getString("publisher");
-                String meal = resultSet.getString("meal");
-                String serveOrderClass = resultSet.getString("serve_order_class");
-                String type = resultSet.getString("type");
-                String content = resultSet.getString("recipe");
-                String ingredients = resultSet.getString("ingredients");
-                int likes = getTotalLikeCount(id);
-                int comments = getTotalCommentCount(id);
-                String publishedTime = resultSet.getString("published_time");
-                publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
-                String timeToMake = resultSet.getString("time_to_make");
-                String imgURL = resultSet.getString("image");
-                Article article = new Article(id, dishName, publisher, meal, serveOrderClass, type, content, ingredients, likes, comments, publishedTime, timeToMake, imgURL);
+                Article article = extractArticleFromResultSet(resultSet);
                 savedArticles.add(article);
             }
         } catch (SQLException e) {
@@ -526,81 +469,63 @@ public class SQLConnection {
 
     public boolean isFollowing(String follower, String followed) {
         String query = "SELECT * FROM follows WHERE follower='" + follower + "' AND followed='" + followed + "'";
-        ResultSet resultSet = getDataQuery(query);
-        boolean isFollowing = false;
-
-        try {
-            isFollowing = resultSet.next();
+        try (ResultSet resultSet = getDataQuery(query)) {
+            return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return isFollowing;
+        return false;
     }
 
     public int getTotalFollowCount(String username) {
         String query = "SELECT COUNT(*) FROM follows WHERE followed='" + username + "'";
-        ResultSet resultSet = getDataQuery(query);
-        int count = 0;
-
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
-                count = resultSet.getInt(1);
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return count;
+        return 0;
     }
 
     public int getTotalCommentCount(int article_id) {
         String query = "SELECT COUNT(*) FROM comments WHERE article_id=" + article_id;
-        ResultSet resultSet = getDataQuery(query);
-        int count = 0;
-
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
-                count = resultSet.getInt(1);
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return count;
+        return 0;
     }
 
     public int getTotalLikeCount(int article_id) {
         String query = "SELECT COUNT(*) FROM article_likes WHERE article=" + article_id;
-        ResultSet resultSet = getDataQuery(query);
-        int count = 0;
-
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
-                count = resultSet.getInt(1);
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return count;
+        return 0;
     }
+
 
     public int getTotalArticleCount(String username) {
         String query = "SELECT COUNT(id) FROM articles WHERE publisher='" + username + "'";
-        ResultSet resultSet = getDataQuery(query);
-        int count = 0;
-
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
-                count = resultSet.getInt(1);
+                return resultSet.getInt(1);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return count;
+        return 0;
     }
+
 
     public boolean reportComment(int comment_id, String reporter, String reason, int articleID) {
         String query = "INSERT INTO reports (comment_id, reporter, reason, article_id) VALUES ("
@@ -630,38 +555,32 @@ public class SQLConnection {
 
     public boolean checkBookmarked(String user, int articleID) {
         String query = "SELECT * FROM bookmarks WHERE user='" + user + "' AND article=" + articleID;
-        ResultSet resultSet = getDataQuery(query);
-        boolean bookmarked = false;
-
-        try {
-            bookmarked = resultSet.next();
+        try (ResultSet resultSet = getDataQuery(query)) {
+            return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return bookmarked;
+        return false;
     }
 
-    public List<Comment> getCommentWithArticleID(String articleID) {
+    public List<Comment> getCommentWithArticleID(int articleID) {
         List<Comment> commentList = new ArrayList<>();
         String query = "SELECT id, commenter, content FROM comments WHERE article_id=" + articleID + " ORDER BY id DESC";
-        ResultSet resultSet = getDataQuery(query);
-
-        try {
+        try (ResultSet resultSet = getDataQuery(query)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String commenter = resultSet.getString("commenter");
                 String content = resultSet.getString("content");
 
-                Comment comment = new Comment(id, commenter, content, Integer.parseInt(articleID));
+                Comment comment = new Comment(id, commenter, content, articleID);
                 commentList.add(comment);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return commentList;
     }
+
 
     public boolean addComment(String articleID, String commenter, String content) {
         String query = "INSERT INTO comments (article_id, commenter, content) VALUES ("
@@ -701,17 +620,15 @@ public class SQLConnection {
 
     public boolean removeComment(int id) {
         String commenterQuery = "SELECT commenter, content, article_id FROM comments WHERE id = " + id;
-        ResultSet rs = getDataQuery(commenterQuery);
-        String commenter, commentContent;
-        int articleID;
-
-        try {
+        try (ResultSet rs = getDataQuery(commenterQuery)) {
             if (rs.next()) {
-                commenter = rs.getString(1);
-                commentContent = rs.getString(2);
-                articleID = rs.getInt(3);
+                String commenter = rs.getString("commenter");
+                String commentContent = rs.getString("content");
+                int articleID = rs.getInt("article_id");
+
                 String query = "DELETE FROM comments WHERE id=" + id;
                 int rows = updateQuery(query);
+
                 if (rows > 0 && MainActivity.loggedInUser.getUsername().equals("admin")) {
                     String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, commentContent) VALUES ('" +
                             commenter + "', 'REPORT_COMMENT', 'admin', " + articleID + ", '" + commentContent + "')";
@@ -719,6 +636,7 @@ public class SQLConnection {
 
                     return true;
                 }
+
                 return rows > 0;
             }
         } catch (SQLException e) {
@@ -728,19 +646,17 @@ public class SQLConnection {
         return false;
     }
 
-    public boolean checkLiked(String user, String articleID) {
+    public boolean checkLiked(String user, int articleID) {
         String query = "SELECT * FROM article_likes WHERE user='" + user + "' AND article=" + articleID;
-        ResultSet resultSet = getDataQuery(query);
-        boolean liked = false;
-
-        try {
-            liked = resultSet.next();
+        try (ResultSet resultSet = getDataQuery(query)) {
+            return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return liked;
+        return false;
     }
+
 
     public boolean addLike(String user, int articleID) {
         String query = "INSERT INTO article_likes (user, article) VALUES ('" + user + "', " + articleID + ")";
@@ -789,9 +705,7 @@ public class SQLConnection {
                 "LEFT JOIN comments c ON r.comment_id = c.id " +
                 "WHERE r.comment_id IS NOT NULL";
 
-        ResultSet resultSet = getDataQuery(selectQuery);
-
-        try {
+        try (ResultSet resultSet = getDataQuery(selectQuery)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String reporter = resultSet.getString("reporter");
@@ -810,7 +724,6 @@ public class SQLConnection {
         return reportList;
     }
 
-
     public List<Report> getAllArticleReports() {
         List<Report> reportList = new ArrayList<>();
         String selectQuery = "SELECT r.id, r.reporter, r.article_id, a.dish_name, r.comment_id, r.reason " +
@@ -818,9 +731,7 @@ public class SQLConnection {
                 "LEFT JOIN articles a ON r.article_id = a.id " +
                 "WHERE r.comment_id IS NULL";
 
-        ResultSet resultSet = getDataQuery(selectQuery);
-
-        try {
+        try (ResultSet resultSet = getDataQuery(selectQuery)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String reporter = resultSet.getString("reporter");
@@ -841,15 +752,12 @@ public class SQLConnection {
 
     public int getArticleIDWithReportID(int reportID) {
         int articleID = -1;
-
         String selectQuery = "SELECT articles.id AS article_id " +
                 "FROM reports " +
                 "INNER JOIN articles ON reports.article_id = articles.id " +
                 "WHERE reports.id = " + reportID;
 
-        ResultSet resultSet = getDataQuery(selectQuery);
-
-        try {
+        try (ResultSet resultSet = getDataQuery(selectQuery)) {
             if (resultSet.next()) {
                 articleID = resultSet.getInt("article_id");
             }
@@ -859,6 +767,7 @@ public class SQLConnection {
 
         return articleID;
     }
+
 
     public boolean removeReport(int reportID) {
         String query = "DELETE FROM reports WHERE id=" + reportID;
@@ -892,6 +801,7 @@ public class SQLConnection {
                     return rows > 0;
                 }
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -925,6 +835,7 @@ public class SQLConnection {
             if (resultSet.next()) {
                 numRecipes = resultSet.getInt(1);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -936,6 +847,7 @@ public class SQLConnection {
             if (resultSet.next()) {
                 numFollowers = resultSet.getInt(1);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -947,6 +859,7 @@ public class SQLConnection {
             if (resultSet.next()) {
                 numLikes = resultSet.getInt(1);
             }
+            resultSet.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -960,6 +873,7 @@ public class SQLConnection {
 
         String query = "SELECT id, user, type, action_by, article_id, comment_id, created_time, commentContent, articleName " +
                 "FROM notifications WHERE user='" + username + "' ORDER BY created_time DESC";
+
         try (ResultSet rs = getDataQuery(query)) {
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -976,12 +890,13 @@ public class SQLConnection {
                 InAppNotification notification = new InAppNotification(id, user, type, actionBy, articleID, commentID, createdTime, commentContent, articleName);
                 notificationList.add(notification);
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
         return notificationList;
     }
+
 
 
     public boolean removeNotification(int id) {

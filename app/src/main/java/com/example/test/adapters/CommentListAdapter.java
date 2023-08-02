@@ -3,6 +3,7 @@ package com.example.test.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,7 +65,9 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
 
         AtomicBoolean checkAvatar = new AtomicBoolean(false);
         AtomicReference<String> url = new AtomicReference<>();
+        AtomicReference<String> commenterName = new AtomicReference<>();
         MainActivity.runTask(() -> {
+            commenterName.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getFullname());
             checkAvatar.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL().equals(""));
             url.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL());
         }, () -> {
@@ -73,8 +76,8 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
             } else {
                 Glide.with(context).load(url.get()).into(holder.comment_avatar);
             }
+            holder.commenter.setText(commenterName.get());
         }, null);
-
 
         int curPos = position;
         if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals("admin")) {
@@ -151,38 +154,63 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
 
 
         TextView report = itemView.findViewById(R.id.report_btn);
-        report.setOnClickListener(new View.OnClickListener() {
+        if (MainActivity.loggedInUser == null) {
+            report.setVisibility(View.GONE);
+        } else {
+            report.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (MainActivity.loggedInUser == null) {
+                        Toast.makeText(context, "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
+                        Navigation.findNavController(view).navigate(R.id.navigation_login);
+                        return;
+                    }
+
+                    final EditText reasonEditText = new EditText(context);
+                    reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                    reasonEditText.setHint("Lí do");
+                    AlertDialog alertDialog = new AlertDialog.Builder(context)
+                            .setTitle("Báo cáo bình luận")
+                            .setMessage("Vấn đề của bình luận này:")
+                            .setView(reasonEditText)
+                            .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Your positive button click logic
+                                    MainActivity.runTask(() -> {
+                                        MainActivity.sqlConnection.reportComment(comment.getId(), MainActivity.loggedInUser.getUsername(), reasonEditText.getText().toString(), comment.getArticleID());
+                                    });
+                                }
+                            })
+                            .setNegativeButton("Huỷ", null)
+                            .show();
+
+                    Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                    Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+
+                    positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                    negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                }
+            });
+        }
+        comment_avatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(context, "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).navigate(R.id.navigation_login);
-                    return;
-                }
-
-                final EditText reasonEditText = new EditText(context);
-                reasonEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                reasonEditText.setHint("Lí do");
-                AlertDialog alertDialog = new AlertDialog.Builder(context)
-                        .setTitle("Báo cáo bình luận")
-                        .setMessage("Vấn đề của bình luận này:")
-                        .setView(reasonEditText)
-                        .setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Your positive button click logic
-                            }
-                        })
-                        .setNegativeButton("Huỷ", null)
-                        .show();
-
-                Button positiveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-                Button negativeButton = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
-
-                positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
-                negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                Bundle args = new Bundle();
+                args.putString("username", comment.getCommenter());
+                Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
             }
         });
+
+        commenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle args = new Bundle();
+                args.putString("username", comment.getCommenter());
+                Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
+            }
+        });
+
 
     }
 }

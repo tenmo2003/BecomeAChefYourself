@@ -1,6 +1,7 @@
 package com.example.test.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -70,6 +71,8 @@ public class CreateStep4Fragment extends Fragment {
                             }, () -> {
                                 if (result.get()) {
                                     Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(view).navigate(R.id.navigation_home);
+
                                 } else {
                                     Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                                 }
@@ -77,13 +80,13 @@ public class CreateStep4Fragment extends Fragment {
                         } else {
                             if (result.get()) {
                                 Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
                                 Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }, MainActivity.progressDialog);
+                    }, new ProgressDialog(getActivity()));
 
-                    Navigation.findNavController(view).navigate(R.id.navigation_home);
 
                 } else {
                     AtomicReference<String> imageURL = new AtomicReference<>(ShareFragment.imageURL);
@@ -93,28 +96,29 @@ public class CreateStep4Fragment extends Fragment {
                             imageURL.set("https://tenmo2003.000webhostapp.com/article_" + MainActivity.loggedInUser.getUsername() + (MainActivity.sqlConnection.getTotalArticleCount(MainActivity.loggedInUser.getUsername()) + 1) + "_" + new Random().nextInt() + ".jpg");
                         }
                          result.set(MainActivity.sqlConnection.editArticle(ShareFragment.articleID, ShareFragment.dishName, MainActivity.loggedInUser.getUsername(), ShareFragment.mealChoice, ShareFragment.serveOrderChoice, ShareFragment.typeChoice, ShareFragment.recipe, ShareFragment.ingredients, ShareFragment.timeToMake, imageURL.get()));
-                    });
-
-
-                    if (ShareFragment.imageChanged) {
-                        String finalImageURL = imageURL.get();
-                        MainActivity.runTask(() -> {
-                            ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
-                        }, () -> {
+                    }, () -> {
+                        if (ShareFragment.imageChanged) {
+                            String finalImageURL = imageURL.get();
+                            MainActivity.runTask(() -> {
+                                ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
+                            }, () -> {
+                                if (result.get()) {
+                                    Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                                    Navigation.findNavController(view).navigate(R.id.navigation_home);
+                                } else {
+                                    Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
+                                }
+                            }, MainActivity.progressDialog);
+                        } else {
                             if (result.get()) {
                                 Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                                Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
                                 Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
                             }
-                        }, MainActivity.progressDialog);
-                    } else {
-                        if (result.get()) {
-                            Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    Navigation.findNavController(view).navigate(R.id.navigation_home);
+                    }, new ProgressDialog(getActivity()));
+
                 }
             }
         });

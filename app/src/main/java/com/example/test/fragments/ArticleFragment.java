@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
@@ -78,6 +79,8 @@ public class ArticleFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        CoordinatorLayout parent = view.findViewById(R.id.parent);
+        parent.setVisibility(View.INVISIBLE);
 
         TextView title = view.findViewById(R.id.title_in_article);
         TextView recipeContentTextView = view.findViewById(R.id.recipe_text);
@@ -230,7 +233,7 @@ public class ArticleFragment extends Fragment {
                     }
 
                     MainActivity.runTask(() -> {
-                        isLike[0] = MainActivity.sqlConnection.checkLiked(MainActivity.loggedInUser.getUsername(), String.valueOf(articleID.get()));
+                        isLike[0] = MainActivity.sqlConnection.checkLiked(MainActivity.loggedInUser.getUsername(), articleID.get());
                     }, () -> {
                         if (isLike[0]) {
                             reactBtn.setImageResource(R.drawable.reacted);
@@ -275,7 +278,7 @@ public class ArticleFragment extends Fragment {
                 MainActivity.runTask(() -> {
                     followCount.set(MainActivity.sqlConnection.getTotalFollowCount(author.get().getUsername()) + " followers");
                     articleCount.set(MainActivity.sqlConnection.getTotalArticleCount(author.get().getUsername()) + " recipes");
-                    commentList = MainActivity.sqlConnection.getCommentWithArticleID(String.valueOf(articleID.get()));
+                    commentList = MainActivity.sqlConnection.getCommentWithArticleID(articleID.get());
                 }, () -> {
                     authorFollowers.setText(followCount.get());
                     authorRecipes.setText(articleCount.get());
@@ -475,6 +478,7 @@ public class ArticleFragment extends Fragment {
                     }
                 });
             }, null);
+            parent.setVisibility(View.VISIBLE);
             }, MainActivity.progressDialog);
 
 

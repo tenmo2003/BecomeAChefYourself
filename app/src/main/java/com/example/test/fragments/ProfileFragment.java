@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -53,6 +54,7 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     public User profileUser;
     private List<Integer> stats;
 
+    private boolean notFollowing;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_user, container, false);
@@ -64,6 +66,8 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        LinearLayout parent = view.findViewById(R.id.parent);
+        parent.setVisibility(View.INVISIBLE);
 
         Bundle args = getArguments();
         MainActivity.runTask(() -> {
@@ -74,6 +78,10 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                 //reload profile if change
                 profileUser = MainActivity.sqlConnection.getUserWithUsername(MainActivity.loggedInUser.getUsername());
             }
+
+            stats = MainActivity.sqlConnection.getUserProfileStats(profileUser.getUsername());
+            notFollowing = (MainActivity.loggedInUser == null || !MainActivity.sqlConnection.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+
         }, () -> {
             if (profileUser != null && MainActivity.loggedInUser != null && profileUser.getUsername().equals(MainActivity.loggedInUser.getUsername())) {
                 MainActivity.navView.setItemActiveIndex(3);
@@ -111,14 +119,10 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
             TextView followerCountTv = view.findViewById(R.id.follower_count);
             TextView likeCountTv = view.findViewById(R.id.likes_count);
 
-            MainActivity.runTask(() -> {
-                stats = MainActivity.sqlConnection.getUserProfileStats(profileUser.getUsername());
-            }, () -> {
-                postCountTv.setText(String.valueOf(stats.get(0)));
-                followerCountTv.setText(String.valueOf(stats.get(1)));
-                likeCountTv.setText(String.valueOf(stats.get(2)));
-            }, null);
 
+            postCountTv.setText(String.valueOf(stats.get(0)));
+            followerCountTv.setText(String.valueOf(stats.get(1)));
+            likeCountTv.setText(String.valueOf(stats.get(2)));
 
 
             usernameTv.setText(profileUser.getUsername());
@@ -131,35 +135,31 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
             } else {
                 popupMenu.setVisibility(View.INVISIBLE);
                 followBtn.setVisibility(View.VISIBLE);
-                AtomicBoolean notFollowing = new AtomicBoolean(false);
-                MainActivity.runTask(() -> {
-                    notFollowing.set(MainActivity.loggedInUser == null || !MainActivity.sqlConnection.isFollowing(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
-                }, () -> {
-                    if (notFollowing.get()) {
-                        View follow_frame = view.findViewById(R.id.follow_frame);
-                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
-                        TextView follow_text = view.findViewById(R.id.follow_text);
-                        follow_text.setText("Theo dõi");
-                    } else {
-                        View follow_frame = view.findViewById(R.id.follow_frame);
-                        follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
-                        TextView follow_text = view.findViewById(R.id.follow_text);
-                        follow_text.setText("Đang theo dõi");
-                    }
 
-                    followBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (MainActivity.loggedInUser == null) {
-                                Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
-                                Navigation.findNavController(view).navigate(R.id.navigation_login);
-                                return;
-                            }
+                if (notFollowing) {
+                    View follow_frame = view.findViewById(R.id.follow_frame);
+                    follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.follow_frame, null));
+                    TextView follow_text = view.findViewById(R.id.follow_text);
+                    follow_text.setText("Theo dõi");
+                } else {
+                    View follow_frame = view.findViewById(R.id.follow_frame);
+                    follow_frame.setBackground(ResourcesCompat.getDrawable(getResources(), R.drawable.following_frame, null));
+                    TextView follow_text = view.findViewById(R.id.follow_text);
+                    follow_text.setText("Đang theo dõi");
+                }
 
-                            if (notFollowing.get()) {
-                                AtomicBoolean result = new AtomicBoolean(false);
-                                MainActivity.runTask(() -> {
-                                    result.set(MainActivity.sqlConnection.addFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+                followBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (MainActivity.loggedInUser == null) {
+                            Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
+                            Navigation.findNavController(view).navigate(R.id.navigation_login);
+                            return;
+                        }
+                        if (notFollowing) {
+                            AtomicBoolean result = new AtomicBoolean(false);
+                            MainActivity.runTask(() -> {
+                                result.set(MainActivity.sqlConnection.addFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
                                 }, () -> {
                                     if (result.get()) {
                                         View follow_frame = view.findViewById(R.id.follow_frame);
@@ -167,14 +167,14 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                                         TextView follow_text = view.findViewById(R.id.follow_text);
                                         follow_text.setText("Đang theo dõi");
                                         followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) + 1));
-                                        notFollowing.set(!notFollowing.get());
+                                        notFollowing = !notFollowing;
                                     }
                                 }, MainActivity.progressDialog);
 
-                            } else {
-                                AtomicBoolean result = new AtomicBoolean(false);
-                                MainActivity.runTask(() -> {
-                                    result.set(MainActivity.sqlConnection.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
+                        } else {
+                            AtomicBoolean result = new AtomicBoolean(false);
+                            MainActivity.runTask(() -> {
+                                result.set(MainActivity.sqlConnection.removeFollow(MainActivity.loggedInUser.getUsername(), profileUser.getUsername()));
                                 }, () -> {
                                     if (result.get()) {
                                         View follow_frame = view.findViewById(R.id.follow_frame);
@@ -182,14 +182,11 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                                         TextView follow_text = view.findViewById(R.id.follow_text);
                                         follow_text.setText("Theo dõi");
                                         followerCountTv.setText(String.valueOf(Integer.parseInt(followerCountTv.getText().toString()) - 1));
-                                        notFollowing.set(!notFollowing.get());
-                                    }
-                                }, MainActivity.progressDialog);
-                            }
+                                        notFollowing = !notFollowing;
+                                    }}, MainActivity.progressDialog);
                         }
-                    });
-                }, null);
-
+                    }
+                });
             }
             viewPager2 = fragmentView.findViewById(R.id.view_pager);
             tabLayout = fragmentView.findViewById(R.id.tabLayout);
@@ -223,6 +220,7 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                     tab.setIcon(R.drawable.gray_bookmark_border_24);
                 }
             }).attach();
+            parent.setVisibility(View.VISIBLE);
         }, new ProgressDialog(getActivity()));
     }
 

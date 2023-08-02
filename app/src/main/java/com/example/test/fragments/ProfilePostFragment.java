@@ -18,6 +18,7 @@ import com.example.test.components.Article;
 import com.example.test.components.User;
 import com.example.test.utils.DatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfilePostFragment extends Fragment {
@@ -48,12 +49,22 @@ public class ProfilePostFragment extends Fragment {
         RecipeListAdapter adapter = new RecipeListAdapter();
 
         MainActivity.runTask(() -> {
-            articleList = MainActivity.sqlConnection.getArticlesFromUser(profileUser.getUsername());
+            articleList = getProfilePost();
         }, () -> {
             adapter.setArticleList(articleList);
             adapter.setContext(getActivity());
             userRecipeList.setAdapter(adapter);
         }, MainActivity.progressDialog);
 
+    }
+
+    private List<Article> getProfilePost() {
+        List<Article> tmp = new ArrayList<>();
+        for (Article article : MainActivity.articleList) {
+            if (article.getPublisher().equals(profileUser.getUsername())) {
+                tmp.add(article);
+            }
+        }
+        return tmp;
     }
 }

@@ -3,6 +3,7 @@ package com.example.test.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {
 
@@ -68,7 +70,7 @@ public class HomeFragment extends Fragment {
     TimerTask timerTask;
     Handler timerHandler = new Handler();
     int position = Integer.MAX_VALUE / 2;
-    List<Article> articlesList, recommendRecipeList;
+    List<Article> recommendRecipeList, randomizedRecipesList;
 
     View view = null;
 
@@ -116,10 +118,10 @@ public class HomeFragment extends Fragment {
             snapHelper.attachToRecyclerView(recommendRecipeView);
 
             //Sort button
-            sortButtons.put("default_sort", view.findViewById(R.id.default_sort));
-            sortButtons.put("most_follow", view.findViewById(R.id.most_follow));
-            sortButtons.put("most_react", view.findViewById(R.id.most_react));
             sortButtons.put("most_recent", view.findViewById(R.id.most_recent));
+            sortButtons.put("most_react", view.findViewById(R.id.most_react));
+            sortButtons.put("most_follow", view.findViewById(R.id.most_follow));
+            sortButtons.put("default_sort", view.findViewById(R.id.default_sort));
 
             //Search bar
             searchView = view.findViewById(R.id.search_view);
@@ -183,11 +185,14 @@ public class HomeFragment extends Fragment {
 
     private void loadView() {
         MainActivity.runTask(() -> {
-            articlesList = MainActivity.sqlConnection.getAllArticles();
-            Collections.shuffle(articlesList);
-            Log.i("LOAD", "DONE LOADING ARTICLES");
+            MainActivity.articleList = MainActivity.sqlConnection.getAllArticles();
+
         }, () -> {
-            recommendRecipeList = articlesList.subList(0, 10);
+            randomizedRecipesList = new ArrayList<>();
+            randomizedRecipesList.addAll(MainActivity.articleList);
+            Collections.shuffle(randomizedRecipesList);
+
+            recommendRecipeList = randomizedRecipesList.subList(0, 10);
             recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
             recommendRecipeAdapter.setContext(getActivity());
 
@@ -195,9 +200,8 @@ public class HomeFragment extends Fragment {
             recommendRecipeView.scrollToPosition(position);
             recommendRecipeView.smoothScrollBy(200, 0);
 
-            Collections.shuffle(articlesList);
 
-            recipeListAdapter.setArticleList(articlesList);
+            recipeListAdapter.setArticleList(MainActivity.articleList);
             recipeListAdapter.setContext(getActivity());
             recipeListView.setAdapter(recipeListAdapter);
 
@@ -226,8 +230,8 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public boolean onQueryTextChange(String s) {
-                    if (s.equals("") && recipeListAdapter.getArticleList().size() != articlesList.size()) {
-                        recipeListAdapter.setArticleList(articlesList);
+                    if (s.equals("") && recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                        recipeListAdapter.setArticleList(MainActivity.articleList);
                     }
                     return true;
                 }
@@ -296,8 +300,8 @@ public class HomeFragment extends Fragment {
                     serveOrderClassFilter.clearCheck();
 //                    typeFilter.clearCheck();
                     typeChoice.setSelection(0);
-                    if (recipeListAdapter.getArticleList().size() != articlesList.size()) {
-                        recipeListAdapter.setArticleList(articlesList);
+                    if (recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                        recipeListAdapter.setArticleList(MainActivity.articleList);
                     }
                 }
             });
@@ -312,7 +316,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             });
-        }, MainActivity.progressDialog);
+        }, new ProgressDialog(getActivity()));
     }
 
     @Override
@@ -369,24 +373,27 @@ public class HomeFragment extends Fragment {
     }
 
     private void searchArticle(String text) {
-        List<Article> filteredList = new ArrayList<>();
-        for (Article article: articlesList) {
+        text = text.toLowerCase();
+        text = Normalizer.normalize(text, Normalizer.Form.NFD);
+        text = text.replaceAll("[^\\p{ASCII}]", "");
 
-            String dish_name = article.getDishName();
-            //Remove accents from string
-            dish_name = dish_name.toLowerCase();
-            dish_name = Normalizer.normalize(dish_name, Normalizer.Form.NFD);
-            dish_name = dish_name.replaceAll("[^\\p{ASCII}]", "");
-            text = text.toLowerCase();
-            text = Normalizer.normalize(text, Normalizer.Form.NFD);
-            text = text.replaceAll("[^\\p{ASCII}]", "");
+        String finalText = text;
+        List<Article> filteredList = MainActivity.articleList.stream()
+                .filter(article -> {
+                    String publisher = article.getPublisher().toLowerCase();
+                    String ingredients = article.getIngredients().toLowerCase();
+                    String dishName = article.getDishName().toLowerCase();
 
-            if (dish_name.contains(text)) {
-                filteredList.add(article);
-            }
-        }
+                    return dishName.contains(finalText)
+                            || publisher.contains(finalText)
+                            || Arrays.stream(finalText.split(",\\s*"))
+                            .anyMatch(searchIngredient -> ingredients.contains(searchIngredient.trim()));
+                })
+                .collect(Collectors.toList());
+
         recipeListAdapter.setArticleList(filteredList);
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     public void setSortButtonBehavior(){
@@ -405,40 +412,43 @@ public class HomeFragment extends Fragment {
                         if (v == sortButtons.get("default_sort")) {
                             MainActivity.runTask(() -> {
                             }, () -> {
-                                recipeListAdapter.setArticleList(articlesList);
+                                Collections.shuffle(randomizedRecipesList);
+                                recipeListAdapter.setArticleList(randomizedRecipesList);
                             }, MainActivity.progressDialog);
                         } else if (v == sortButtons.get("most_follow")) {
                             recipeListAdapter.sortByFollow();
                         } else if (v == sortButtons.get("most_react")) {
                             recipeListAdapter.sortByReact();
                         } else {
-                            recipeListAdapter.sortByPublishedTime();
+                            MainActivity.runTask(() -> {}, () -> {
+//                                recipeListAdapter.sortByPublishedTime();
+                                recipeListAdapter.setArticleList(MainActivity.articleList);
+                            }, MainActivity.progressDialog);
                         }
                     }
                     return true;
                 }
             });
         }
-        Objects.requireNonNull(sortButtons.get("default_sort")).getBackground()
+        Objects.requireNonNull(sortButtons.get("most_recent")).getBackground()
                 .setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
     }
 
     private void filterArticle(List<String> filterList) {
         // No filter has passed
         if (filterList.get(0).equals("") && filterList.get(1).equals("") && filterList.get(2).equals("")) {
-            if (recipeListAdapter.getArticleList().size() != articlesList.size()) {
-                recipeListAdapter.setArticleList(articlesList);
+            if (recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                for (TextView sortButton: sortButtons.values()) {
+                    sortButton.getBackground().clearColorFilter();
+                }
+                Objects.requireNonNull(sortButtons.get("most_recent")).getBackground().
+                        setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
+                recipeListAdapter.setArticleList(MainActivity.articleList);
             }
             return;
         }
 
         // Reset data when re-filter
-        for (TextView sortButton: sortButtons.values()) {
-            sortButton.getBackground().clearColorFilter();
-        }
-        Objects.requireNonNull(sortButtons.get("default_sort")).getBackground().
-                setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
-        recipeListAdapter.setArticleList(articlesList);
 
         List<Article> filteredArticle = new ArrayList<>();
         for (Article article: recipeListAdapter.getArticleList()) {

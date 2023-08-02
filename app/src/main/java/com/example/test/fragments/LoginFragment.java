@@ -1,5 +1,6 @@
 package com.example.test.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,7 +84,7 @@ public class LoginFragment extends Fragment {
                     } else {
                         Toast.makeText(getActivity(), "Đăng nhập thất bại! Người dùng đã bị cấm", Toast.LENGTH_SHORT).show();
                     }
-                }, MainActivity.progressDialog);
+                }, new ProgressDialog(getActivity()));
             }
         });
 
@@ -100,38 +101,6 @@ public class LoginFragment extends Fragment {
                 Navigation.findNavController(view).navigate(R.id.navigation_forget_password);
             }
         });
-
-//        Button test = view.findViewById(R.id.test_button);
-//        TextView textView = view.findViewById(R.id.database_test);
-//        test.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (MainActivity.sqlConnection != null) {
-//                    AtomicReference<ResultSet> rsRef = new AtomicReference<>();
-//                    Runner.runTask(() -> {
-//                        ResultSet rs = MainActivity.sqlConnection.getDataQuery("SELECT * FROM users");
-//                        rsRef.set(rs);
-//                    }, () -> {
-//                        ResultSet rs = rsRef.get();
-//                        if (rs != null) {
-//                            try {
-//                                while (rs.next()) {
-//                                    textView.setText(rs.getString(1));
-//                                }
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                try {
-//                                    rs.close();
-//                                } catch (SQLException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                    }, getActivity());
-//                }
-//            }
-//        });
 
     }
 

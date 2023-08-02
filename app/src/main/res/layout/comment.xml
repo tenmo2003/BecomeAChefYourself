@@ -38,7 +38,7 @@
                 android:id="@+id/commenter"
                 android:textSize="18sp"
                 android:text="nguoibinhluan"
-                android:layout_marginLeft="3dp">
+                android:layout_marginLeft="5dp">
             </TextView>
         </LinearLayout>
 
@@ -48,7 +48,7 @@
             android:maxWidth="300dp"
             android:id="@+id/comment_content"
             android:inputType="textMultiLine"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="25dp"
             android:text="mon an nay qua ngon">
         </TextView>
     </LinearLayout>

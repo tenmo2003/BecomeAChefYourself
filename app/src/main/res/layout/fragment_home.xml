@@ -90,8 +90,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/default_sort"
-                        android:text="@string/default_sort"
+                        android:id="@+id/most_recent"
+                        android:text="@string/most_recent"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:paddingHorizontal="12dp"
@@ -103,8 +103,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/most_follow"
-                        android:text="@string/most_follow"
+                        android:id="@+id/default_sort"
+                        android:text="@string/default_sort"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:paddingHorizontal="12dp"
@@ -129,8 +129,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/most_recent"
-                        android:text="@string/most_recent"
+                        android:id="@+id/most_follow"
+                        android:text="@string/most_follow"
                         android:textColor="@color/black"
                         android:gravity="center"
                         android:paddingHorizontal="12dp"
@@ -138,6 +138,10 @@
                         android:layout_margin="3dp"
                         android:background="@drawable/sort_button_shape">
                     </TextView>
+
+
+
+
                 </LinearLayout>
             </HorizontalScrollView>
 

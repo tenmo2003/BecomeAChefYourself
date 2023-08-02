@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/parent"
     >
 
     <ImageView
@@ -68,14 +69,12 @@
                             android:textColor="@color/_61_8k_color"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/gordon_ramsay_string"
                             />
 
                         <TextView
                             android:id="@+id/user_username"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="\@user full name"
                             android:textSize="15sp"/>
                         <!--                    android:cursorVisible="false"-->
                         <!--                    android:focusable="false"-->
@@ -109,7 +108,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="25dp"
-                    android:text="bio"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:layout_marginLeft="15dp"/>
@@ -135,7 +133,6 @@
                         android:textColor="@color/_61_8k_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_61_8k_string"
                         android:gravity="center"
                         />
 
@@ -161,7 +158,6 @@
                         android:textColor="@color/_61_8k_color"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_10_5m_string"
                         android:gravity="center"
                         />
 
@@ -187,7 +183,6 @@
                         android:id="@+id/likes_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/_100k_string"
                         android:textColor="@color/_61_8k_color"
                         android:textSize="20sp"
                         android:gravity="center"

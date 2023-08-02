@@ -16,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.test.R;
+import com.example.test.components.Article;
 import com.example.test.components.User;
 import com.example.test.fragments.AdminFragment;
 import com.example.test.fragments.HomeFragment;
@@ -37,6 +38,7 @@ import androidx.navigation.Navigation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public static User loggedInUser = null;
     public static SmoothBottomBar navView;
     NavController navController;
+    public static List<Article> articleList;
 
     private void setupSmoothBottomMenu() {
         PopupMenu popupMenu = new PopupMenu(this, null);
@@ -79,12 +82,21 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
 
+        ProgressDialog con = new ProgressDialog(this);
+        con.setMessage("Đang kết nối");
+        con.setCancelable(false);
+
         runTask(() -> {
             try {
                 //Background work here
-                String url = "jdbc:mysql://byyrm3ewrta8hnhxsoxm-mysql.services.clever-cloud.com:3306/byyrm3ewrta8hnhxsoxm";
-                String username = "urv00k6u73pbdhlv";
-                String password = "YsXWXThVUsLfNbaKL1aP";
+//                String url = "jdbc:mysql://byyrm3ewrta8hnhxsoxm-mysql.services.clever-cloud.com:3306/byyrm3ewrta8hnhxsoxm";
+//                String url = "jdbc:mysql://46.252.181.32:3306/byyrm3ewrta8hnhxsoxm";
+//                String username = "urv00k6u73pbdhlv";
+//                String password = "YsXWXThVUsLfNbaKL1aP";
+
+                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6636224";
+                String username = "sql6636224";
+                String password = "2WlVgwUzRt";
 
                 sqlConnection = new SQLConnection(url, username, password);
 
@@ -161,12 +173,15 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             });
-        }, null);
+        }, con);
     }
 
     public static void runTask(Runnable background, Runnable result, ProgressDialog progressDialog) {
-        if (progressDialog != null)
+        if (progressDialog != null) {
+            progressDialog.setMessage("Đang tải");
+            progressDialog.setCancelable(false);
             progressDialog.show();
+        }
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());

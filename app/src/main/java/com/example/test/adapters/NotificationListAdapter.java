@@ -90,7 +90,7 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                     }
                 }).into(avatar);
             }
-        }, MainActivity.progressDialog);
+        }, null);
 
 
 

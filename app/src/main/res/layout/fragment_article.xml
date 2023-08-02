@@ -6,7 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".fragments.ArticleFragment">
+    tools:context=".fragments.ArticleFragment"
+    android:id="@+id/parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
