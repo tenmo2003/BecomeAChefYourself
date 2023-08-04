@@ -52,12 +52,14 @@ public class SignUpStep1Fragment extends Fragment {
                 SignUpFragment.fullname = usernameInput.getText().toString();
 
                 if (SignUpFragment.email.equals("") || SignUpFragment.username.equals("") || SignUpFragment.password.equals("") || SignUpFragment.reenter.equals("")) {
-                    Toast.makeText(getActivity(), "Hãy nhập đủ thông tin", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Hãy nhập đủ thông tin");
+                    MainActivity.toast.show();
                     return;
                 }
 
                 if (!SignUpFragment.reenter.equals(SignUpFragment.password)) {
-                    Toast.makeText(getActivity(), "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Mật khẩu không trùng khớp");
+                    MainActivity.toast.show();
                     return;
                 }
 
@@ -71,7 +73,8 @@ public class SignUpStep1Fragment extends Fragment {
                         }, null, null);
                         SignUpFragment.viewPager.setCurrentItem(SignUpFragment.viewPager.getCurrentItem() + 1, false);
                     } else {
-                        Toast.makeText(getActivity(), "Tên đăng nhập đã tồn tại! Vui lòng chọn tên đăng nhập khác", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Tên đăng nhập đã tồn tại! Vui lòng chọn tên đăng nhập khác");
+                        MainActivity.toast.show();
                     }
                 }, MainActivity.progressDialog);
             }

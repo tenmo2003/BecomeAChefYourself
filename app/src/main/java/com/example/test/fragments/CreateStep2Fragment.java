@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 
 public class CreateStep2Fragment extends Fragment {
 
@@ -37,7 +38,8 @@ public class CreateStep2Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (ShareFragment.serveOrderChoice == null) {
-                    Toast.makeText(getActivity(), "Vui lòng chọn một ô", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Vui lòng chọn một ô");
+                    MainActivity.toast.show();
 
                 } else {
 

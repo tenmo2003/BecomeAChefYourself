@@ -43,7 +43,8 @@ public class ForgetStep1Fragment extends Fragment {
                     ForgetPasswordFragment.forgotten = MainActivity.sqlConnection.getUserWithUsername(usernameInput.getText().toString());
                 }, () -> {
                     if (ForgetPasswordFragment.forgotten == null) {
-                        Toast.makeText(getActivity(), "Không tồn tại người dùng", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Không tồn tại người dùng");
+                        MainActivity.toast.show();
                         return;
                     }
 

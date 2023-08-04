@@ -81,7 +81,8 @@ public class ForgetStep2Fragment extends Fragment {
                 if (Integer.parseInt(codeInput.getText().toString()) == ForgetPasswordFragment.code) {
                     ForgetPasswordFragment.viewPager.setCurrentItem(ForgetPasswordFragment.viewPager.getCurrentItem() + 1, false);
                 } else {
-                    Toast.makeText(getActivity(), "Mã xác thực sai! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Mã xác thực sai! Vui lòng kiểm tra lại");
+                    MainActivity.toast.show();
                 }
             }
         });

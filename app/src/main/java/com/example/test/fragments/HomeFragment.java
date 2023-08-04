@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -434,6 +435,8 @@ public class HomeFragment extends Fragment {
                         if (v == sortButtons.get("default_sort")) {
                             MainActivity.runTask(() -> {
                             }, () -> {
+                                randomizedRecipesList = new ArrayList<>();
+                                randomizedRecipesList.addAll(recipeListAdapter.getArticleList());
                                 Collections.shuffle(randomizedRecipesList);
                                 recipeListAdapter.setArticleList(randomizedRecipesList);
                             }, MainActivity.progressDialog);
@@ -443,8 +446,8 @@ public class HomeFragment extends Fragment {
                             recipeListAdapter.sortByReact();
                         } else {
                             MainActivity.runTask(() -> {}, () -> {
-//                                recipeListAdapter.sortByPublishedTime();
-                                recipeListAdapter.setArticleList(MainActivity.articleList);
+                                recipeListAdapter.sortByPublishedTime();
+//                                recipeListAdapter.setArticleList(MainActivity.articleList);
                             }, MainActivity.progressDialog);
                         }
                     }
@@ -473,7 +476,7 @@ public class HomeFragment extends Fragment {
         // Reset data when re-filter
 
         List<Article> filteredArticle = new ArrayList<>();
-        for (Article article: recipeListAdapter.getArticleList()) {
+        for (Article article: MainActivity.articleList) {
             boolean matchMeal = article.getMeal().equals(filterList.get(0)) || filterList.get(0).equals("");
             boolean matchServeOrderClass = article.getServeOrderClass().equals(filterList.get(1)) || filterList.get(1).equals("");
             boolean matchType = article.getType().equals(filterList.get(2)) || filterList.get(2).equals("");
@@ -482,6 +485,11 @@ public class HomeFragment extends Fragment {
                 filteredArticle.add(article);
             }
         }
+        for (TextView sortButton: sortButtons.values()) {
+            sortButton.getBackground().clearColorFilter();
+        }
+        Objects.requireNonNull(sortButtons.get("most_recent")).getBackground().
+                setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
         recipeListAdapter.setArticleList(filteredArticle);
     }
 }

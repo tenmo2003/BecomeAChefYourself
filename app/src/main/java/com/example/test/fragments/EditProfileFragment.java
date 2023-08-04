@@ -135,12 +135,14 @@ public class EditProfileFragment extends Fragment {
                                     MainActivity.runTask(() -> {
                                         ImageController.uploadImage(imageURI, finalImageURL, getContext());
                                     }, () -> {
-                                        Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                                        MainActivity.toast.setText("Cập nhật thông tin thành công");
+                                        MainActivity.toast.show();
                                     }, MainActivity.progressDialog);
 
                                     MainActivity.loggedInUser.setAvatarURL(finalImageURL1);
                                 } else {
-                                    Toast.makeText(getContext(), "Cập nhật trang cá nhân thành công", Toast.LENGTH_SHORT).show();
+                                    MainActivity.toast.setText("Cập nhật trang cá nhân thành công");
+                                    MainActivity.toast.show();
                                 }
                             }
                         }, MainActivity.progressDialog);

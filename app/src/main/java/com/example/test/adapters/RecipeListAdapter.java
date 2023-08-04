@@ -253,7 +253,7 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 if (MainActivity.loggedInUser == null) {
-                    Toast.makeText(context, "Please login first", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Please login first");
                     return;
                 }
 

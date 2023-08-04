@@ -321,7 +321,8 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (MainActivity.loggedInUser == null) {
-                            Toast.makeText(getActivity(), "Please login first", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Please login first");
+                            MainActivity.toast.show();
                             return;
                         }
 
@@ -356,7 +357,8 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (MainActivity.loggedInUser == null) {
-                            Toast.makeText(getActivity(), "Vui lòng đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Vui lòng đăng nhập trước");
+                            MainActivity.toast.show();
                             InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                             return;
@@ -391,7 +393,8 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (MainActivity.loggedInUser == null) {
-                            Toast.makeText(getActivity(), "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Bạn cần đăng nhập trước");
+                            MainActivity.toast.show();
                             Navigation.findNavController(view).navigate(R.id.navigation_login);
                             return;
                         }
@@ -415,9 +418,11 @@ public class ArticleFragment extends Fragment {
                                             success.set(MainActivity.sqlConnection.reportArticle(articleID.get(), reporter, reason));
                                         }, () -> {
                                             if (success.get()) {
-                                                Toast.makeText(getActivity(), "Báo cáo của bạn đã được gửi để xem xét", Toast.LENGTH_SHORT).show();
+                                                MainActivity.toast.setText("Báo cáo của bạn đã được gửi để xem xét");
+                                                MainActivity.toast.show();
                                             } else {
-                                                Toast.makeText(getActivity(), "Gửi báo cáo thất bại", Toast.LENGTH_SHORT).show();
+                                                MainActivity.toast.setText("Gửi báo cáo thất bại");
+                                                MainActivity.toast.show();
                                             }
                                         }, MainActivity.progressDialog);
                                     }

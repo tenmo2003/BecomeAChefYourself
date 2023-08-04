@@ -152,7 +152,8 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
                     @Override
                     public void onClick(View view) {
                         if (MainActivity.loggedInUser == null) {
-                            Toast.makeText(getActivity(), "Vui lòng đăng nhập trước!", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Vui lòng đăng nhập trước!");
+                            MainActivity.toast.show();
                             Navigation.findNavController(view).navigate(R.id.navigation_login);
                             return;
                         }

@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 import com.example.test.adapters.IngredientListAdapter;
 import com.example.test.utils.ExpandedListView;
 
@@ -143,7 +144,8 @@ public class CreateStep3Fragment extends Fragment {
                 String ingredient = ingredientInput.getText().toString();
 
                 if (ingredient.equals("")) {
-                    Toast.makeText(getActivity(), "Xin hãy nhập nguyên liệu", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Xin hãy nhập nguyên liệu");
+                    MainActivity.toast.show();
                     return;
                 }
                 addItem(ingredient);
@@ -188,7 +190,7 @@ public class CreateStep3Fragment extends Fragment {
                 } else {
                     // One or more EditText fields are empty or null
                     // Handle the case where input is missing
-                    Toast.makeText(getActivity(), "Vui lòng điền hết các thông tin", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Vui lòng điền hết các thông tin");
 
                 }
             }

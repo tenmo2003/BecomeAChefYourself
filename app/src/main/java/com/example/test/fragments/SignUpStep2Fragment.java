@@ -86,14 +86,17 @@ public class SignUpStep2Fragment extends Fragment {
                         signUpResult.set(MainActivity.sqlConnection.signUpUser(SignUpFragment.email, SignUpFragment.username, SignUpFragment.password, SignUpFragment.fullname));
                     }, () -> {
                         if (signUpResult.get()) {
-                            Toast.makeText(getActivity(), "Đăng ký tài khoản thành công", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Đăng ký tài khoản thành công");
+                            MainActivity.toast.show();
                             Navigation.findNavController(view).navigate(R.id.navigation_login);
                         } else {
-                            Toast.makeText(getActivity(), "Đăng ký thất bại", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Đăng ký thất bại");
+                            MainActivity.toast.show();
                         }
                     }, MainActivity.progressDialog);
                 } else {
-                    Toast.makeText(getActivity(), "Mã xác thực sai! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Mã xác thực sai! Vui lòng kiểm tra lại");
+                    MainActivity.toast.show();
                 }
             }
         });

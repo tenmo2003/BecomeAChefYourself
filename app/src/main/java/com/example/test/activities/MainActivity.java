@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     public static User loggedInUser = null;
     public static SmoothBottomBar navView;
     NavController navController;
+    public static Toast toast;
     public static List<Article> articleList;
 
     private void setupSmoothBottomMenu() {
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        toast = Toast.makeText(this, null, Toast.LENGTH_SHORT);
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading");
         progressDialog.setCancelable(false);
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 //                String username = "urv00k6u73pbdhlv";
 //                String password = "YsXWXThVUsLfNbaKL1aP";
 
-                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6636224";
+                String url = "jdbc:mysql://sql6.freemysqlhosting.net:3306/sql6636224?useUnicode=yes&characterEncoding=UTF-8";
                 String username = "sql6636224";
                 String password = "2WlVgwUzRt";
 

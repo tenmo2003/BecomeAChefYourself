@@ -60,7 +60,8 @@ public class LoginFragment extends Fragment {
                 String password = passwordTv.getText().toString();
 
                 if (username.equals("") || password.equals("")) {
-                    Toast.makeText(getActivity(), "Hãy nhập đủ thông tin đăng nhập", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Hãy nhập đủ thông tin đăng nhập");
+                    MainActivity.toast.show();
                     return;
                 }
 
@@ -69,7 +70,8 @@ public class LoginFragment extends Fragment {
                     result.set(MainActivity.sqlConnection.userAuthentication(username, password));
                 }, () -> {
                     if (result.get() == 1) {
-                        Toast.makeText(getActivity(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Đăng nhập thành công!");
+                        MainActivity.toast.show();
 
                         // Save login status in preference file
                         SaveSharedPreference.setUserName(getContext(), usernameTv.getText().toString());
@@ -80,9 +82,11 @@ public class LoginFragment extends Fragment {
                             Navigation.findNavController(view).navigate(R.id.navigation_profile);
                         }
                     } else if (result.get() == 0) {
-                        Toast.makeText(getActivity(), "Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Đăng nhập thất bại! Hãy kiểm tra lại tên đăng nhập và mật khẩu");
+                        MainActivity.toast.show();
                     } else {
-                        Toast.makeText(getActivity(), "Đăng nhập thất bại! Người dùng đã bị cấm", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Đăng nhập thất bại! Người dùng đã bị cấm");
+                        MainActivity.toast.show();
                     }
                 }, new ProgressDialog(getActivity()));
             }

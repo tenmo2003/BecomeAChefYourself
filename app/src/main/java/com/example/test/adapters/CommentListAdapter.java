@@ -161,7 +161,8 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
                 @Override
                 public void onClick(View view) {
                     if (MainActivity.loggedInUser == null) {
-                        Toast.makeText(context, "Bạn cần đăng nhập trước", Toast.LENGTH_SHORT).show();
+                        MainActivity.toast.setText("Bạn cần đăng nhập trước");
+                        MainActivity.toast.show();
                         Navigation.findNavController(view).navigate(R.id.navigation_login);
                         return;
                     }

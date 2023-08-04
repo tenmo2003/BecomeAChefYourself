@@ -265,6 +265,7 @@ public class SQLConnection {
     public boolean addArticle(String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
         String insertArticleQuery = "INSERT INTO articles (dish_name, publisher, meal, serve_order_class, type, recipe, ingredients, time_to_make, image) VALUES ('" +
                 dishName + "', '" + publisher + "', '" + meal + "', '" + serve_order_class + "', '" + type + "', '" + recipe + "', '" + ingredients + "', '" + timeToMake + "', '" + imgURL + "')";
+        System.out.println(insertArticleQuery);
 
         int rowsAffected = updateQuery(insertArticleQuery);
 
@@ -304,6 +305,7 @@ public class SQLConnection {
 
     public boolean editArticle(int articleId, String dishName, String publisher, String meal, String serve_order_class, String type, String recipe, String ingredients, String timeToMake, String imgURL) {
         String updateQuery = "UPDATE articles SET dish_name='" + dishName + "', publisher='" + publisher + "', recipe='" + recipe + "', ingredients='" + ingredients + "', meal='" + meal + "', serve_order_class='" + serve_order_class + "', type='" + type + "', time_to_make='" + timeToMake + "', image='" + imgURL + "' WHERE id=" + articleId;
+        System.out.println(updateQuery);
         int rows = updateQuery(updateQuery);
 
         return rows > 0;

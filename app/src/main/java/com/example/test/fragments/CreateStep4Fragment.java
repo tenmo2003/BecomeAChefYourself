@@ -70,19 +70,23 @@ public class CreateStep4Fragment extends Fragment {
                                 ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
                             }, () -> {
                                 if (result.get()) {
-                                    Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                    MainActivity.toast.setText("Đăng bài thành công!");
+                                    MainActivity.toast.show();
                                     Navigation.findNavController(view).navigate(R.id.navigation_home);
 
                                 } else {
-                                    Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
+                                    MainActivity.toast.setText("Đăng bài thất bại!");
+                                    MainActivity.toast.show();
                                 }
                             }, MainActivity.progressDialog);
                         } else {
                             if (result.get()) {
-                                Toast.makeText(getActivity(), "Đăng bài thành công!", Toast.LENGTH_SHORT).show();
+                                MainActivity.toast.setText("Đăng bài thành công!");
+                                MainActivity.toast.show();
                                 Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
-                                Toast.makeText(getActivity(), "Đăng bài thất bại!", Toast.LENGTH_SHORT).show();
+                                MainActivity.toast.setText("Đăng bài thất bại!");
+                                MainActivity.toast.show();
                             }
                         }
                     }, new ProgressDialog(getActivity()));
@@ -103,18 +107,22 @@ public class CreateStep4Fragment extends Fragment {
                                 ImageController.uploadImage(ShareFragment.imageURI, finalImageURL.substring(finalImageURL.indexOf("article")), getContext());
                             }, () -> {
                                 if (result.get()) {
-                                    Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                                    MainActivity.toast.setText("Sửa bài thành công!");
+                                    MainActivity.toast.show();
                                     Navigation.findNavController(view).navigate(R.id.navigation_home);
                                 } else {
-                                    Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
+                                    MainActivity.toast.setText("Sửa bài thất bại!");
+                                    MainActivity.toast.show();
                                 }
                             }, MainActivity.progressDialog);
                         } else {
                             if (result.get()) {
-                                Toast.makeText(getActivity(), "Sửa bài thành công!", Toast.LENGTH_SHORT).show();
+                                MainActivity.toast.setText("Sửa bài thành công!");
+                                MainActivity.toast.show();
                                 Navigation.findNavController(view).navigate(R.id.navigation_home);
                             } else {
-                                Toast.makeText(getActivity(), "Sửa bài thất bại!", Toast.LENGTH_SHORT).show();
+                                MainActivity.toast.setText("Sửa bài thất bại!");
+                                MainActivity.toast.show();
                             }
                         }
                     }, new ProgressDialog(getActivity()));

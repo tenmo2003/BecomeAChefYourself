@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.test.R;
+import com.example.test.activities.MainActivity;
 
 public class CreateStep1Fragment extends Fragment {
 
@@ -34,7 +35,8 @@ public class CreateStep1Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (ShareFragment.mealChoice == null) {
-                    Toast.makeText(getActivity(), "Vui lòng chọn một ô", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Vui lòng chọn một ô");
+                    MainActivity.toast.show();
                 } else {
 
                     ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() + 1);
@@ -58,12 +60,12 @@ public class CreateStep1Fragment extends Fragment {
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground3.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground4.setBackgroundResource(R.drawable.make_corner);
-            } else if (ShareFragment.mealChoice.equals("Bữa sáng")) {
+            } else if (ShareFragment.mealChoice.equals("Bữa trưa")) {
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner_selected);
                 selectionBackground3.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground4.setBackgroundResource(R.drawable.make_corner);
-            } else if (ShareFragment.mealChoice.equals("Bữa sáng")) {
+            } else if (ShareFragment.mealChoice.equals("Bữa tối")) {
                 selectionBackground1.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground2.setBackgroundResource(R.drawable.make_corner);
                 selectionBackground3.setBackgroundResource(R.drawable.make_corner_selected);

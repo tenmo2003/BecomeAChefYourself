@@ -47,15 +47,18 @@ public class ForgetStep3Fragment extends Fragment {
                         result.set(MainActivity.sqlConnection.changePassword(ForgetPasswordFragment.forgotten.getUsername(), passwordInput.getText().toString()));
                     }, () -> {
                         if (result.get()) {
-                            Toast.makeText(getActivity(), "Đổi mật khẩu thành công!", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Đổi mật khẩu thành công!");
+                            MainActivity.toast.show();
                         } else {
-                            Toast.makeText(getActivity(), "Đổi mật khẩu thất bại!", Toast.LENGTH_SHORT).show();
+                            MainActivity.toast.setText("Đổi mật khẩu thất bại!");
+                            MainActivity.toast.show();
                         }
 
                     }, MainActivity.progressDialog);
                     Navigation.findNavController(view).navigate(R.id.navigation_login);
                 } else {
-                    Toast.makeText(getActivity(), "Mật khẩu không giống nhau! Vui lòng kiểm tra lại", Toast.LENGTH_SHORT).show();
+                    MainActivity.toast.setText("Mật khẩu không giống nhau! Vui lòng kiểm tra lại");
+                    MainActivity.toast.show();
                 }
             }
         });
