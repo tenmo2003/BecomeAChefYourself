@@ -1,7 +1,5 @@
 package com.example.test.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -9,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,7 +35,6 @@ import com.example.test.activities.MainActivity;
 import com.example.test.adapters.RecipeListAdapter;
 import com.example.test.adapters.RecommendRecipeAdapter;
 import com.example.test.components.Article;
-import com.example.test.utils.DatabaseHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.Normalizer;
@@ -50,7 +46,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class HomeFragment extends Fragment {
 
@@ -184,139 +180,145 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadView() {
-        MainActivity.runTask(() -> {
-            MainActivity.articleList = MainActivity.sqlConnection.getAllArticles();
+        AtomicBoolean serverChanged = new AtomicBoolean(false);
+//        MainActivity.runTask(() -> {
+//            serverChanged.set(MainActivity.articleList == null || MainActivity.sqlConnection.serverUpdated());
+//        }, () -> {
+//            if (serverChanged.get()) {
+                MainActivity.runTask(() -> {
+                    MainActivity.articleList = MainActivity.sqlConnection.getAllArticles();
+                }, () -> {
+                    randomizedRecipesList = new ArrayList<>();
+                    randomizedRecipesList.addAll(MainActivity.articleList);
+                    Collections.shuffle(randomizedRecipesList);
 
-        }, () -> {
-            randomizedRecipesList = new ArrayList<>();
-            randomizedRecipesList.addAll(MainActivity.articleList);
-            Collections.shuffle(randomizedRecipesList);
+                    recommendRecipeList = randomizedRecipesList.subList(0, 10);
+                    recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
+                    recommendRecipeAdapter.setContext(getActivity());
 
-            recommendRecipeList = randomizedRecipesList.subList(0, 10);
-            recommendRecipeAdapter.setRecommendRecipeList(recommendRecipeList);
-            recommendRecipeAdapter.setContext(getActivity());
-
-            recommendRecipeView.setAdapter(recommendRecipeAdapter);
-            recommendRecipeView.scrollToPosition(position);
-            recommendRecipeView.smoothScrollBy(200, 0);
-
-
-            recipeListAdapter.setArticleList(MainActivity.articleList);
-            recipeListAdapter.setContext(getActivity());
-            recipeListView.setAdapter(recipeListAdapter);
-
-            recommendRecipeView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                    super.onScrollStateChanged(recyclerView, newState);
-                    if (newState == 1) {
-                        stopAutoScroll();
-                    } else if (newState == 0) {
-                        position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
-                        autoScroll();
-                    }
-                }
-            });
-
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    searchArticle(s);
-                    searchView.clearFocus();
-                    InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    if (s.equals("") && recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
-                        recipeListAdapter.setArticleList(MainActivity.articleList);
-                    }
-                    return true;
-                }
-            });
+                    recommendRecipeView.setAdapter(recommendRecipeAdapter);
+                    recommendRecipeView.scrollToPosition(position);
+                    recommendRecipeView.smoothScrollBy(200, 0);
 
 
-            setSortButtonBehavior();
+                    recipeListAdapter.setArticleList(MainActivity.articleList);
+                    recipeListAdapter.setContext(getActivity());
+                    recipeListView.setAdapter(recipeListAdapter);
 
-            //Filter
-            Button filterButton = view.findViewById(R.id.filter_btn);
-            RadioGroup mealFilter = view.findViewById(R.id.meal_filter);
-            RadioGroup serveOrderClassFilter = view.findViewById(R.id.serve_order_class_filter);
+                    recommendRecipeView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == 1) {
+                                stopAutoScroll();
+                            } else if (newState == 0) {
+                                position = rcmLLayoutManager.findFirstCompletelyVisibleItemPosition();
+                                autoScroll();
+                            }
+                        }
+                    });
+
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String s) {
+                            searchArticle(s);
+                            searchView.clearFocus();
+                            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String s) {
+                            if (s.equals("") && recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                                recipeListAdapter.setArticleList(MainActivity.articleList);
+                            }
+                            return true;
+                        }
+                    });
+
+
+                    setSortButtonBehavior();
+
+                    //Filter
+                    Button filterButton = view.findViewById(R.id.filter_btn);
+                    RadioGroup mealFilter = view.findViewById(R.id.meal_filter);
+                    RadioGroup serveOrderClassFilter = view.findViewById(R.id.serve_order_class_filter);
 //            RadioGroup typeFilter = view.findViewById(R.id.type_filter);
-            LinearLayout filterField = view.findViewById(R.id.filter_field);
-            TextView applyFilter = view.findViewById(R.id.apply_filter);
-            TextView clearFilter = view.findViewById(R.id.clear_filter);
-            Spinner typeChoice = view.findViewById(R.id.typeSpinner);
+                    LinearLayout filterField = view.findViewById(R.id.filter_field);
+                    TextView applyFilter = view.findViewById(R.id.apply_filter);
+                    TextView clearFilter = view.findViewById(R.id.clear_filter);
+                    Spinner typeChoice = view.findViewById(R.id.typeSpinner);
 
-            List<String> types = new ArrayList<>(Arrays.asList("Chọn", "Món thịt", "Món hải sản", "Món chay", "Món canh", "Món rau", "Mì", "Bún", "Món cuốn", "Món xôi", "Món cơm", "Món bánh mặn", "Món bánh ngọt"));
+                    List<String> types = new ArrayList<>(Arrays.asList("Chọn", "Món thịt", "Món hải sản", "Món chay", "Món canh", "Món rau", "Mì", "Bún", "Món cuốn", "Món xôi", "Món cơm", "Món bánh mặn", "Món bánh ngọt"));
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, types);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, types);
 
-            typeChoice.setAdapter(adapter);
+                    typeChoice.setAdapter(adapter);
 
-            filterField.setVisibility(View.GONE);
+                    filterField.setVisibility(View.GONE);
 
-            applyFilter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    List<String> filterList = new ArrayList<>();
-                    HashMap<Integer, String> filterItems = new HashMap<>();
+                    applyFilter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            List<String> filterList = new ArrayList<>();
+                            HashMap<Integer, String> filterItems = new HashMap<>();
 
-                    filterItems.put(-1, "");
+                            filterItems.put(-1, "");
 
-                    filterItems.put(R.id.breakfast_item, "Bữa sáng");
-                    filterItems.put(R.id.lunch_item, "Bữa trưa");
-                    filterItems.put(R.id.dinner_item, "Bữa tối");
-                    filterItems.put(R.id.flexible_item, "Linh hoạt");
+                            filterItems.put(R.id.breakfast_item, "Bữa sáng");
+                            filterItems.put(R.id.lunch_item, "Bữa trưa");
+                            filterItems.put(R.id.dinner_item, "Bữa tối");
+                            filterItems.put(R.id.flexible_item, "Linh hoạt");
 
-                    filterItems.put(R.id.appetizer_item, "Món khai vị");
-                    filterItems.put(R.id.main_item, "Món chính");
-                    filterItems.put(R.id.dessert_item, "Món tráng miệng");
+                            filterItems.put(R.id.appetizer_item, "Món khai vị");
+                            filterItems.put(R.id.main_item, "Món chính");
+                            filterItems.put(R.id.dessert_item, "Món tráng miệng");
 
 //                    filterItems.put(R.id.meat_item, "Món thịt");
 //                    filterItems.put(R.id.seafood, "Món hải sản");
 //                    filterItems.put(R.id.vegetarian, "Món chay");
 //                    filterItems.put(R.id.soup, "Món canh");
 
-                    filterList.add(filterItems.get(mealFilter.getCheckedRadioButtonId()));
-                    filterList.add(filterItems.get(serveOrderClassFilter.getCheckedRadioButtonId()));
+                            filterList.add(filterItems.get(mealFilter.getCheckedRadioButtonId()));
+                            filterList.add(filterItems.get(serveOrderClassFilter.getCheckedRadioButtonId()));
 //                    filterList.add(filterItems.get(typeFilter.getCheckedRadioButtonId()));
-                    if (typeChoice.getSelectedItemPosition() == 0) {
-                        filterList.add("");
-                    } else {
-                        filterList.add((String) typeChoice.getSelectedItem());
-                    }
+                            if (typeChoice.getSelectedItemPosition() == 0) {
+                                filterList.add("");
+                            } else {
+                                filterList.add((String) typeChoice.getSelectedItem());
+                            }
 
-                    filterArticle(filterList);
-                }
-            });
+                            filterArticle(filterList);
+                        }
+                    });
 
-            clearFilter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mealFilter.clearCheck();
-                    serveOrderClassFilter.clearCheck();
+                    clearFilter.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            mealFilter.clearCheck();
+                            serveOrderClassFilter.clearCheck();
 //                    typeFilter.clearCheck();
-                    typeChoice.setSelection(0);
-                    if (recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
-                        recipeListAdapter.setArticleList(MainActivity.articleList);
-                    }
-                }
-            });
+                            typeChoice.setSelection(0);
+                            if (recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                                recipeListAdapter.setArticleList(MainActivity.articleList);
+                            }
+                        }
+                    });
 
-            filterButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (filterField.getVisibility() == View.GONE) {
-                        filterField.setVisibility(View.VISIBLE);
-                    } else {
-                        filterField.setVisibility(View.GONE);
-                    }
-                }
-            });
-        }, new ProgressDialog(getActivity()));
+                    filterButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (filterField.getVisibility() == View.GONE) {
+                                filterField.setVisibility(View.VISIBLE);
+                            } else {
+                                filterField.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                }, new ProgressDialog(getActivity()));
+//            }
+//        }, new ProgressDialog(getActivity()));
     }
 
     @Override
@@ -373,24 +375,44 @@ public class HomeFragment extends Fragment {
     }
 
     private void searchArticle(String text) {
-        text = text.toLowerCase();
-        text = Normalizer.normalize(text, Normalizer.Form.NFD);
-        text = text.replaceAll("[^\\p{ASCII}]", "");
+        List<Article> filteredList = new ArrayList<>();
+        for (Article article : MainActivity.articleList) {
+            String publisher = article.getPublisher();
+            String[] ingredients = article.getIngredients().split(";\\s*");
 
-        String finalText = text;
-        List<Article> filteredList = MainActivity.articleList.stream()
-                .filter(article -> {
-                    String publisher = article.getPublisher().toLowerCase();
-                    String ingredients = article.getIngredients().toLowerCase();
-                    String dishName = article.getDishName().toLowerCase();
+            String dish_name = article.getDishName();
+            //Remove accents from string
+            dish_name = dish_name.toLowerCase();
+            dish_name = Normalizer.normalize(dish_name, Normalizer.Form.NFD);
+            dish_name = dish_name.replaceAll("[^\\p{ASCII}]", "");
+            text = text.toLowerCase();
+            text = Normalizer.normalize(text, Normalizer.Form.NFD);
+            text = text.replaceAll("[^\\p{ASCII}]", "");
 
-                    return dishName.contains(finalText)
-                            || publisher.contains(finalText)
-                            || Arrays.stream(finalText.split(",\\s*"))
-                            .anyMatch(searchIngredient -> ingredients.contains(searchIngredient.trim()));
-                })
-                .collect(Collectors.toList());
+            boolean dishNameMatches = dish_name.contains(text);
+            boolean publisherMatches = publisher.contains(text);
+            boolean ingredientMatches = false;
 
+            // Split the search text into individual ingredients
+            String[] searchIngredients = text.split(",\\s*");
+
+            // Check if each search ingredient is present in the article's ingredients
+            for (String searchIngredient : searchIngredients) {
+                for (String ingredient : ingredients) {
+                    ingredient = ingredient.toLowerCase();
+                    ingredient = Normalizer.normalize(ingredient, Normalizer.Form.NFD);
+                    ingredient = ingredient.replaceAll("[^\\p{ASCII}]", "");
+                    if (ingredient.contains(searchIngredient.trim())) {
+                        ingredientMatches = true;
+                        break;
+                    }
+                }
+            }
+
+            if (dishNameMatches || publisherMatches || ingredientMatches) {
+                filteredList.add(article);
+            }
+        }
         recipeListAdapter.setArticleList(filteredList);
     }
 

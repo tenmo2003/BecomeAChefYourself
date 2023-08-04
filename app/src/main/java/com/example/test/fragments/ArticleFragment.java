@@ -271,7 +271,7 @@ public class ArticleFragment extends Fragment {
                 recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
                 ingredientsTextView.setText(formatIngredients(article.getIngredients(), view));
                 ingredientsCount.setText(article.getIngredients().split(";\\s*").length + " thành phần");
-                publishedDateTextView.setText(postedTime(article.getPublishedTime()));
+                publishedDateTextView.setText(article.getPublishedTime());
                 publisherTextView.setText(article.getPublisher());
                 AtomicReference<String> followCount = new AtomicReference<>();
                 AtomicReference<String> articleCount = new AtomicReference<>();

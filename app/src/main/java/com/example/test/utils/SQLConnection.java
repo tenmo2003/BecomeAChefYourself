@@ -12,7 +12,9 @@ import com.example.test.components.User;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -352,7 +354,7 @@ public class SQLConnection {
         int likes = getTotalLikeCount(id);
         int comments = getTotalCommentCount(id);
         String publishedTime = resultSet.getString("published_time");
-        publishedTime = publishedTime.substring(0, publishedTime.length() - 2);
+        publishedTime = postedTime(publishedTime.substring(0, publishedTime.length() - 2));
         String timeToMake = resultSet.getString("time_to_make");
         String imgURL = resultSet.getString("image");
 
@@ -883,7 +885,7 @@ public class SQLConnection {
                 int articleID = rs.getInt("article_id");
                 int commentID = rs.getInt("comment_id");
                 String createdTime = rs.getString("created_time");
-                createdTime = createdTime.substring(0, createdTime.length() - 2);
+                createdTime = postedTime(createdTime.substring(0, createdTime.length() - 2));
                 String commentContent = rs.getString("commentContent");
                 String articleName = rs.getString("articleName");
 
@@ -941,40 +943,37 @@ public class SQLConnection {
     private String postedTime(String publishedTime) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            LocalDateTime publishedDateTime = LocalDateTime.parse(publishedTime, dateTimeFormatter);
+
+            // Add 7 hours and 7 minutes to the published time
+            LocalDateTime adjustedDateTime = publishedDateTime.plusHours(7).plusMinutes(7);
+
             LocalDateTime now = LocalDateTime.now();
+            Duration duration = Duration.between(adjustedDateTime, now);
 
-            int periodAsSecond = subTime(publishedTime, dateTimeFormatter.format(now));
-
-            int days = periodAsSecond / 3600 / 24;
+            long days = duration.toDays();
             if (days >= 3) {
-                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM");
-
-                Date date = null;
-                try {
-                    date = inputFormat.parse(publishedTime);
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-
-                // Format the Date object to the desired output format
-                assert date != null;
-                return outputFormat.format(date);
+                return outputFormat.format(adjustedDateTime);
             }
 
             if (days >= 1) {
                 return days + " ngày trước";
             }
 
-            if (periodAsSecond >= 3600) {
-                return periodAsSecond / 3600 + " giờ trước";
+            long hours = duration.toHours();
+            if (hours >= 1) {
+                return hours + " giờ trước";
             }
-            if (periodAsSecond >= 60) {
-                return periodAsSecond / 60 + " phút trước";
+
+            long minutes = duration.toMinutes();
+            if (minutes >= 1) {
+                return minutes + " phút trước";
             }
-            return "Vừa xong";
         }
-        return "Đã từ rất lâu";
+
+        return "Vừa xong";
     }
 
     private int subTime(String past, String now) {
@@ -1003,6 +1002,18 @@ public class SQLConnection {
 
         return (period[0] * 365 + period[1] * 30 + period[2]) * 24 * 3600
                 + (period[3] * 3600 + period[4] * 60 + period[5]);
+    }
+
+    public boolean serverUpdated() {
+        String query = "SELECT COUNT(id) FROM articles";
+        try (ResultSet rs = getDataQuery(query)) {
+            if (rs.next()) {
+                return rs.getInt(1) == MainActivity.articleList.size();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 
