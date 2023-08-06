@@ -184,21 +184,21 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 //        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
-        if (inHome) {
-            AtomicBoolean checkBookmarked = new AtomicBoolean(false);
-            MainActivity.runTask(() -> {
-                checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId()));
-            }, () -> {
-                holder.isBookmark = checkBookmarked.get();
-                if (holder.isBookmark) {
-                    holder.bookmark.setImageResource(R.drawable.bookmarked);
-                } else {
-                    holder.bookmark.setImageResource(R.drawable.bookmark);
-                }
-            }, null);
-        } else {
-            holder.bookmark.setVisibility(View.GONE);
-        }
+//        if (inHome) {
+//            AtomicBoolean checkBookmarked = new AtomicBoolean(false);
+//            MainActivity.runTask(() -> {
+//                checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId()));
+//            }, () -> {
+//                holder.isBookmark = checkBookmarked.get();
+//                if (holder.isBookmark) {
+//                    holder.bookmark.setImageResource(R.drawable.bookmarked);
+//                } else {
+//                    holder.bookmark.setImageResource(R.drawable.bookmark);
+//                }
+//            }, null);
+//        } else {
+//            holder.bookmark.setVisibility(View.GONE);
+//        }
 
         holder.context = context;
     }

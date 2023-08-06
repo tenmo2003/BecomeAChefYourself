@@ -47,7 +47,7 @@ public class ProfileSavedFragment extends Fragment {
         userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
-        adapter.setInHome(false);
+//        adapter.setInHome(false);
         AtomicReference<List<Article>> articleList = new AtomicReference<>();
         MainActivity.runTask(() -> {
             articleList.set(MainActivity.sqlConnection.getUserSavedArticles(profileUser.getUsername()));

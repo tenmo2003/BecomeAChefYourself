@@ -143,7 +143,7 @@ public class ArticleFragment extends Fragment {
                         }, () -> {
                             bookmark.setImageResource(R.drawable.bookmarked);
                             HomeFragment.modified = true;
-                        }, MainActivity.progressDialog);
+                        }, null);
                     } else {
                         isBookmark[0] = false;
                         MainActivity.runTask(() -> {
@@ -151,7 +151,7 @@ public class ArticleFragment extends Fragment {
                         }, () -> {
                             bookmark.setImageResource(R.drawable.bookmark_in_article);
                             HomeFragment.modified = true;
-                        }, MainActivity.progressDialog);
+                        }, null);
                     }
                 }
             });
@@ -186,6 +186,8 @@ public class ArticleFragment extends Fragment {
                                             MainActivity.sqlConnection.increaseReportLevelForUser(article.getPublisher());
                                         }
                                     }, () -> {
+                                        MainActivity.toast.setText("Bài viết đã bị xoá");
+                                        MainActivity.toast.show();
                                         Navigation.findNavController(view).navigate(R.id.navigation_home);
                                     }, null);
 

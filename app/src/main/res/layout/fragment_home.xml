@@ -59,6 +59,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:id="@+id/search_view"
+                    app:queryHint="Tên món, người đăng, nguyên liệu"
                     android:background="@drawable/search_view_shape"
                     app:iconifiedByDefault="false"
                     app:queryBackground="@color/transparent"

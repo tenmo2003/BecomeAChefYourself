@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment {
             recommendRecipeAdapter = new RecommendRecipeAdapter();
             recipeListAdapter = new RecipeListAdapter();
 
-            recipeListAdapter.setInHome(true);
+//            recipeListAdapter.setInHome(true);
 
             recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
             rcmLLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -170,7 +170,7 @@ public class HomeFragment extends Fragment {
         });
 
         if (adapterPos != -1) {
-            if (commentAdded != 0 || likeAdded != 0 || deleted || modified)
+            if (commentAdded != 0 || likeAdded != 0 || deleted)
                 recipeListAdapter.updateViewHolder(adapterPos, commentAdded, likeAdded, deleted);
             adapterPos = -1;
             commentAdded = 0;
