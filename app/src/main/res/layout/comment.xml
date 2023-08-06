@@ -57,15 +57,21 @@
         android:layout_width="10dp"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <ImageView
         android:id="@+id/report_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Báo cáo"
         android:layout_marginRight="5dp"
-        android:textColor="@color/red"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:src="@drawable/baseline_report_24"
+        />
+
+    <ImageView
+        android:id="@+id/remove_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_remove_circle_24"
+        android:visibility="gone"
+        android:layout_marginRight="5dp"
         />
 
 </LinearLayout>

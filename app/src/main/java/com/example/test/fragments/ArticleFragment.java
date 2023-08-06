@@ -33,6 +33,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -66,6 +67,7 @@ public class ArticleFragment extends Fragment {
     CommentListAdapter commentListAdapter;
     RecyclerView commentListView;
     Article article;
+    public static TextView commentTextView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -89,7 +91,7 @@ public class ArticleFragment extends Fragment {
         TextView publishedDateTextView = view.findViewById(R.id.published_date_text);
         TextView timeToMakeTextView = view.findViewById(R.id.time_to_make_text);
         TextView reactTextView = view.findViewById(R.id.react_count);
-        TextView commentTextView = view.findViewById(R.id.cmt_count);
+        commentTextView = view.findViewById(R.id.cmt_count);
         ImageView authorAvatar = view.findViewById(R.id.author_avatar_in_article);
         ImageView viewAuthorProfile = view.findViewById(R.id.view_author_profile);
         ImageView userAvatar = view.findViewById(R.id.user_avatar_in_article);
@@ -125,7 +127,6 @@ public class ArticleFragment extends Fragment {
             } else {
                 bookmark.setImageResource(R.drawable.bookmark_in_article);
             }
-            HomeFragment.bookmarked = isBookmark[0];
 
             bookmark.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -139,16 +140,18 @@ public class ArticleFragment extends Fragment {
                         isBookmark[0] = true;
                         MainActivity.runTask(() -> {
                             MainActivity.sqlConnection.addBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
-                        });
-                        bookmark.setImageResource(R.drawable.bookmarked);
-                        HomeFragment.bookmarked = true;
+                        }, () -> {
+                            bookmark.setImageResource(R.drawable.bookmarked);
+                            HomeFragment.modified = true;
+                        }, MainActivity.progressDialog);
                     } else {
                         isBookmark[0] = false;
                         MainActivity.runTask(() -> {
                             MainActivity.sqlConnection.removeBookmark(MainActivity.loggedInUser.getUsername(), article.getId());
-                        });
-                        bookmark.setImageResource(R.drawable.bookmark_in_article);
-                        HomeFragment.bookmarked = false;
+                        }, () -> {
+                            bookmark.setImageResource(R.drawable.bookmark_in_article);
+                            HomeFragment.modified = true;
+                        }, MainActivity.progressDialog);
                     }
                 }
             });
@@ -163,22 +166,7 @@ public class ArticleFragment extends Fragment {
                 if (author.get().getAvatarURL().equals("")) {
                     authorAvatar.setImageResource(R.drawable.baseline_person_24);
                 } else {
-                    ProgressBar progress = view.findViewById(R.id.avatar_progressbar);
-                    progress.setVisibility(View.VISIBLE);
-                    Glide.with(getActivity()).load(author.get().getAvatarURL()).listener(new RequestListener<Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                            progress.setVisibility(View.GONE);
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                            progress.setVisibility(View.GONE);
-                            return false;
-                        }
-                    }).into(authorAvatar);
-
+                    Glide.with(getActivity()).load(author.get().getAvatarURL()).placeholder(new CircularProgressDrawable(getActivity())).error(R.drawable.image_load_failed).into(authorAvatar);
                 }
 
                 if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(author.get().getUsername()))) {
@@ -194,12 +182,11 @@ public class ArticleFragment extends Fragment {
                                 public void onClick(DialogInterface dialog, int which) {
                                     MainActivity.runTask(() -> {
                                         MainActivity.sqlConnection.removeArticle(articleID.get());
-                                        if (MainActivity.loggedInUser.getUsername().equals("admin")) {
+                                        if (!MainActivity.loggedInUser.getUsername().equals(author.get().getUsername())) {
                                             MainActivity.sqlConnection.increaseReportLevelForUser(article.getPublisher());
                                         }
                                     }, () -> {
-                                        HomeFragment.deleted = true;
-                                        Navigation.findNavController(view).navigateUp();
+                                        Navigation.findNavController(view).navigate(R.id.navigation_home);
                                     }, null);
 
                                 }
@@ -264,11 +251,11 @@ public class ArticleFragment extends Fragment {
                             progressBar.setVisibility(View.GONE);
                             return false;
                         }
-                    }).into(dishImg);
+                    }).error(R.drawable.image_load_failed).into(dishImg);
                 }
 
                 title.setText(article.getDishName());
-                recipeContentTextView.setText(Html.fromHtml(article.getRecipe(), Html.FROM_HTML_MODE_COMPACT));
+                recipeContentTextView.setText(article.getRecipe());
                 ingredientsTextView.setText(formatIngredients(article.getIngredients(), view));
                 ingredientsCount.setText(article.getIngredients().split(";\\s*").length + " thành phần");
                 publishedDateTextView.setText(article.getPublishedTime());
@@ -321,7 +308,7 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if (MainActivity.loggedInUser == null) {
-                            MainActivity.toast.setText("Please login first");
+                            MainActivity.toast.setText("Vui lòng đăng nhập trước");
                             MainActivity.toast.show();
                             return;
                         }
@@ -366,6 +353,12 @@ public class ArticleFragment extends Fragment {
 
                         String commenter = MainActivity.loggedInUser.getUsername();
                         String content = commentEditText.getText().toString();
+
+                        if (content.equals("")) {
+                            MainActivity.toast.setText("Xin điền nội dung bình luận");
+                            MainActivity.toast.show();
+                            return;
+                        }
 
                         AtomicReference<Comment> cmt = new AtomicReference<>();
 

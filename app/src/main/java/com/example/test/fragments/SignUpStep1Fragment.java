@@ -57,8 +57,27 @@ public class SignUpStep1Fragment extends Fragment {
                     return;
                 }
 
+                if (SignUpFragment.username.length() < 6) {
+                    MainActivity.toast.setText("Tên đăng nhập phải có ít nhất 6 ký tự");
+                    MainActivity.toast.show();
+                    return;
+                }
+
+                if (SignUpFragment.password.length() < 8) {
+                    MainActivity.toast.setText("Mật khẩu phải có ít nhất 8 ký tự");
+                    MainActivity.toast.show();
+                    return;
+                }
+
                 if (!SignUpFragment.reenter.equals(SignUpFragment.password)) {
                     MainActivity.toast.setText("Mật khẩu không trùng khớp");
+                    MainActivity.toast.show();
+                    return;
+                }
+
+                String regex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+                if (!SignUpFragment.email.matches(regex)) {
+                    MainActivity.toast.setText("Email sai định dạng. Hãy kiểm tra lại");
                     MainActivity.toast.show();
                     return;
                 }

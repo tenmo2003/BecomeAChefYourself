@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
     public static int commentAdded = 0;
     public static int likeAdded = 0;
     public static boolean deleted = false;
-    public static boolean bookmarked = false;
+    public static boolean modified = false;
     RecommendRecipeAdapter recommendRecipeAdapter;
     RecyclerView recipeListView, recommendRecipeView;
     LinearLayoutManager rcmLLayoutManager;
@@ -90,6 +90,8 @@ public class HomeFragment extends Fragment {
 
             recommendRecipeAdapter = new RecommendRecipeAdapter();
             recipeListAdapter = new RecipeListAdapter();
+
+            recipeListAdapter.setInHome(true);
 
             recommendRecipeView = view.findViewById(R.id.recommend_recipe_list);
             rcmLLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -128,7 +130,7 @@ public class HomeFragment extends Fragment {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    scrollView.smoothScrollTo(0, 0);
+                    scrollView.smoothScrollTo(0, 0, 1000);
                 }
             });
 
@@ -168,12 +170,13 @@ public class HomeFragment extends Fragment {
         });
 
         if (adapterPos != -1) {
-            if (commentAdded != 0 || likeAdded != 0 || deleted)
+            if (commentAdded != 0 || likeAdded != 0 || deleted || modified)
                 recipeListAdapter.updateViewHolder(adapterPos, commentAdded, likeAdded, deleted);
             adapterPos = -1;
             commentAdded = 0;
             likeAdded = 0;
             deleted = false;
+            modified = false;
         }
 
 
@@ -376,6 +379,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void searchArticle(String text) {
+        text = text.toLowerCase();
         List<Article> filteredList = new ArrayList<>();
         for (Article article : MainActivity.articleList) {
             String publisher = article.getPublisher();
@@ -384,11 +388,6 @@ public class HomeFragment extends Fragment {
             String dish_name = article.getDishName();
             //Remove accents from string
             dish_name = dish_name.toLowerCase();
-            dish_name = Normalizer.normalize(dish_name, Normalizer.Form.NFD);
-            dish_name = dish_name.replaceAll("[^\\p{ASCII}]", "");
-            text = text.toLowerCase();
-            text = Normalizer.normalize(text, Normalizer.Form.NFD);
-            text = text.replaceAll("[^\\p{ASCII}]", "");
 
             boolean dishNameMatches = dish_name.contains(text);
             boolean publisherMatches = publisher.contains(text);
@@ -401,8 +400,6 @@ public class HomeFragment extends Fragment {
             for (String searchIngredient : searchIngredients) {
                 for (String ingredient : ingredients) {
                     ingredient = ingredient.toLowerCase();
-                    ingredient = Normalizer.normalize(ingredient, Normalizer.Form.NFD);
-                    ingredient = ingredient.replaceAll("[^\\p{ASCII}]", "");
                     if (ingredient.contains(searchIngredient.trim())) {
                         ingredientMatches = true;
                         break;

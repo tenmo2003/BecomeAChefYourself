@@ -80,6 +80,12 @@ public class SignUpStep2Fragment extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (codeInput.getText().toString().length() < 6) {
+                    MainActivity.toast.setText("Mã xác thực phải bao gồm 6 số");
+                    MainActivity.toast.show();
+                    return;
+                }
+
                 if (Integer.parseInt(codeInput.getText().toString()) == SignUpFragment.code) {
                     AtomicBoolean signUpResult = new AtomicBoolean(false);
                     MainActivity.runTask(() -> {

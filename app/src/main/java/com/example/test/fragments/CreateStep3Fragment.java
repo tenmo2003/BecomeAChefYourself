@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -45,10 +46,10 @@ public class CreateStep3Fragment extends Fragment {
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
 
     private static ExpandedListView ingredientsListView;
-    private static ArrayList<String> ingredientsList;
-    private static IngredientListAdapter ingredientsAdapter;
+    public static ArrayList<String> ingredientsList;
+    private IngredientListAdapter ingredientsAdapter;
 
-    private static StringBuilder ingredientString;
+    public static StringBuilder ingredientString;
 
     ImageView imgInput;
     @Override
@@ -191,6 +192,7 @@ public class CreateStep3Fragment extends Fragment {
                     // One or more EditText fields are empty or null
                     // Handle the case where input is missing
                     MainActivity.toast.setText("Vui lòng điền hết các thông tin");
+                    MainActivity.toast.show();
 
                 }
             }
@@ -214,22 +216,5 @@ public class CreateStep3Fragment extends Fragment {
         ingredientsListView.setLayoutParams(mParam);
     }
 
-    public static void removeItem(int position) {
-        StringBuilder updatedIngredientString = new StringBuilder();
 
-        String[] ingredientsArray = ingredientString.toString().split(";");
-        for (String ingredient : ingredientsArray) {
-            if (!ingredient.equals(ingredientsList.get(position))) {
-                if (updatedIngredientString.length() != 0) {
-                    updatedIngredientString.append(';');
-                }
-                updatedIngredientString.append(ingredient);
-            }
-        }
-        ingredientString = updatedIngredientString;
-
-        ingredientsList.remove(position);
-        ingredientsAdapter.setIngredientList(ingredientsList);
-        ingredientsListView.setAdapter(ingredientsAdapter);
-    }
 }

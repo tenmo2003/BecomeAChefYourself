@@ -82,7 +82,8 @@
 				android:layout_height="wrap_content"
 				android:textSize="15sp"
 				android:layout_marginTop="10dp"
-				android:inputType="textMultiLine|textCapSentences" />
+				android:maxLength="40"
+				android:inputType="textCapSentences" />
 
 			<TextView android:id="@+id/image_string"
 				android:textStyle="bold"
@@ -143,6 +144,7 @@
 					android:layout_height="wrap_content"
 					android:maxLines="1"
 					android:textSize="15sp"
+					android:maxLength="23"
 					android:inputType="textCapSentences"
 					android:layout_weight="10"/>
 

@@ -35,18 +35,15 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax"
-                app:layout_collapseParallaxMultiplier="0">
+                android:src="@drawable/no_preview"
+                app:layout_collapseParallaxMultiplier="0"
+                android:baselineAlignBottom="true">
             </ImageView>
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 app:layout_collapseMode="pin">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
                     <Button
                         android:layout_width="30dp"
                         android:layout_height="30dp"
@@ -55,48 +52,7 @@
                         android:layout_gravity="start">
                     </Button>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="end"
-                        android:layout_weight="1"
-                        >
-                        <TextView
-                            android:id="@+id/edit_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sửa"
-                            android:textStyle="bold"
-                            android:textSize="15sp"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:fontFamily="@font/rubik_regular"
-                            android:padding="5dp"
-                            android:layout_marginHorizontal="10dp"
-                            android:visibility="gone" />
-                        <TextView
-                            android:id="@+id/report_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Báo cáo"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/red"
-                            android:fontFamily="@font/rubik_regular"
-                            android:padding="5dp"
-                            android:layout_marginHorizontal="10dp" />
-                        <TextView
-                            android:id="@+id/remove_btn"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/rubik_regular"
-                            android:text="Xoá"
-                            android:textStyle="bold"
-                            android:textSize="15sp"
-                            android:textColor="@color/red"
-                            android:padding="5dp"
-                            android:visibility="gone" />
-                    </LinearLayout>
+
 
                     <ImageView
                         android:layout_width="30dp"
@@ -106,9 +62,23 @@
                         android:layout_marginHorizontal="15dp"
                         android:layout_gravity="end">
                     </ImageView>
-                </LinearLayout>
+
             </androidx.appcompat.widget.Toolbar>
 
+            <TextView
+                app:layout_collapseMode="parallax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_in_article"
+                android:text="Món ăn"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto_slab_regular"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"
+                android:padding="10dp"
+                android:layout_gravity="bottom|start">
+            </TextView>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -126,17 +96,60 @@
             android:orientation="vertical"
             android:paddingHorizontal="5dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title_in_article"
-                android:text="Món ăn"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_slab_regular"
-                android:textColor="@color/colorPrimaryDark"
-                android:padding="10dp">
-            </TextView>
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/edit_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sửa"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:padding="5dp"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/report_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Báo cáo"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/red"
+                    android:padding="5dp"
+                    android:layout_marginRight="10dp"
+                    />
+                <TextView
+                    android:id="@+id/remove_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xoá"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/red"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    android:layout_marginRight="10dp"
+                    />
+            </LinearLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:id="@+id/title_in_article"-->
+<!--                android:text="Món ăn"-->
+<!--                android:textSize="25sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:fontFamily="@font/roboto_slab_regular"-->
+<!--                android:textColor="@color/colorPrimaryDark"-->
+<!--                android:padding="10dp">-->
+<!--            </TextView>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -414,7 +427,6 @@
                     android:id="@+id/comment_edit_text"
                     android:textSize="15sp"
                     android:gravity="bottom"
-                    android:maxLines="1"
                     android:layout_weight="9"
                     android:inputType="textMultiLine|textCapSentences">
                 </EditText>

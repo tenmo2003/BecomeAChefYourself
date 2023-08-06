@@ -66,6 +66,12 @@ public class ChangePasswordFragment extends Fragment {
                     } else if (!newPassword.equals(renewPassword)) {
                         Toast.makeText(getContext(), "Nhập lại mật khẩu mới không trùng khớp", Toast.LENGTH_SHORT).show();
                     } else {
+                        if (newPassword.length() < 8) {
+                            MainActivity.toast.setText("Mật khẩu phải có ít nhất 8 ký tự");
+                            MainActivity.toast.show();
+                            return;
+                        }
+
                         AtomicBoolean result = new AtomicBoolean(false);
 
                         MainActivity.runTask(() -> {

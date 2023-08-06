@@ -104,6 +104,12 @@ public class EditProfileFragment extends Fragment {
             updateProfileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (fullnameEditText.getText().toString().length() < 2) {
+                        MainActivity.toast.setText("Tên người dùng phải có ít nhất 2 ký tự");
+                        MainActivity.toast.show();
+                        return;
+                    }
+
                     //Hide device keyboard
                     InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

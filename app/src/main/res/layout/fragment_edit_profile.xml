@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Cập nhập trang cá nhân"
+            android:text="Cập nhật trang cá nhân"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/colorAccent"
@@ -116,8 +116,26 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/fullname_edit_text"
+            android:maxLength="20"
             android:textSize="15sp"
             android:inputType="text">
+        </EditText>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Email"
+            android:textSize="18sp">
+        </TextView>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/email_edit_text"
+            android:maxLength="20"
+            android:textSize="15sp"
+            android:inputType="textEmailAddress">
         </EditText>
 
         <TextView
@@ -133,6 +151,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/bio_edit_text"
             android:textSize="15sp"
+            android:maxLength="150"
             android:inputType="textMultiLine"
             android:maxLines="3">
         </EditText>

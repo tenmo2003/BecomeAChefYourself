@@ -41,6 +41,12 @@ public class ForgetStep3Fragment extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (passwordInput.getText().toString().length() < 8) {
+                    MainActivity.toast.setText("Mật khẩu phải có ít nhất 8 ký tự");
+                    MainActivity.toast.show();
+                    return;
+                }
+
                 if (passwordInput.getText().toString().equals(repasswordInput.getText().toString())) {
                     AtomicBoolean result = new AtomicBoolean();
                     MainActivity.runTask(() -> {

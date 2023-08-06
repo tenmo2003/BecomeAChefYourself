@@ -47,6 +47,7 @@ public class ProfilePostFragment extends Fragment {
         userRecipeList.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
+        adapter.setInHome(false);
 
         MainActivity.runTask(() -> {
             articleList = getProfilePost();

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,12 @@ import androidx.navigation.Navigation;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
-import com.example.test.utils.DatabaseHelper;
+import com.example.test.components.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 
@@ -78,13 +79,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         if (view == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.group_item, null);
-
-            TextView item = view.findViewById(R.id.name);
-            item.setTypeface(null, Typeface.BOLD);
-            item.setText(name);
-
-            return view;
         }
+
+        TextView item = view.findViewById(R.id.name);
+        item.setTypeface(null, Typeface.BOLD);
+        item.setText(name);
 
         return view;
     }
@@ -102,83 +101,121 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
         ImageView delete = view.findViewById(R.id.delete);
 
         item.setText(child);
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
 
-                builder.setMessage("Bạn chắc chắn muốn xoá không?");
-                if (groupList.get(i).equals("Danh sách các người dùng")) {
-                    builder.setMessage("Bạn chắc chắn muốn cấm người dùng này?");
-                }
-                builder.setCancelable(true);
-                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int ii) {
-                        List<String> childList = collection.get(groupList.get(i));
-                        childList.remove(i1);
-                        String group = groupList.get(i);
-                        if (group.equals("Báo cáo về bình luận") || group.equals("Báo cáo về bài đăng")) {
-                            // Split the string by the dot (.)
-                            String[] parts = child.split("\\.");
+        boolean isUser = groupList.get(i).equals("Danh sách các người dùng");
+        AtomicInteger isBanned = new AtomicInteger(-1);
+        AtomicReference<User> user = new AtomicReference<>();
 
-                            // Get the first part and remove any leading or trailing white spaces
-                            String idString = parts[0].trim();
+        MainActivity.runTask(() -> {
+            if (isUser) {
+                String[] parts = child.split("\\.");
 
-                            // Parse the ID string to an integer
-                            int id = Integer.parseInt(idString);
+                String username = parts[1].trim(); // Remove any leading/trailing whitespaces
 
-                            MainActivity.runTask(() -> {
-                                MainActivity.sqlConnection.removeReport(id);
-                            }, null, null);
-                        } else if (group.equals("Danh sách các bài đăng")){
-                            // Split the string by the dot (.)
-                            String[] parts = child.split("\\.");
-
-                            // Get the first part and remove any leading or trailing white spaces
-                            String idString = parts[0].trim();
-
-                            // Parse the ID string to an integer
-                            int id = Integer.parseInt(idString);
-
-                            MainActivity.runTask(() -> {
-                                MainActivity.sqlConnection.removeArticle(id);
-                            }, null, null);
-                        } else {
-                            String[] parts = child.split("\\.");
-
-                            String username = parts[1].trim(); // Remove any leading/trailing whitespaces
-
-                            MainActivity.runTask(() -> {
-                                MainActivity.sqlConnection.banUser(username);
-                            }, null, null);
-                        }
-                        notifyDataSetChanged();
-                    }
-                });
-
-                builder.setNegativeButton("Huỷ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                });
-
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-
-                // Get the positive and negative buttons
-                Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-                // Set the text color of the positive button
-                positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
-
-                // Set the text color of the negative button
-                negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                user.set(MainActivity.sqlConnection.getUserWithUsername(username));
             }
-        });
+        }, () -> {
+            if (isUser) {
+                isBanned.set(user.get().getBanned());
+                if (isBanned.get() == 1) {
+                    delete.setImageResource(R.drawable.baseline_add_circle_24);
+                } else {
+                    delete.setImageResource(R.drawable.baseline_remove_circle_24);
+                }
+            }
+
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+
+                    builder.setMessage("Bạn chắc chắn muốn xoá không?");
+                    if (groupList.get(i).equals("Danh sách các người dùng")) {
+                        if (isBanned.get() == 1)
+                            builder.setMessage("Bạn chắc chắn muốn gỡ cấm người dùng này?");
+                        else
+                            builder.setMessage("Bạn chắc chắn muốn cấm người dùng này?");
+                    }
+                    builder.setCancelable(true);
+                    builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int ii) {
+                            List<String> childList = collection.get(groupList.get(i));
+                            if (!groupList.get(i).equals("Danh sách các người dùng")) {
+                                childList.remove(i1);
+                            }
+                            String group = groupList.get(i);
+                            if (group.equals("Báo cáo về bình luận") || group.equals("Báo cáo về bài đăng")) {
+                                // Split the string by the dot (.)
+                                String[] parts = child.split("\\.");
+
+                                // Get the first part and remove any leading or trailing white spaces
+                                String idString = parts[0].trim();
+
+                                // Parse the ID string to an integer
+                                int id = Integer.parseInt(idString);
+
+                                MainActivity.runTask(() -> {
+                                    MainActivity.sqlConnection.removeReport(id);
+                                }, null, MainActivity.progressDialog);
+                            } else if (group.equals("Danh sách các bài đăng")){
+                                // Split the string by the dot (.)
+                                String[] parts = child.split("\\.");
+
+                                // Get the first part and remove any leading or trailing white spaces
+                                String idString = parts[0].trim();
+
+                                // Parse the ID string to an integer
+                                int id = Integer.parseInt(idString);
+
+                                MainActivity.runTask(() -> {
+                                    MainActivity.sqlConnection.removeArticle(id);
+                                }, null, MainActivity.progressDialog);
+                            } else {
+                                String[] parts = child.split("\\.");
+
+                                String username = parts[1].trim(); // Remove any leading/trailing whitespaces
+
+                                if (isBanned.get() == 0) {
+                                    MainActivity.runTask(() -> {
+                                        MainActivity.sqlConnection.banUser(username);
+                                    }, null, MainActivity.progressDialog);
+                                } else {
+                                    MainActivity.runTask(() -> {
+                                        MainActivity.sqlConnection.unbanUser(username);
+                                    }, null, MainActivity.progressDialog);
+                                }
+                            }
+                            notifyDataSetChanged();
+                        }
+                    });
+
+                    builder.setNegativeButton("Huỷ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+
+                    // Get the positive and negative buttons
+                    Button positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    Button negativeButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+
+                    // Set the text color of the positive button
+                    positiveButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+
+                    // Set the text color of the negative button
+                    negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
+                }
+            });
+
+
+        }, null);
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,6 +265,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
                 }
             }
         });
+
         return view;
     }
 

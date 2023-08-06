@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/navigation_share"
-        android:icon="@drawable/add_circle"
+        android:icon="@drawable/baseline_add_circle_white"
         android:title="@string/empty" />
 
     <item

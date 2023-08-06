@@ -108,6 +108,7 @@ public class SQLConnection {
         try (Statement statement = connection.createStatement()) {
             rowsAffected = statement.executeUpdate(query);
         } catch (SQLException e) {
+            System.out.println(query);
             throw new RuntimeException(e);
         }
         return rowsAffected;
@@ -167,26 +168,33 @@ public class SQLConnection {
 
 
     public void increaseReportLevelForUser(String username) {
-        String selectQuery = "SELECT reportLevel FROM user WHERE username='" + username + "'";
+        if (!username.equals("admin")) {
+            String selectQuery = "SELECT reportLevel FROM user WHERE username='" + username + "'";
 
-        try (ResultSet resultSet = getDataQuery(selectQuery)) {
-            int currentReportLevel = 0;
-            if (resultSet.next()) {
-                currentReportLevel = resultSet.getInt("reportLevel");
+            try (ResultSet resultSet = getDataQuery(selectQuery)) {
+                int currentReportLevel = 0;
+                if (resultSet.next()) {
+                    currentReportLevel = resultSet.getInt("reportLevel");
+                }
+
+                // Increment the reportLevel by 1
+                int newReportLevel = currentReportLevel + 1;
+                String updateQuery = "UPDATE user SET reportLevel=" + newReportLevel + " WHERE username='" + username + "'";
+                int rows = updateQuery(updateQuery);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-            // Increment the reportLevel by 1
-            int newReportLevel = currentReportLevel + 1;
-            String updateQuery = "UPDATE user SET reportLevel=" + newReportLevel + " WHERE username='" + username + "'";
-            int rows = updateQuery(updateQuery);
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
 
     public void banUser(String username) {
         String updateQuery = "UPDATE user SET banned=1 WHERE username='" + username + "'";
+        int rows = updateQuery(updateQuery);
+    }
+
+    public void unbanUser(String username) {
+        String updateQuery = "UPDATE user SET banned=0 WHERE username='" + username + "'";
         int rows = updateQuery(updateQuery);
     }
 
@@ -328,9 +336,9 @@ public class SQLConnection {
                 String deleteQuery = "DELETE FROM articles WHERE id=" + articleID;
                 int rowsAffected = updateQuery(deleteQuery);
 
-                if (rowsAffected > 0 && MainActivity.loggedInUser.getUsername().equals("admin")) {
-                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, articleName) VALUES ('" +
-                            publisher + "', 'REPORT_ARTICLE', 'admin', " + articleID + ", '" + dishName + "')";
+                if (rowsAffected > 0 && MainActivity.loggedInUser.getUsername().equals("admin") && !publisher.equals("admin")) {
+                    String notificationQuery = "INSERT INTO notifications (user, type, action_by, articleName) VALUES ('" +
+                            publisher + "', 'REPORT_ARTICLE', 'admin', '" + dishName + "')";
                     updateQuery(notificationQuery);
 
                     return true;
@@ -365,7 +373,7 @@ public class SQLConnection {
 
     public List<Article> getAllArticles() {
         List<Article> articles = new ArrayList<>();
-        String query = "SELECT * FROM articles ORDER BY id DESC";
+        String query = "SELECT articles.* FROM articles LEFT JOIN user ON articles.publisher = user.username WHERE user.banned = 0 ORDER BY id DESC";
         ResultSet resultSet = getDataQuery(query);
 
         try {
@@ -433,7 +441,7 @@ public class SQLConnection {
 
     public List<Article> getUserSavedArticles(String username) {
         List<Article> savedArticles = new ArrayList<>();
-        String query = "SELECT articles.id, dish_name, publisher, meal, serve_order_class, type, recipe, ingredients, likes, published_time, time_to_make, image FROM articles INNER JOIN bookmarks ON articles.id = bookmarks.article WHERE bookmarks.user='" + username + "' ORDER BY published_time DESC";
+        String query = "SELECT articles.id, dish_name, publisher, meal, serve_order_class, type, recipe, ingredients, likes, published_time, time_to_make, image FROM articles INNER JOIN bookmarks ON articles.id = bookmarks.article LEFT JOIN user ON articles.publisher = user.username WHERE bookmarks.user='" + username + "' AND user.banned = 0 ORDER BY published_time DESC";
         ResultSet resultSet = getDataQuery(query);
 
         try {
@@ -506,7 +514,7 @@ public class SQLConnection {
     }
 
     public int getTotalLikeCount(int article_id) {
-        String query = "SELECT COUNT(*) FROM article_likes WHERE article=" + article_id;
+        String query = "SELECT COUNT(*) FROM article_likes LEFT JOIN user ON article_likes.user = user.username WHERE article=" + article_id + " AND user.banned = 0";
         try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
@@ -519,7 +527,7 @@ public class SQLConnection {
 
 
     public int getTotalArticleCount(String username) {
-        String query = "SELECT COUNT(id) FROM articles WHERE publisher='" + username + "'";
+        String query = "SELECT COUNT(id) FROM articles LEFT JOIN user ON articles.publisher = user.username WHERE publisher='" + username + "' AND user.banned = 0";
         try (ResultSet resultSet = getDataQuery(query)) {
             if (resultSet.next()) {
                 return resultSet.getInt(1);
@@ -569,7 +577,7 @@ public class SQLConnection {
 
     public List<Comment> getCommentWithArticleID(int articleID) {
         List<Comment> commentList = new ArrayList<>();
-        String query = "SELECT id, commenter, content FROM comments WHERE article_id=" + articleID + " ORDER BY id DESC";
+        String query = "SELECT id, commenter, content FROM comments LEFT JOIN user ON commenter = username WHERE article_id=" + articleID + " AND banned = 0 ORDER BY id DESC";
         try (ResultSet resultSet = getDataQuery(query)) {
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
@@ -603,7 +611,7 @@ public class SQLConnection {
                 }
                 resultSet.close();
 
-                if (!publisher.isEmpty()) {
+                if (!publisher.isEmpty() && !publisher.equals(commenter)) {
                     // Insert a notification for the publisher
                     String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, comment_id, commentContent) VALUES ('" +
                             publisher + "', 'COMMENT', '" + commenter + "', " + articleID + ", LAST_INSERT_ID(), '" + content + "')";
@@ -633,7 +641,7 @@ public class SQLConnection {
                 String query = "DELETE FROM comments WHERE id=" + id;
                 int rows = updateQuery(query);
 
-                if (rows > 0 && MainActivity.loggedInUser.getUsername().equals("admin")) {
+                if (rows > 0 && !MainActivity.loggedInUser.getUsername().equals(commenter)) {
                     String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, commentContent) VALUES ('" +
                             commenter + "', 'REPORT_COMMENT', 'admin', " + articleID + ", '" + commentContent + "')";
                     updateQuery(notificationQuery);
@@ -682,7 +690,7 @@ public class SQLConnection {
                 e.printStackTrace();
             }
 
-            if (publisher != null) {
+            if (publisher != null && !publisher.equals(MainActivity.loggedInUser.getUsername())) {
                 // Insert a notification for the publisher of the article
                 String notificationQuery = "INSERT INTO notifications (user, type, action_by, article_id, articleName) VALUES ('" +
                         publisher + "', 'LIKE', '" + user + "', " + articleID + ", '" + dishName + "')";
@@ -875,8 +883,8 @@ public class SQLConnection {
     public List<InAppNotification> getNotificationsForUser(String username) {
         List<InAppNotification> notificationList = new ArrayList<>();
 
-        String query = "SELECT id, user, type, action_by, article_id, comment_id, created_time, commentContent, articleName " +
-                "FROM notifications WHERE user='" + username + "' ORDER BY created_time DESC";
+        String query = "SELECT id, notifications.user, type, action_by, article_id, comment_id, created_time, commentContent, articleName " +
+                "FROM notifications LEFT JOIN user ON action_by = user.username WHERE user='" + username + "' AND user.banned = 0 ORDER BY created_time DESC";
 
         try (ResultSet rs = getDataQuery(query)) {
             while (rs.next()) {
@@ -953,11 +961,10 @@ public class SQLConnection {
 
             LocalDateTime now = LocalDateTime.now();
             Duration duration = Duration.between(adjustedDateTime, now);
-
             long days = duration.toDays();
             if (days >= 3) {
-                SimpleDateFormat outputFormat = new SimpleDateFormat("dd-MM");
-                return outputFormat.format(adjustedDateTime);
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd-MM");
+                return adjustedDateTime.format(outputFormatter);
             }
 
             if (days >= 1) {

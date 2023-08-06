@@ -49,10 +49,28 @@ public class IngredientListAdapter extends ArrayAdapter<String> {
         remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateStep3Fragment.removeItem(position);
+                removeItem(position);
             }
         });
 
         return convertView;
+    }
+
+    public void removeItem(int position) {
+        StringBuilder updatedIngredientString = new StringBuilder();
+
+        String[] ingredientsArray = CreateStep3Fragment.ingredientString.toString().split(";");
+        for (String ingredient : ingredientsArray) {
+            if (!ingredient.equals(CreateStep3Fragment.ingredientsList.get(position))) {
+                if (updatedIngredientString.length() != 0) {
+                    updatedIngredientString.append(';');
+                }
+                updatedIngredientString.append(ingredient);
+            }
+        }
+        CreateStep3Fragment.ingredientString = updatedIngredientString;
+
+        CreateStep3Fragment.ingredientsList.remove(position);
+        setIngredientList(CreateStep3Fragment.ingredientsList);
     }
 }

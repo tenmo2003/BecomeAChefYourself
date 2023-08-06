@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -39,6 +40,13 @@ public class CreateStep4Fragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                ShareFragment.viewPager.setCurrentItem(ShareFragment.viewPager.getCurrentItem() - 1);
+            }
+        });
 
 
         TextView nextStepBtn = view.findViewById(R.id.next_steps_btn);
@@ -151,7 +159,7 @@ public class CreateStep4Fragment extends Fragment {
         }
 
         dishNameTextView.setText(ShareFragment.dishName);
-        recipeContentTextView.setText(Html.fromHtml(ShareFragment.recipe, Html.FROM_HTML_MODE_COMPACT));
+        recipeContentTextView.setText(ShareFragment.recipe);
         ingredientsTextView.setText(formatIngredients(ShareFragment.ingredients));
         ingredientCountsTextView.setText(ShareFragment.ingredients.split(";\\s*").length + " thành phần");
         timeToMakeTextView.setText(ShareFragment.timeToMake);

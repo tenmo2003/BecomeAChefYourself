@@ -38,6 +38,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
     private List<Article> articleList;
     private Context context;
+    private boolean inHome;
+
+    public void setInHome(boolean value) {
+        inHome = value;
+    }
 
     public void setArticleList(List<Article> articleList) {
         this.articleList = new ArrayList<>();
@@ -110,16 +115,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
             articleList.sort(new Comparator<Article>() {
                 @Override
                 public int compare(Article article1, Article article2) {
-                    String[] a1 = article1.getPublishedTime().split(" ");
-                    String[] a2 = article2.getPublishedTime().split(" ");
-                    String date1 = a1[0], time1 = a1[1], date2 = a2[0], time2 = a2[1];
-                    if (date1.compareTo(date2) < 0) {
-                        return 1;
-                    } else if (date1.compareTo(date2) > 0) {
-                        return -1;
-                    } else {
-                        return Integer.compare(0, time1.compareTo(time2));
-                    }
+                    return Integer.compare(article2.getId(), article1.getId());
                 }
             });
         }, () -> {
@@ -150,7 +146,6 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
                 @Override
                 public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                     holder.progressBar.setVisibility(View.GONE);
-                    holder.dish_img.setImageResource(R.drawable.no_preview);
                     return false;
                 }
 
@@ -159,7 +154,7 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
                     holder.progressBar.setVisibility(View.GONE);
                     return false;
                 }
-            }).into(holder.dish_img);
+            }).error(R.drawable.image_load_failed).into(holder.dish_img);
         }
 
         AtomicReference<User> user = new AtomicReference<>();
@@ -189,17 +184,21 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
 //        holder.dish_img.setImageResource(R.drawable.beefsteak);
         holder.react_count.setText(String.valueOf(articleList.get(position).getLikes()));
         holder.cmt_count.setText(String.valueOf(articleList.get(position).getComments()));
-        AtomicBoolean checkBookmarked = new AtomicBoolean(false);
-        MainActivity.runTask(() -> {
-            checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId()));
-        }, () -> {
-            holder.isBookmark = checkBookmarked.get();
-            if (holder.isBookmark) {
-                holder.bookmark.setImageResource(R.drawable.bookmarked);
-            } else {
-                holder.bookmark.setImageResource(R.drawable.bookmark);
-            }
-        }, null);
+        if (inHome) {
+            AtomicBoolean checkBookmarked = new AtomicBoolean(false);
+            MainActivity.runTask(() -> {
+                checkBookmarked.set(MainActivity.loggedInUser != null && MainActivity.sqlConnection.checkBookmarked(MainActivity.loggedInUser.getUsername(), articleList.get(position).getId()));
+            }, () -> {
+                holder.isBookmark = checkBookmarked.get();
+                if (holder.isBookmark) {
+                    holder.bookmark.setImageResource(R.drawable.bookmarked);
+                } else {
+                    holder.bookmark.setImageResource(R.drawable.bookmark);
+                }
+            }, null);
+        } else {
+            holder.bookmark.setVisibility(View.GONE);
+        }
 
         holder.context = context;
     }
@@ -272,23 +271,6 @@ class RecipeViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-    }
-
-    public void plusComment(int number) {
-        cmt_count.setText(String.valueOf(Integer.parseInt(cmt_count.getText().toString()) + number));
-    }
-
-    public void plusLike(int number) {
-        react_count.setText(String.valueOf(Integer.parseInt(react_count.getText().toString()) + number));
-    }
-
-    public void setBookmark(boolean value) {
-        isBookmark = value;
-        if (value) {
-            bookmark.setImageResource(R.drawable.bookmarked);
-        } else {
-            bookmark.setImageResource(R.drawable.bookmark);
-        }
     }
 }
 

@@ -16,10 +16,10 @@
         android:src="@drawable/setting"
         />
 
-<!--    <androidx.core.widget.NestedScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:id="@+id/nested_scroll_view">-->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/nested_scroll_view">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -205,7 +205,6 @@
                 android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:overScrollMode="never"
                 />
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/view_pager"
@@ -214,6 +213,6 @@
                 />
 
         </LinearLayout>
-<!--    </androidx.core.widget.NestedScrollView>-->
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

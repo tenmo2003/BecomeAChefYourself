@@ -90,9 +90,18 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                     }
                 }).into(avatar);
             }
+
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle args = new Bundle();
+
+                    args.putString("username", actionUser.get().getUsername());
+
+                    Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
+                }
+            });
         }, null);
-
-
 
 
         String type = notification.getType();
@@ -137,16 +146,6 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
 
         ImageView delete = convertView.findViewById(R.id.delete);
 
-        avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle args = new Bundle();
-
-                args.putString("username", actionUser.get().getUsername());
-
-                Navigation.findNavController(view).navigate(R.id.navigation_profile, args);
-            }
-        });
 
         notificationContent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,5 +202,15 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
         });
 
         return convertView;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return Math.max(getCount(), 1);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }

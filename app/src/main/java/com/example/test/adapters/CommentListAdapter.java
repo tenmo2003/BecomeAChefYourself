@@ -23,6 +23,9 @@ import com.bumptech.glide.Glide;
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.components.Comment;
+import com.example.test.components.User;
+import com.example.test.fragments.ArticleFragment;
+import com.example.test.fragments.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +70,10 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         AtomicReference<String> url = new AtomicReference<>();
         AtomicReference<String> commenterName = new AtomicReference<>();
         MainActivity.runTask(() -> {
-            commenterName.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getFullname());
-            checkAvatar.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL().equals(""));
-            url.set(MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter()).getAvatarURL());
+            User user = MainActivity.sqlConnection.getUserWithUsername(comments.get(position).getCommenter());
+            commenterName.set(user.getFullname());
+            checkAvatar.set(user.getAvatarURL().equals(""));
+            url.set(user.getAvatarURL());
         }, () -> {
             if (checkAvatar.get()) {
                 holder.comment_avatar.setImageResource(R.drawable.baseline_person_24);
@@ -80,10 +84,11 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         }, null);
 
         int curPos = position;
-        if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals("admin")) {
-            holder.commentView.setOnLongClickListener(new View.OnLongClickListener() {
+        if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(holder.comment.getCommenter()))) {
+            holder.delete.setVisibility(View.VISIBLE);
+            holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View view) {
+                public void onClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     AlertDialog alertDialog = builder.setTitle("Xác nhận")
                             .setMessage("Bạn có chắc chắn muốn xoá comment '" + comments.get(curPos).getContent() + "'")
@@ -93,10 +98,13 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
                                     // User clicked the "Yes" button, proceed with removal
                                     MainActivity.runTask(() -> {
                                         MainActivity.sqlConnection.removeComment(comments.get(curPos).getId());
-                                        MainActivity.sqlConnection.increaseReportLevelForUser(comments.get(curPos).getCommenter());
+                                        if (!MainActivity.loggedInUser.getUsername().equals(comments.get(curPos).getCommenter()))
+                                            MainActivity.sqlConnection.increaseReportLevelForUser(comments.get(curPos).getCommenter());
                                     }, () -> {
                                         comments.remove(curPos);
                                         notifyDataSetChanged();
+                                        HomeFragment.commentAdded--;
+                                        ArticleFragment.commentTextView.setText(String.valueOf(Integer.parseInt(ArticleFragment.commentTextView.getText().toString().split("\\s+")[0]) - 1) + " bình luận");
                                     }, MainActivity.progressDialog);
 
                                 }
@@ -121,17 +129,21 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
 
                     // Set the text color of the negative button
                     negativeButton.setTextColor(ContextCompat.getColor(context, R.color.mainTheme));
-
-
-                    return false;
                 }
             });
+        } else {
+            holder.delete.setVisibility(View.GONE);
         }
     }
 
     @Override
     public int getItemCount() {
         return comments.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }
 
@@ -143,6 +155,8 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
 
     View commentView;
 
+    ImageView delete;
+
     Context context;
 
     public CommentViewHolder(@NonNull View itemView) {
@@ -151,9 +165,9 @@ class CommentViewHolder extends RecyclerView.ViewHolder {
         commenter = itemView.findViewById(R.id.commenter);
         comment_content = itemView.findViewById(R.id.comment_content);
         commentView = itemView;
+        delete = itemView.findViewById(R.id.remove_btn);
 
-
-        TextView report = itemView.findViewById(R.id.report_btn);
+        ImageView report = itemView.findViewById(R.id.report_btn);
         if (MainActivity.loggedInUser == null) {
             report.setVisibility(View.GONE);
         } else {
