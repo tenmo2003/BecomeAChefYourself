@@ -41,6 +41,7 @@ import androidx.navigation.Navigation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -195,6 +196,10 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println("Updated");
                     // Fetch notifications in the background
                     List<InAppNotification> notifications = sqlConnection.getNotificationsForUser(loggedInUser.getUsername());
+                    if (notificationList == null) {
+                        notificationList = new ArrayList<>();
+                        notificationList.addAll(notifications);
+                    }
                     System.out.println(notifications.size());
                     System.out.println(notificationList.size());
 
@@ -205,11 +210,9 @@ public class MainActivity extends AppCompatActivity {
                             if (notificationList.size() < notifications.size()) {
                                 int difference = notifications.size() - notificationList.size();
                                 for (int i = 0; i < difference; i++) {
-                                    System.out.println("Got in loop");
                                     // Get the first n new notifications and show push notifications
                                     InAppNotification notification = notifications.get(i);
 
-                                    System.out.println("Got out loop and sending notification");
                                     NotificationUtils.showNotification(MainActivity.this, notification);
                                 }
                                 NotificationFragment.updated.setValue(true);

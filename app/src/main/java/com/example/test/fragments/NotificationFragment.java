@@ -40,13 +40,13 @@ public class NotificationFragment extends Fragment {
 
         ListView listView = view.findViewById(R.id.list_view);
 
-        AtomicReference<List<InAppNotification>> notificationList = new AtomicReference<>();
-        MainActivity.runTask(() -> {
-            MainActivity.notificationList = MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
-            notificationList.set(MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername()));
-        }, () -> {
-            Log.i("DETAIL", String.valueOf(notificationList.get().size()));
-            NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList.get());
+//        AtomicReference<List<InAppNotification>> notificationList = new AtomicReference<>();
+//        MainActivity.runTask(() -> {
+//            MainActivity.notificationList = MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
+//            notificationList.set(MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername()));
+//        }, () -> {
+//            Log.i("DETAIL", String.valueOf(notificationList.get().size()));
+            NotificationListAdapter adapter = new NotificationListAdapter(getActivity());
 
             updated.observe(getActivity(), new Observer<Boolean>() {
                 @Override
@@ -58,6 +58,6 @@ public class NotificationFragment extends Fragment {
                 }
             });
             listView.setAdapter(adapter);
-        }, MainActivity.progressDialog);
+//        }, MainActivity.progressDialog);
     }
 }

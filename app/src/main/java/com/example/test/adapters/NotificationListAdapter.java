@@ -44,7 +44,7 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
 
     Context context;
 
-    public NotificationListAdapter(@NonNull Context context, List<InAppNotification> notificationList) {
+    public NotificationListAdapter(@NonNull Context context) {
         super(context, R.layout.notification, MainActivity.notificationList);
 //        this.notificationList = notificationList;
 
