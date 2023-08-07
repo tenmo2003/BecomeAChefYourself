@@ -1,6 +1,7 @@
 package com.example.test.fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
@@ -197,7 +198,7 @@ public class EditProfileFragment extends Fragment {
                                                     MainActivity.toast.show();
                                                 }
                                             }
-                                        }, MainActivity.progressDialog);
+                                        }, new ProgressDialog(getActivity()));
                                     } else {
                                         MainActivity.toast.setText("Mã xác thực sai. Vui lòng nhập lại");
                                         MainActivity.toast.show();
@@ -262,7 +263,7 @@ public class EditProfileFragment extends Fragment {
                                     MainActivity.toast.show();
                                 }
                             }
-                        }, MainActivity.progressDialog);
+                        }, new ProgressDialog(getActivity()));
                     }
                 }
             });

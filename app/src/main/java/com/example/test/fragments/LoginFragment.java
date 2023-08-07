@@ -73,6 +73,10 @@ public class LoginFragment extends Fragment {
                         MainActivity.toast.setText("Đăng nhập thành công!");
                         MainActivity.toast.show();
 
+                        MainActivity.runTask(() -> {
+                            MainActivity.notificationList = MainActivity.sqlConnection.getNotificationsForUser(username);
+                        });
+
                         // Save login status in preference file
                         SaveSharedPreference.setUserName(getContext(), usernameTv.getText().toString());
 

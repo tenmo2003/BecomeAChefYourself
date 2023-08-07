@@ -222,25 +222,6 @@ public class HomeFragment extends Fragment {
                         }
                     });
 
-                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                        @Override
-                        public boolean onQueryTextSubmit(String s) {
-                            searchArticle(s);
-                            searchView.clearFocus();
-                            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onQueryTextChange(String s) {
-                            if (s.equals("") && recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
-                                recipeListAdapter.setArticleList(MainActivity.articleList);
-                            }
-                            return true;
-                        }
-                    });
-
 
                     setSortButtonBehavior();
 
@@ -294,6 +275,7 @@ public class HomeFragment extends Fragment {
                             }
 
                             filterArticle(filterList);
+                            searchView.setQuery("", false);
                         }
                     });
 
@@ -318,6 +300,29 @@ public class HomeFragment extends Fragment {
                             } else {
                                 filterField.setVisibility(View.GONE);
                             }
+                        }
+                    });
+
+                    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                        @Override
+                        public boolean onQueryTextSubmit(String s) {
+                            searchArticle(s);
+                            mealFilter.clearCheck();
+                            serveOrderClassFilter.clearCheck();
+//                    typeFilter.clearCheck();
+                            typeChoice.setSelection(0);
+                            searchView.clearFocus();
+                            InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onQueryTextChange(String s) {
+                            if (s.equals("") && recipeListAdapter.getArticleList().size() != MainActivity.articleList.size()) {
+                                recipeListAdapter.setArticleList(MainActivity.articleList);
+                            }
+                            return true;
                         }
                     });
                 }, new ProgressDialog(getActivity()));
@@ -379,6 +384,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void searchArticle(String text) {
+
         text = text.toLowerCase();
         List<Article> filteredList = new ArrayList<>();
         for (Article article : MainActivity.articleList) {
@@ -412,6 +418,11 @@ public class HomeFragment extends Fragment {
             }
         }
         recipeListAdapter.setArticleList(filteredList);
+        for (TextView sortButton: sortButtons.values()) {
+            sortButton.getBackground().clearColorFilter();
+        }
+        Objects.requireNonNull(sortButtons.get("most_recent")).getBackground()
+                .setColorFilter(Color.rgb(220, 220, 220), PorterDuff.Mode.SRC);
     }
 
 

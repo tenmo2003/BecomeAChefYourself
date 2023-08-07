@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ProfileSavedFragment extends Fragment {
     RecyclerView userSavedList;
     private final User profileUser;
+    FrameLayout parent;
 
     public ProfileSavedFragment(User profileUser) {
         this.profileUser = profileUser;
@@ -34,7 +36,10 @@ public class ProfileSavedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_saved, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_saved, container, false);
+
+        parent = view.findViewById(R.id.parent);
+        return view;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class ProfileSavedFragment extends Fragment {
 
         userSavedList = view.findViewById(R.id.user_saved_list);
         userSavedList.setHasFixedSize(true);
-        userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        userSavedList.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         RecipeListAdapter adapter = new RecipeListAdapter();
 //        adapter.setInHome(false);
@@ -56,5 +61,11 @@ public class ProfileSavedFragment extends Fragment {
             adapter.setContext(getActivity());
             userSavedList.setAdapter(adapter);
         }, MainActivity.progressDialog);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        parent.requestLayout();
     }
 }

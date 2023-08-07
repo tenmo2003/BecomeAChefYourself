@@ -214,8 +214,11 @@ public class MainActivity extends AppCompatActivity {
                                     InAppNotification notification = notifications.get(i);
 
                                     NotificationUtils.showNotification(MainActivity.this, notification);
+
+                                    notificationList.add(0, notification);
                                 }
                                 NotificationFragment.updated.setValue(true);
+                            } else if (notificationList.size() > notifications.size()) {
                                 notificationList.clear();
                                 notificationList.addAll(notifications);
                             }

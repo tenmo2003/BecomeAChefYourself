@@ -54,6 +54,9 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     public User profileUser;
     private List<Integer> stats;
 
+    SectionsPagerAdapter adapter;
+
+
     private boolean notFollowing;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -291,7 +294,7 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
     }
 
     private void setupViewPager(ViewPager2 viewPager2) {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
+        adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager(), getLifecycle());
         adapter.addFragment(new ProfilePostFragment(profileUser));
         if (MainActivity.loggedInUser != null && MainActivity.loggedInUser.getUsername().equals(profileUser.getUsername())) {
             adapter.addFragment(new ProfileSavedFragment(profileUser));

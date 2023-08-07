@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+
 import com.example.test.R;
 import com.example.test.activities.MainActivity;
 import com.example.test.adapters.RecipeListAdapter;
@@ -25,6 +27,7 @@ public class ProfilePostFragment extends Fragment {
     RecyclerView userRecipeList;
     private final User profileUser;
     List<Article> articleList;
+    FrameLayout parent;
 
     public ProfilePostFragment(User profileUser) {
         this.profileUser = profileUser;
@@ -34,7 +37,11 @@ public class ProfilePostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_post, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_post, container, false);
+
+        parent = view.findViewById(R.id.parent);
+
+        return view;
     }
 
     @Override
@@ -67,5 +74,11 @@ public class ProfilePostFragment extends Fragment {
             }
         }
         return tmp;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        parent.requestLayout();
     }
 }
