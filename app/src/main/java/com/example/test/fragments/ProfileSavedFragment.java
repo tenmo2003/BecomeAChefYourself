@@ -66,6 +66,6 @@ public class ProfileSavedFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        parent.requestLayout();
+//        parent.requestLayout();
     }
 }

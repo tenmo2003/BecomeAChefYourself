@@ -79,6 +79,6 @@ public class ProfilePostFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        parent.requestLayout();
+//        parent.requestLayout();
     }
 }
