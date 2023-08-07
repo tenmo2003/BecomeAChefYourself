@@ -52,6 +52,14 @@ public class MailSender {
         }
     }
 
+    public static int sendUpdateEmailVerification(String emailReceiver) {
+        int securityCode = (int) (Math.random() * 999999 + 100000);
+        String title = "Sửa hồ sơ";
+        String verifyMailContent = "Mã xác thực cho email của bạn là: " + securityCode;
+        sendMail(emailReceiver, title, verifyMailContent);
+        return securityCode;
+    }
+
     public static int sendResetPasswordMail(String emailReceiver) {
         int securityCode = (int) (Math.random() * 999999 + 100000);
         String title = "Đổi mật khẩu";

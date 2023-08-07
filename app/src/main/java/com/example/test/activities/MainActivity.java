@@ -2,6 +2,7 @@ package com.example.test.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.test.R;
 import com.example.test.components.Article;
+import com.example.test.components.InAppNotification;
 import com.example.test.components.User;
 import com.example.test.fragments.AdminFragment;
 import com.example.test.fragments.HomeFragment;
@@ -25,6 +27,7 @@ import com.example.test.fragments.NotificationFragment;
 import com.example.test.fragments.ShareFragment;
 import com.example.test.fragments.ProfileFragment;
 import com.example.test.utils.DatabaseHelper;
+import com.example.test.utils.NotificationUtils;
 import com.example.test.utils.SQLConnection;
 import com.example.test.databinding.ActivityMainBinding;
 import com.example.test.utils.SaveSharedPreference;
@@ -42,6 +45,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import me.ibrahimsn.lib.OnItemSelectedListener;
 import me.ibrahimsn.lib.SmoothBottomBar;
@@ -59,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     NavController navController;
     public static Toast toast;
     public static List<Article> articleList;
+    public static List<InAppNotification> notificationList;
 
     private void setupSmoothBottomMenu() {
         PopupMenu popupMenu = new PopupMenu(this, null);
@@ -115,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
 
             if (SaveSharedPreference.getUserName(MainActivity.this).length() != 0) {
                 MainActivity.loggedInUser = sqlConnection.getUserWithUsername(SaveSharedPreference.getUserName(MainActivity.this));
+            }
+
+            if (MainActivity.loggedInUser != null) {
+                notificationList = sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
             }
         }, () -> {
             binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -176,6 +186,40 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             });
+
+            ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+            Handler handler = new Handler(Looper.getMainLooper());
+
+            service.scheduleAtFixedRate(() -> {
+                if (MainActivity.loggedInUser != null) {
+                    System.out.println("Updated");
+                    // Fetch notifications in the background
+                    List<InAppNotification> notifications = sqlConnection.getNotificationsForUser(loggedInUser.getUsername());
+                    System.out.println(notifications.size());
+                    System.out.println(notificationList.size());
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Do your stuff here, It gets loop every 15 Minutes
+                            if (notificationList.size() < notifications.size()) {
+                                int difference = notifications.size() - notificationList.size();
+                                for (int i = 0; i < difference; i++) {
+                                    System.out.println("Got in loop");
+                                    // Get the first n new notifications and show push notifications
+                                    InAppNotification notification = notifications.get(i);
+
+                                    System.out.println("Got out loop and sending notification");
+                                    NotificationUtils.showNotification(MainActivity.this, notification);
+                                }
+                                NotificationFragment.updated.setValue(true);
+                                notificationList.clear();
+                                notificationList.addAll(notifications);
+                            }
+                        }
+                    });
+                }
+            }, 0, 5, TimeUnit.SECONDS);
         }, con);
     }
 
@@ -250,5 +294,29 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Bundle extras = intent.getExtras();
+
+        Bundle args = new Bundle();
+
+        if (extras.containsKey("articleID")) {
+            args.putInt("articleID", extras.getInt("articleID"));
+            if (extras.containsKey("toComment")) {
+                args.putBoolean("toComment", true);
+            }
+            navController.navigate(R.id.navigation_article, args);
+        } else if (extras.containsKey("username")) {
+            args.putString("username", extras.getString("username"));
+            navController.navigate(R.id.navigation_profile, args);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

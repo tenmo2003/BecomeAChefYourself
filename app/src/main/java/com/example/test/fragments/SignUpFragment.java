@@ -26,7 +26,7 @@ public class SignUpFragment extends Fragment {
     public static String reenter;
     public static String fullname;
 
-    public static int code;
+    public static int code = -15;
     public static ViewPager2 viewPager;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

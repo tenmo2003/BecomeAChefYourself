@@ -5,6 +5,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NotificationFragment extends Fragment {
 
+    public static MutableLiveData<Boolean> updated = new MutableLiveData<>(false);
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,11 +42,21 @@ public class NotificationFragment extends Fragment {
 
         AtomicReference<List<InAppNotification>> notificationList = new AtomicReference<>();
         MainActivity.runTask(() -> {
+            MainActivity.notificationList = MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername());
             notificationList.set(MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername()));
         }, () -> {
             Log.i("DETAIL", String.valueOf(notificationList.get().size()));
             NotificationListAdapter adapter = new NotificationListAdapter(getActivity(), notificationList.get());
 
+            updated.observe(getActivity(), new Observer<Boolean>() {
+                @Override
+                public void onChanged(Boolean aBoolean) {
+                    if (aBoolean) {
+                        adapter.notifyDataSetChanged();
+                        updated.setValue(false);
+                    }
+                }
+            });
             listView.setAdapter(adapter);
         }, MainActivity.progressDialog);
     }

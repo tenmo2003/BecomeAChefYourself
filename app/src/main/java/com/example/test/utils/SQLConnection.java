@@ -787,12 +787,12 @@ public class SQLConnection {
         return rows > 0;
     }
 
-    public boolean updateProfile(String username, String fullname, String bio, String avatarURL, boolean imageChanged) {
+    public boolean updateProfile(String username, String fullname, String bio, String email, String avatarURL, boolean imageChanged) {
         String query;
         if (imageChanged) {
-            query = "UPDATE user SET fullname='" + fullname + "', bio='" + bio + "', avatar='" + avatarURL + "' WHERE username='" + username + "'";
+            query = "UPDATE user SET fullname='" + fullname + "', bio='" + bio + "', email = '" + email + "', avatar='" + avatarURL + "' WHERE username='" + username + "'";
         } else {
-            query = "UPDATE user SET fullname='" + fullname + "', bio='" + bio + "' WHERE username='" + username + "'";
+            query = "UPDATE user SET fullname='" + fullname + "', bio='" + bio + "', email = '" + email + "' WHERE username='" + username + "'";
         }
 
         int rows = updateQuery(query);

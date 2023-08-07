@@ -40,13 +40,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
 
-    List<InAppNotification> notificationList;
+//    List<InAppNotification> notificationList;
 
     Context context;
 
     public NotificationListAdapter(@NonNull Context context, List<InAppNotification> notificationList) {
-        super(context, R.layout.notification, notificationList);
-        this.notificationList = notificationList;
+        super(context, R.layout.notification, MainActivity.notificationList);
+//        this.notificationList = notificationList;
 
         this.context = context;
     }
@@ -58,7 +58,7 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = layoutInflater.inflate(R.layout.notification, null);
         }
-        InAppNotification notification = notificationList.get(position);
+        InAppNotification notification = MainActivity.notificationList.get(position);
 
         TextView contentTv = convertView.findViewById(R.id.content);
         TextView createdTv = convertView.findViewById(R.id.created_time);
@@ -178,7 +178,7 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Perform logout action here
-                        notificationList.remove(position);
+                        MainActivity.notificationList.remove(position);
                         MainActivity.runTask(() -> {
                             MainActivity.sqlConnection.removeNotification(notification.getId());
                         }, null, null);
@@ -202,6 +202,11 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
         });
 
         return convertView;
+    }
+
+    @Override
+    public int getCount() {
+        return MainActivity.notificationList.size();
     }
 
     @Override

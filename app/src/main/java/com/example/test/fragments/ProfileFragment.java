@@ -249,6 +249,7 @@ public class ProfileFragment extends Fragment implements PopupMenu.OnMenuItemCli
             args.putString("username", profileUser.getUsername());
             args.putString("fullname", profileUser.getFullname());
             args.putString("bio", profileUser.getBio());
+            args.putString("email", profileUser.getEmail());
 
             Navigation.findNavController(fragmentView).navigate(R.id.navigation_edit_profile, args);
             return true;
