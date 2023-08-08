@@ -121,10 +121,11 @@ public class NotificationListAdapter extends ArrayAdapter<InAppNotification> {
                 content = notification.getActionBy() + " đã đăng bài viết mới: '" + notification.getArticleName() + "'";
                 break;
             case "REPORT_ARTICLE":
-                content = "Bài đăng '" + notification.getArticleName() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiển tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
+
+                content = "Bài đăng '" + notification.getArticleName() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiến tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
                 break;
             case "REPORT_COMMENT":
-                content = "Bình luận '" + notification.getCommentContent() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiển tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
+                content = "Bình luận '" + notification.getCommentContent() + "' của bạn đã vi phạm quy chuẩn cộng đồng và đã bị xoá! Việc này có thể khiến tài khoản của bạn bị khoá. Mong bạn thông cảm vì một cộng đồng sạch";
                 break;
             default:
                 content = "Notification type: " + type;

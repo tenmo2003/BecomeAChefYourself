@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
@@ -45,7 +47,9 @@ import com.example.test.activities.MainActivity;
 import com.example.test.adapters.CommentListAdapter;
 import com.example.test.components.Article;
 import com.example.test.components.Comment;
+import com.example.test.components.InAppNotification;
 import com.example.test.components.User;
+import com.example.test.utils.NotificationUtils;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.sql.ResultSet;
@@ -58,6 +62,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -492,10 +499,47 @@ public class ArticleFragment extends Fragment {
                         nestedScrollView.smoothScrollTo(0, cmtTv.getTop());
                     }
                 });
+
+
             }, null);
             parent.setVisibility(View.VISIBLE);
             }, MainActivity.progressDialog);
 
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        Handler handler = new Handler();
+
+        service.scheduleAtFixedRate(() -> {
+            System.out.println("Comment Updated");
+            // Fetch notifications in the background
+            if (articleID.get() != 0 && commentList != null) {
+                List<Comment> comments = MainActivity.sqlConnection.getCommentWithArticleID(articleID.get());
+
+                System.out.println(comments.size());
+                System.out.println(commentList.size());
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do your stuff here, It gets loop every 15 Minutes
+                        if (commentList.size() < comments.size()) {
+                            int difference = comments.size() - commentList.size();
+                            for (int i = 0; i < difference; i++) {
+                                // Get the first n new notifications and show push notifications
+                                Comment comment = comments.get(i);
+
+                                commentList.add(0, comment);
+                            }
+                            commentListAdapter.setComments(commentList);
+                        } else if (commentList.size() > comments.size()) {
+                            commentList.clear();
+                            commentList.addAll(comments);
+                            commentListAdapter.setComments(commentList);
+                        }
+                    }
+
+                });
+            }
+        }, 0, 1, TimeUnit.SECONDS);
 
     }
 

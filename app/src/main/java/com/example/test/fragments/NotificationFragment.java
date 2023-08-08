@@ -46,18 +46,20 @@ public class NotificationFragment extends Fragment {
 //            notificationList.set(MainActivity.sqlConnection.getNotificationsForUser(MainActivity.loggedInUser.getUsername()));
 //        }, () -> {
 //            Log.i("DETAIL", String.valueOf(notificationList.get().size()));
-            NotificationListAdapter adapter = new NotificationListAdapter(getActivity());
+        NotificationListAdapter adapter = new NotificationListAdapter(getActivity());
 
-            updated.observe(getActivity(), new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean aBoolean) {
-                    if (aBoolean) {
-                        adapter.notifyDataSetChanged();
-                        updated.setValue(false);
-                    }
+
+        listView.setAdapter(adapter);
+        updated.observe(getActivity(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    System.out.println("UPDATED");
+                    adapter.notifyDataSetChanged();
+                    updated.setValue(false);
                 }
-            });
-            listView.setAdapter(adapter);
+            }
+        });
 //        }, MainActivity.progressDialog);
     }
 }
