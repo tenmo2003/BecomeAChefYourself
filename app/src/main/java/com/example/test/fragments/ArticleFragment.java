@@ -166,7 +166,22 @@ public class ArticleFragment extends Fragment {
                 if (author.get().getAvatarURL().equals("")) {
                     authorAvatar.setImageResource(R.drawable.baseline_person_24);
                 } else {
-                    Glide.with(getActivity()).load(author.get().getAvatarURL()).placeholder(new CircularProgressDrawable(getActivity())).error(R.drawable.image_load_failed).into(authorAvatar);
+                    if (getActivity() != null) {
+                        ProgressBar progressBar = view.findViewById(R.id.avatar_progressbar);
+                        Glide.with(getActivity()).load(author.get().getAvatarURL()).listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                progressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                progressBar.setVisibility(View.GONE);
+                                return false;
+                            }
+                        }).error(R.drawable.image_load_failed).into(authorAvatar);
+                    }
                 }
 
                 if (MainActivity.loggedInUser != null && (MainActivity.loggedInUser.getUsername().equals("admin") || MainActivity.loggedInUser.getUsername().equals(author.get().getUsername()))) {
