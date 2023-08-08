@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -97,21 +98,28 @@ public class NotificationUtils {
     private static PendingIntent createPendingIntent(Context context, InAppNotification notification) {
         Intent intent = new Intent(context, MainActivity.class);
 
-
         String type = notification.getType();
+        System.out.println(type);
+
+        Bundle extrasBundle = new Bundle(); // Create a new Bundle
+
+        extrasBundle.putString("type", type); // Add the "type" extra to the Bundle
 
         if (type.equals("LIKE") || type.equals("FOLLOWING_POST")) {
-            intent.putExtra("articleID", notification.getArticleId());
+            extrasBundle.putInt("articleID", notification.getArticleId());
         } else if (type.equals("COMMENT")) {
-            intent.putExtra("articleID", notification.getArticleId());
-            intent.putExtra("toComment", true);
-        } else if (type.equals("FOLLOW")){
-            intent.putExtra("username", notification.getActionBy());
+            extrasBundle.putInt("articleID", notification.getArticleId());
+            extrasBundle.putBoolean("toComment", true);
+        } else if (type.equals("FOLLOW")) {
+            extrasBundle.putString("username", notification.getActionBy());
         }
+
+        intent.putExtras(extrasBundle); // Set the Bundle as extras in the Intent
+
 
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return pendingIntent;
     }
 

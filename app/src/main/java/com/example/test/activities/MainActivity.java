@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-            }, 0, 5, TimeUnit.SECONDS);
+            }, 0, 3, TimeUnit.SECONDS);
         }, con);
     }
 
@@ -309,13 +309,16 @@ public class MainActivity extends AppCompatActivity {
 
         Bundle args = new Bundle();
 
-        if (extras.containsKey("articleID")) {
+        String type = extras.getString("type");
+        System.out.println(type);
+        if (type.equals("LIKE") || type.equals("FOLLOWING_POST")) {
             args.putInt("articleID", extras.getInt("articleID"));
-            if (extras.containsKey("toComment")) {
-                args.putBoolean("toComment", true);
-            }
             navController.navigate(R.id.navigation_article, args);
-        } else if (extras.containsKey("username")) {
+        } else if (type.equals("COMMENT")) {
+            args.putInt("articleID", extras.getInt("articleID"));
+            args.putBoolean("toComment", true);
+            navController.navigate(R.id.navigation_article, args);
+        } else if (type.equals("FOLLOW")) {
             args.putString("username", extras.getString("username"));
             navController.navigate(R.id.navigation_profile, args);
         }
